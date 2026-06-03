@@ -1,17 +1,18 @@
 package com.project.budaya.Entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
+import jakarta.persistence.*;
+import java.util.List;
 @Entity
+@Table(name = "forums")
 public class Forums {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
     private String name;
     private String description;
+
+    @OneToMany(mappedBy = "forum", cascade = CascadeType.ALL)
+    private List<Threads> threads;
 
     public Forums() {
     }
@@ -23,14 +24,13 @@ public class Forums {
 
     // Getters and Setters
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
-
     public String getName() {
         return name;
     }
@@ -45,5 +45,13 @@ public class Forums {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<Threads> getThreads() {
+        return threads;
+    }
+
+    public void setThreads(List<Threads> threads) {
+        this.threads = threads;
     }
 }

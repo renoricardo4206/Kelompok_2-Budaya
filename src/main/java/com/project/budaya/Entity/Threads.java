@@ -1,27 +1,38 @@
 package com.project.budaya.Entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
+import jakarta.persistence.*;
+import java.util.List;
 @Entity
+@Table(name = "threads")
 public class Threads {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private Long user_id;
-    private Long forum_id;
+    private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "forum_id", nullable = false)
+    private Forums forum;
+
     private String title;
     private String content;
     private String createdAt;
 
+    @OneToMany(mappedBy = "thread", cascade = CascadeType.ALL)
+    private List<Comments> comments;
+
+    @OneToMany(mappedBy = "thread", cascade = CascadeType.ALL)
+    private List<Likes> likes;
+
     public Threads() {
     }
 
-    public Threads(Long user_id, Long forum_id, String title, String content, String createdAt) {
-        this.user_id = user_id;
-        this.forum_id = forum_id;
+    public Threads(User user, Forums forum, String title, String content, String createdAt) {
+        this.user = user;
+        this.forum = forum;
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
@@ -29,28 +40,28 @@ public class Threads {
 
     // Getters and Setters
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public Long getUser_id() {
-        return user_id;
+    public User getUser() {
+        return user;
     }
 
-    public void setUser_id(Long user_id) {
-        this.user_id = user_id;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public Long getForum_id() {
-        return forum_id;
+    public Forums getForum() {
+        return forum;
     }
 
-    public void setForum_id(Long forum_id) {
-        this.forum_id = forum_id;
+    public void setForum(Forums forum) {
+        this.forum = forum;
     }
 
     public String getTitle() {
@@ -75,5 +86,21 @@ public class Threads {
 
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public List<Comments> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comments> comments) {
+        this.comments = comments;
+    }
+
+    public List<Likes> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(List<Likes> likes) {
+        this.likes = likes;
     }
 }

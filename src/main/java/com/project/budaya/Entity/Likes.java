@@ -1,52 +1,57 @@
 package com.project.budaya.Entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "likes")
 public class Likes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private Long user_id;
-    private Long thread_id;
+    private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "thread_id", nullable = false)
+    private Threads thread;
+
     private String createdAt;
 
     public Likes() {
     }
 
-    public Likes(Long user_id, Long thread_id, String createdAt) {
-        this.user_id = user_id;
-        this.thread_id = thread_id;
+    public Likes(User user, Threads thread, String createdAt) {
+        this.user = user;
+        this.thread = thread;
         this.createdAt = createdAt;
     }
 
     // Getters and Setters
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public Long getUser_id() {
-        return user_id;
+    public User getUser() {
+        return user;
     }
 
-    public void setUser_id(Long user_id) {
-        this.user_id = user_id;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public Long getThread_id() {
-        return thread_id;
+    public Threads getThread() {
+        return thread;
     }
 
-    public void setThread_id(Long thread_id) {
-        this.thread_id = thread_id;
+    public void setThread(Threads thread) {
+        this.thread = thread;
     }
 
     public String getCreatedAt() {
