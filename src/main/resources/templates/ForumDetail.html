@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title id="pageTitle">Thread – Warisan</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400;0,600&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+:root{
+  --primary:#9e2016;--primary-dark:#7a1810;--primary-light:#fff1ec;--primary-bg:#fff8f6;
+  --text-dark:#2a170f;--text-mid:#59413d;--border-soft:rgba(225,191,185,0.2);
+  --border-card:rgba(44,24,16,0.06);--card-shadow:0 1px 2px rgba(0,0,0,.05);
+  --ease:cubic-bezier(0.23,1,0.32,1);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--primary-bg);color:var(--text-dark);margin:0;overflow-x:hidden}
+body.locked{overflow:hidden;position:fixed;width:100%}
+
+/* ── NAVBAR ── */
+.wastra-nav{
+  position:sticky;top:0;z-index:200;
+  background:rgba(255,248,246,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border-soft);transition:box-shadow .2s var(--ease);
+}
+.wastra-nav.scrolled{box-shadow:0 2px 20px rgba(44,24,16,0.09)}
+.nav-inner{max-width:100%;height:72px;padding:0 48px;display:flex;align-items:center;gap:14px;position:relative}
+.nav-brand{font-family:'Playfair Display',serif;font-weight:700;font-size:24px;color:var(--primary);text-decoration:none;flex-shrink:0}
+.nav-links{display:flex;align-items:center;gap:28px;list-style:none;margin:0;padding:0;position:absolute;left:50%;transform:translateX(-50%)}
+.nav-links a{font-size:15px;font-weight:600;color:var(--text-mid);text-decoration:none;padding-bottom:2px;transition:color .15s}
+.nav-links a:hover{color:var(--primary)}
+.nav-links a.active{color:var(--primary);border-bottom:2px solid var(--primary)}
+.nav-search{width:260px;flex-shrink:0;position:relative}
+.nav-search input{width:100%;background:var(--primary-light);border:1.5px solid rgba(225,191,185,.4);border-radius:9999px;font-family:inherit;font-size:15px;padding:10px 18px 10px 40px;outline:none;transition:border-color .15s}
+.nav-search input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(158,32,22,.1)}
+.nav-search input::placeholder{color:#9b8780}
+.nav-search .si{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#9b8780;font-size:14px;pointer-events:none}
+.nav-auth{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.btn-masuk{font-family:inherit;font-size:15px;font-weight:600;color:var(--primary);background:none;border:none;padding:9px 16px;border-radius:9999px;cursor:pointer;transition:background .15s}
+.btn-masuk:hover{background:var(--primary-light)}
+.btn-daftar{font-family:inherit;font-size:15px;font-weight:600;color:#fff;background:var(--primary);border:none;padding:9px 22px;border-radius:9999px;cursor:pointer;transition:background .15s}
+.btn-daftar:hover{background:var(--primary-dark)}
+.btn-hamburger{display:none;width:40px;height:40px;align-items:center;justify-content:center;border:none;background:none;cursor:pointer;border-radius:9999px;color:var(--text-dark);font-size:20px;margin-left:auto;flex-shrink:0}
+.btn-hamburger:hover{background:var(--primary-light)}
+
+/* ── DRAWER ── */
+.drawer-overlay{position:fixed;inset:0;z-index:300;background:rgba(42,23,15,.4);opacity:0;pointer-events:none;transition:opacity .25s var(--ease);backdrop-filter:blur(2px)}
+.drawer-overlay.open{opacity:1;pointer-events:all}
+.drawer{position:fixed;top:0;right:0;bottom:0;z-index:301;width:min(300px,85vw);background:var(--primary-bg);padding:24px 24px calc(24px + var(--safe-bottom));transform:translateX(105%);transition:transform .28s var(--ease);display:flex;flex-direction:column;overflow-y:auto}
+.drawer.open{transform:translateX(0)}
+.drawer-header{display:flex;align-items:center;justify-content:space-between;padding-bottom:20px;border-bottom:1px solid var(--border-soft);margin-bottom:8px}
+.drawer-brand{font-family:'Playfair Display',serif;font-weight:700;font-size:20px;color:var(--primary)}
+.drawer-close{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border:none;background:none;cursor:pointer;border-radius:9999px;color:var(--text-mid);font-size:20px}
+.drawer-nav{list-style:none;padding:0;margin:16px 0 20px;display:flex;flex-direction:column;gap:2px}
+.drawer-nav a{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600;color:var(--text-mid);text-decoration:none;padding:12px 10px;border-radius:10px;transition:background .15s,color .15s}
+.drawer-nav a:hover,.drawer-nav a.active{background:var(--primary-light);color:var(--primary)}
+.drawer-nav a i{font-size:18px}
+.drawer-divider{height:1px;background:var(--border-soft);margin:8px 0}
+.drawer-auth{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.drawer-btn-masuk{width:100%;font-family:inherit;font-size:14px;font-weight:600;color:var(--primary);background:var(--primary-light);border:none;padding:12px;border-radius:9999px;cursor:pointer}
+.drawer-btn-daftar{width:100%;font-family:inherit;font-size:14px;font-weight:600;color:#fff;background:var(--primary);border:none;padding:12px;border-radius:9999px;cursor:pointer}
+
+/* ── TOAST ── */
+.toast-container{position:fixed;bottom:calc(24px + var(--safe-bottom));right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast-item{background:var(--text-dark);color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:500;max-width:300px;box-shadow:0 4px 20px rgba(0,0,0,.2);opacity:0;transform:translateX(20px);transition:opacity .25s var(--ease),transform .25s var(--ease);pointer-events:auto}
+.toast-item.show{opacity:1;transform:translateX(0)}
+.toast-item.success{background:#2e7d32}
+
+/* ── PAGE WRAPPER ── */
+.page-wrapper{width:100%;padding:36px 56px calc(56px + var(--safe-bottom))}
+
+/* ── LAYOUT ── */
+.detail-layout{display:grid;grid-template-columns:260px 1fr 300px;gap:28px;align-items:start}
+
+/* ── SIDEBAR LEFT ── */
+.sidebar-left{
+  background:var(--primary-light);border:1px solid var(--border-soft);
+  border-radius:16px;box-shadow:var(--card-shadow);
+  padding:24px;position:sticky;top:80px;
+}
+.sidebar-title{font-family:'Playfair Display',serif;font-weight:700;font-size:23px;color:var(--primary);margin:0 0 2px;padding:0 8px}
+.sidebar-subtitle{font-size:14px;font-weight:500;color:var(--text-mid);padding:0 8px;margin-bottom:18px}
+.cat-nav{display:flex;flex-direction:column;gap:3px;margin-bottom:18px}
+.cat-link{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-mid);text-decoration:none;cursor:pointer;border:none;background:none;width:100%;text-align:left;transition:background .15s,color .15s}
+.cat-link:hover{background:rgba(158,32,22,.06);color:var(--text-dark)}
+.cat-link.active{background:#ffc641;color:#59413d}
+.cat-link i{font-size:18px;width:22px;text-align:center;flex-shrink:0}
+.btn-new-thread{width:100%;background:var(--primary);color:#fff;border:none;border-radius:10px;padding:11px 16px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:background .15s,transform .1s}
+.btn-new-thread:hover{background:var(--primary-dark)}
+.btn-new-thread:active{transform:scale(.97)}
+
+/* ── MAIN COLUMN ── */
+/* Breadcrumbs */
+.breadcrumbs{display:flex;align-items:center;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.breadcrumbs a{font-size:12px;font-weight:500;color:var(--text-mid);text-decoration:none;transition:color .15s}
+.breadcrumbs a:hover{color:var(--primary)}
+.breadcrumbs span{font-size:14px;color:var(--text-mid);opacity:.5}
+.breadcrumbs .current{font-size:14px;font-weight:500;color:var(--text-dark)}
+
+/* ── OP CARD ── */
+.op-card{background:white;border:1px solid rgba(225,191,185,.15);border-radius:12px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:24px}
+.op-body{padding:32px}
+.op-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.op-author{display:flex;align-items:center;gap:12px}
+.op-avatar{width:40px;height:40px;border-radius:9999px;object-fit:cover;flex-shrink:0;border:2px solid rgba(225,191,185,.3)}
+.op-avatar-placeholder{width:40px;height:40px;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}
+.op-name{font-size:14px;font-weight:600;color:var(--text-dark);letter-spacing:.1px}
+.op-time{font-size:14px;font-weight:500;color:var(--text-mid)}
+.op-menu{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:none;background:none;cursor:pointer;border-radius:9999px;color:var(--text-mid);font-size:16px;transition:background .15s}
+.op-menu:hover{background:var(--primary-light)}
+.op-title{font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(22px,3.5vw,32px);color:var(--text-dark);margin:0 0 16px;line-height:1.25}
+.op-text{font-size:16px;line-height:1.7;color:var(--text-mid);margin:0 0 20px;white-space:pre-wrap}
+.op-img{width:100%;max-height:420px;object-fit:cover;border-radius:8px;display:block;margin-bottom:4px}
+
+/* Interaction bar */
+.interact-bar{background:#fff8f6;border-top:1px solid rgba(225,191,185,.15);padding:12px 24px;display:flex;align-items:center;gap:20px}
+.ibar-btn{display:flex;align-items:center;gap:7px;font-family:inherit;font-size:12px;font-weight:500;color:var(--text-mid);background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:8px;transition:color .15s,background .15s}
+.ibar-btn:hover{background:var(--primary-light);color:var(--primary)}
+.ibar-btn i{font-size:16px;transition:transform .15s var(--ease)}
+.ibar-btn.liked{color:var(--primary)}
+.ibar-btn.liked i{color:var(--primary)}
+.ibar-share{margin-left:auto}
+
+/* ── DISCUSSION SECTION ── */
+.discussion-section{margin-bottom:32px}
+.discussion-title{font-family:'Playfair Display',serif;font-weight:600;font-size:26px;color:var(--text-dark);margin:0 0 20px}
+
+/* Comment form */
+.comment-form{background:white;border:1px solid rgba(225,191,185,.15);border-radius:12px;box-shadow:var(--card-shadow);padding:16px;display:flex;gap:14px;margin-bottom:24px;align-items:flex-start}
+.cf-avatar{width:40px;height:40px;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#ffe5e1;background:#c0392b;flex-shrink:0}
+.cf-right{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px}
+.cf-textarea{width:100%;background:var(--primary-bg);border:1.5px solid rgba(225,191,185,.4);border-radius:8px;padding:12px 14px;font-family:inherit;font-size:15px;color:var(--text-dark);outline:none;resize:none;min-height:80px;transition:border-color .15s}
+.cf-textarea:focus{border-color:var(--primary)}
+.cf-textarea::placeholder{color:#9b8780}
+.cf-submit-row{display:flex;justify-content:flex-end}
+.cf-submit{background:var(--primary);color:#fff;border:none;border-radius:9999px;padding:9px 20px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s,transform .1s}
+.cf-submit:hover{background:var(--primary-dark)}
+.cf-submit:active{transform:scale(.96)}
+
+/* Comments */
+.comment-thread{display:flex;flex-direction:column;gap:22px}
+.comment-item{display:flex;gap:14px}
+.comment-avatar{width:40px;height:40px;border-radius:9999px;object-fit:cover;flex-shrink:0;border:1.5px solid rgba(225,191,185,.3)}
+.comment-avatar-initials{width:40px;height:40px;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+.comment-right{flex:1;min-width:0}
+.comment-bubble{background:white;border:1px solid rgba(225,191,185,.15);border-radius:0 12px 12px 12px;box-shadow:var(--card-shadow);padding:14px 16px;margin-bottom:8px}
+.comment-header{display:flex;align-items:baseline;gap:8px;margin-bottom:7px;flex-wrap:wrap}
+.comment-name{font-size:16px;font-weight:700;color:var(--text-dark)}
+.comment-time{font-size:14px;font-weight:500;color:var(--text-mid)}
+.comment-text{font-size:15px;line-height:1.65;color:var(--text-mid)}
+.comment-actions{display:flex;align-items:center;gap:14px;padding:0 8px}
+.ca-btn{display:flex;align-items:center;gap:4px;font-family:inherit;font-size:12px;font-weight:500;color:var(--text-mid);background:none;border:none;cursor:pointer;padding:3px 6px;border-radius:6px;transition:color .15s,background .15s}
+.ca-btn:hover{color:var(--primary);background:var(--primary-light)}
+.ca-btn i{font-size:13px}
+
+/* Nested reply */
+.nested-replies{margin-top:10px;padding-left:20px;border-left:2px solid rgba(225,191,185,.3)}
+.reply-item{display:flex;gap:10px;padding-top:12px}
+.reply-avatar{width:32px;height:32px;border-radius:9999px;object-fit:cover;flex-shrink:0}
+.reply-avatar-initials{width:32px;height:32px;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.reply-bubble{background:#ffe9e2;border:1px solid rgba(225,191,185,.1);border-radius:0 8px 8px 8px;padding:10px 12px;flex:1}
+.reply-header{display:flex;align-items:baseline;gap:7px;margin-bottom:5px}
+.reply-name{font-size:14px;font-weight:700;color:var(--text-dark)}
+.reply-time{font-size:13px;color:var(--text-mid)}
+.reply-text{font-size:13px;line-height:1.6;color:var(--text-mid)}
+.reply-actions{display:flex;align-items:center;gap:10px;padding:6px 4px 0}
+.ra-btn{display:flex;align-items:center;gap:4px;font-family:inherit;font-size:11px;font-weight:500;color:var(--text-mid);background:none;border:none;cursor:pointer;padding:2px 5px;border-radius:5px;transition:color .15s,background .15s}
+.ra-btn:hover{color:var(--primary)}
+.ra-btn i{font-size:12px}
+
+/* Load more */
+.btn-load-more{
+  width:100%;border:1.5px solid #8d706c;background:none;
+  border-radius:9999px;padding:10px;font-family:inherit;
+  font-size:14px;font-weight:600;color:var(--text-mid);cursor:pointer;
+  margin-top:20px;transition:background .15s,color .15s;
+}
+.btn-load-more:hover{background:var(--primary-light);color:var(--primary);border-color:var(--primary)}
+
+/* ── SIDEBAR RIGHT ── */
+.sidebar-right{position:sticky;top:80px}
+.related-widget{background:var(--primary-light);border:1px solid var(--border-soft);border-radius:12px;box-shadow:var(--card-shadow);padding:20px}
+.related-title{font-family:'Playfair Display',serif;font-weight:600;font-size:22px;color:var(--text-dark);margin:0 0 16px;padding-bottom:14px;border-bottom:1px solid var(--border-soft)}
+.related-items{display:flex;flex-direction:column;gap:0}
+.related-item{padding:14px 0;border-bottom:1px solid rgba(225,191,185,.15);cursor:pointer;transition:opacity .15s}
+.related-item:last-child{border-bottom:none}
+.related-item:hover{opacity:.75}
+.ri-cat{font-size:13px;font-weight:600;margin-bottom:4px;display:block}
+.ri-title{font-size:13px;font-weight:600;color:var(--text-dark);line-height:1.45;margin:0 0 4px}
+.ri-meta{font-size:13px;color:var(--text-mid)}
+.btn-lihat-lebih{width:100%;border:1.5px solid #8d706c;background:none;border-radius:9999px;padding:9px;font-family:inherit;font-size:13px;font-weight:600;color:var(--text-mid);cursor:pointer;margin-top:14px;transition:background .15s,color .15s}
+.btn-lihat-lebih:hover{background:var(--primary-light);color:var(--primary)}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(255,248,246,.95);backdrop-filter:blur(12px);border-top:1px solid var(--border-soft);padding:8px 0 calc(8px + var(--safe-bottom))}
+.bottom-nav-inner{display:flex;align-items:center;justify-content:space-around;max-width:480px;margin:0 auto}
+.bnav-btn{display:flex;flex-direction:column;align-items:center;gap:3px;font-family:inherit;font-size:10px;font-weight:600;color:var(--text-mid);background:none;border:none;cursor:pointer;padding:4px 16px;border-radius:12px;transition:color .15s}
+.bnav-btn i{font-size:20px}
+.bnav-btn.active{color:var(--primary)}
+
+/* ── FOOTER ── */
+.wastra-footer{background:#ffdbce;border-top:1px solid var(--border-soft);padding:40px 0 calc(40px + var(--safe-bottom))}
+.footer-inner{width:100%;padding:0 56px;display:flex;align-items:flex-start;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.footer-brand{font-family:'Playfair Display',serif;font-weight:700;font-size:24px;color:var(--primary);margin-bottom:4px}
+.footer-tagline{font-size:16px;color:var(--text-mid);margin-bottom:12px}
+.footer-copy{font-size:13px;font-weight:500;color:var(--text-mid);opacity:.65}
+.footer-links{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.footer-links a{font-size:11px;font-weight:500;color:var(--text-mid);text-decoration:none;transition:color .15s}
+.footer-links a:hover{color:var(--primary)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1023px){
+  .nav-links{display:none}
+  .detail-layout{grid-template-columns:200px 1fr;gap:16px}
+  .sidebar-right{display:none}
+}
+@media(max-width:767px){
+  .nav-search,.nav-auth{display:none}
+  .btn-hamburger{display:flex}
+  .detail-layout{grid-template-columns:1fr}
+  .sidebar-left{display:none}
+  .bottom-nav{display:block}
+  .page-wrapper{padding-bottom:calc(80px + var(--safe-bottom))}
+  .wastra-footer{padding-bottom:calc(80px + var(--safe-bottom))}
+  .op-title{font-size:22px}
+  .op-text{font-size:15px}
+}
+@media(max-width:480px){
+  .page-wrapper{padding:14px 12px calc(80px + var(--safe-bottom))}
+  .op-body{padding:16px}
+  .interact-bar{padding:10px 16px;gap:12px}
+}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- DRAWER -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="mobileDrawer">
+  <div class="drawer-header">
+    <span class="drawer-brand">Warisan</span>
+    <button class="drawer-close" onclick="closeDrawer()"><i class="bi bi-x"></i></button>
+  </div>
+  <ul class="drawer-nav">
+    <li><a href="Beranda.html"><i class="bi bi-house"></i>Beranda</a></li>
+    <li><a href="Forum.html" class="active"><i class="bi bi-chat-dots"></i>Forum</a></li>
+    <li><a href="#" onclick="showToast('Segera hadir!');return false"><i class="bi bi-journal-richtext"></i>Dokumentasi</a></li>
+    <li><a href="#" onclick="showToast('Segera hadir!');return false"><i class="bi bi-info-circle"></i>Tentang</a></li>
+  </ul>
+  <div class="drawer-divider"></div>
+  <div class="drawer-auth">
+    <button class="drawer-btn-masuk" onclick="closeDrawer();showToast('Segera hadir!','success')">Masuk</button>
+    <button class="drawer-btn-daftar" onclick="closeDrawer();showToast('Segera hadir!','success')">Daftar Sekarang</button>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="wastra-nav" id="mainNav">
+  <div class="nav-inner">
+    <a href="Beranda.html" class="nav-brand">Warisan</a>
+    <ul class="nav-links">
+      <li><a href="Beranda.html">Beranda</a></li>
+      <li><a href="Forum.html" class="active">Forum</a></li>
+      <li><a href="#" onclick="showToast('Segera hadir!');return false">Dokumentasi</a></li>
+      <li><a href="#" onclick="showToast('Segera hadir!');return false">Tentang</a></li>
+    </ul>
+    <div style="flex:1"></div>
+    <div class="nav-auth">
+      <div class="nav-search" style="margin-right:6px">
+        <i class="bi bi-search si"></i>
+        <input type="search" placeholder="Cari budaya, tarian, atau kuliner...">
+      </div>
+      <button class="btn-masuk" onclick="showToast('Segera hadir!','success')">Masuk</button>
+      <button class="btn-daftar" onclick="showToast('Segera hadir!','success')">Daftar</button>
+    </div>
+    <button class="btn-hamburger" onclick="openDrawer()"><i class="bi bi-list"></i></button>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="page-wrapper">
+  <div class="detail-layout">
+
+    <!-- SIDEBAR LEFT -->
+    <aside class="sidebar-left">
+      <div class="sidebar-title">Kategori Budaya</div>
+      <div class="sidebar-subtitle">Jelajahi Warisan Kita</div>
+      <nav class="cat-nav" id="sidebarCatNav">
+        <a href="Forum.html" class="cat-link"><i class="bi bi-compass"></i>Jelajah</a>
+        <a href="Forum.html?cat=tari" class="cat-link" id="sideCatTari"><i class="bi bi-music-note-beamed"></i>Tari</a>
+        <a href="Forum.html?cat=bahasa" class="cat-link"><i class="bi bi-translate"></i>Bahasa</a>
+        <a href="Forum.html?cat=seni" class="cat-link"><i class="bi bi-palette"></i>Seni</a>
+        <a href="Forum.html?cat=musik" class="cat-link" id="sideCatMusik"><i class="bi bi-music-note"></i>Musik</a>
+        <a href="Forum.html?cat=pakaian" class="cat-link" id="sideCatPakaian"><i class="bi bi-stars"></i>Pakaian Adat</a>
+        <a href="Forum.html?cat=kuliner" class="cat-link" id="sideCatKuliner"><i class="bi bi-egg-fried"></i>Kuliner</a>
+        
+        <a href="Forum.html?cat=lainnya" class="cat-link"><i class="bi bi-three-dots"></i>Lainnya</a>
+      </nav>
+      <button class="btn-new-thread" onclick="showToast('Fitur buat thread segera hadir!','success')">
+        <i class="bi bi-plus-lg"></i> Buat Thread Baru
+      </button>
+    </aside>
+
+    <!-- CENTER COLUMN -->
+    <main id="mainContent">
+      <!-- populated by JS -->
+    </main>
+
+    <!-- SIDEBAR RIGHT -->
+    <aside class="sidebar-right">
+      <div class="related-widget">
+        <div class="related-title">Diskusi Terkait</div>
+        <div class="related-items" id="relatedItems">
+          <!-- populated by JS -->
+        </div>
+        <button class="btn-lihat-lebih" onclick="showToast('Segera hadir!')">Lihat Lebih Banyak</button>
+      </div>
+    </aside>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="wastra-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">Warisan</div>
+      <div class="footer-tagline">Melestarikan Budaya, Menghubungkan Bangsa.</div>
+      <div class="footer-copy">© 2026 Warisan. Seluruh hak cipta dilindungi.</div>
+    </div>
+    <div class="footer-links">
+      <a href="#" onclick="showToast('Segera hadir!');return false">Panduan Komunitas</a>
+      <a href="#" onclick="showToast('Segera hadir!');return false">Kebijakan Privasi</a>
+      <a href="#" onclick="showToast('Segera hadir!');return false">Kontak</a>
+    </div>
+  </div>
+</footer>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <button class="bnav-btn" onclick="location.href='Beranda.html'"><i class="bi bi-house"></i>Beranda</button>
+    <button class="bnav-btn active" onclick="location.href='Forum.html'"><i class="bi bi-chat-dots"></i>Forum</button>
+    <button class="bnav-btn" onclick="showToast('Segera hadir!')"><i class="bi bi-compass"></i>Jelajah</button>
+    <button class="bnav-btn" onclick="showToast('Segera hadir!')"><i class="bi bi-person"></i>Profil</button>
+  </div>
+</nav>
+
+<script>
+/* ── THREAD DATA (same source as forum.html) ── */
+const THREADS = [
+  {
+    id:1, slug:'tari-kecak-bali',
+    cat:'tari', catLabel:'Tari Tradisional', catColor:'#2e7d32',
+    username:'Maria Damaris', avatarUrl:'https://i.pinimg.com/1200x/b0/0f/fb/b00ffb3a94d32e4741c7273338f667c3.jpg',
+    avatarBg:'#c0392b', avatarInitial:'M',
+    time:'2 jam yang lalu',
+    title:'Tari Kecak Bali',
+    img:'https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=900&q=80',
+    fullText:`Mau cerita dikit, kemaren pas liburan ke Bali gw sempetin nonton Tari Kecak di Uluwatu, dan jujur... gw mesmerized parah.
+
+Selama ini kan gw taunya Bali emang kental banget ama budayanya ya, tapi waktu ngeliat langsung tuh, vibesnya bener-bener beda banget. Pas pertunjukan mulai, gw sempet bingung karena kok sepi, nggak ada suara gamelan atau instrumen musik sama sekali kayak tarian Bali biasanya. Eh tiba-tiba, ada segerombolan orang duduk melingkar terus langsung nyeruin "Cak... cak... cak... cak!" secara ritmis.
+
+Demi apa, di situ gw langsung merinding beneran. Apa yah, suaranya tuh somehow kayak punya "energi magis"-nya gitu looohh, bukan kayak suara teriakan biasa. Terus tangan mereka yang serempak ke atas bener-bener kek berkesan banget di mata gw. Bener-bener seakan dibawa masuk ke dimensi lain, kayak lagi ngelihat ritual sakral, bukan cuma sekadar tontonan turis doang.
+
+Dan karena aku bener-bener sekagum itu, seterpukau itu, gw kepo ya kan ya... pas bubaran gw nggak langsung balik. Gw sempetin ngobrol-ngobrol santai ama warga setempat di sana. Untungnya mereka ramah banget dan mau sharing. Dari situ baru deh gw paham sejarah ama maknanya yang ternyata dalem banget.
+
+Kata mereka, tarian ini sebenernya udah ada dari tahun 1930-an, aslinya dari ritual sakral namanya Sanghyang. Jadi tarian ini emang dipercaya sebagai sarana komunikasi antara manusia ama dunia spiritual. Malah katanya dulu penarinya bisa sampai kesurupan karena emang lagi interaksi ama dewa atau roh leluhur buat minta berkat ama perlindungan. Filosofinya tuh soal penyatuan manusia ama kekuatan supranatural.
+
+Nah, kalau plot pertunjukan yang gw tonton tadi, mereka cerita kalau itu diambil dari kisah Ramayana. Khususnya pas bagian Dewi Sinta diculik ama Rahwana, terus perjuangan Rama yang dibantu ama Hanoman dan pasukan kera buat nyelametin Sinta.
+
+Asli sih, kalo kapan-kapan kalian ke Bali juga dan punya kesempatan buat nonton tari kecak, jangan sampe kelewatan deh. Itu bakalan jadi pengalaman yang berkesan banget.`,
+    likes:124, replies:32,
+    comments:[
+      {id:'c1', avatarUrl:'https://i.pravatar.cc/40?img=5', avatarBg:'', name:'Siti Aminah', time:'1 jam yang lalu', initials:'S', bg:'#427452', textColor:'#c1f8cd',
+       text:'Sama mbaa. dulu pas pertama kali aku liet tari kecak, aku juga mesmerized bangett. soalnya emang kayak unik banget kan. aku kena goosebumps sih., dari keliatannya aja aku tuh uda bisa sense kalo dia nih maknanya dalem banget, dan ternyata emang bener?!?! jadi pengen liet lagi 😭',
+       likes:15,
+       nested:[
+         {id:'r1', initials:'S', bg:'#795900', textColor:'#fff8e1', name:'Setiawan', time:'45 mnt yang lalu',
+          text:'duh pada bilang gini.... lama-lama gw jadi penasaran juga mau nonton tari kecak secara langsung... when yahh....',
+          likes:8}
+       ]
+      },
+      {id:'c2', avatarUrl:'', initials:'G', bg:'#427452', textColor:'#c1f8cd', name:'Gilang Mulyo', time:'30 mnt yang lalu',
+       text:'loh sedalam itu yah ternyata maknanya?? jujur aku ga ekspek sih... bner-bener tarian-tarian tradisional indonesia tu pada keren-keren yah',
+       likes:3, nested:[]
+      }
+    ]
+  },
+  {
+    id:2, slug:'sepiring-rendang',
+    cat:'kuliner', catLabel:'Kuliner', catColor:'#cc8800',
+    username:'Marcel Tandiawan', avatarUrl:'https://i.pinimg.com/webp/1200x/09/a0/a2/09a0a23164fddfe5027ba6b10dc0315a.webp',
+    avatarBg:'#cc8800', avatarInitial:'M',
+    time:'5 jam yang lalu',
+    title:'Sepiring Rendang',
+    img:'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=900&q=80',
+    fullText:`Setiap kali membicarakan kuliner Nusantara, Rendang hampir selalu mengambil panggung utama. Dan memang layak!
+
+Kemarin gw sempat ngobrol sama nenek gw yang asli Minang, dan dia cerita kalau resep rendang yang dia punya itu udah turun-temurun dari buyut gw. Proses memasaknya bisa sampai 4-6 jam, dan itu bukan sekadar masak, tapi semacam ritual.
+
+Setiap tahap punya makna: dari cara motong daging, urutan bumbu yang dimasukkan, sampai api yang harus dijaga. Ada bumbu yang baru boleh dimasukkan setelah bumbu sebelumnya sudah "menyatu" dengan daging. Nenek bilang, sabar adalah kunci utamanya.
+
+Rendang bukan cuma makanan — ini adalah wujud kesabaran dan kecintaan orang Minang terhadap budayanya. Filosofi hidup yang tertuang dalam satu piring masakan.`,
+    likes:89, replies:28,
+    comments:[
+      {id:'c1', avatarUrl:'https://i.pravatar.cc/40?img=31', initials:'S', bg:'#2e7d32', textColor:'#e8f5e9', name:'SitiNurhaliza', time:'4 jam lalu',
+       text:'Wah resep turun-temurun tuh beneran beda rasanya! Nenek saya juga punya versi sendiri yang agak beda dari yang biasa dijual.',
+       likes:12, nested:[]
+      },
+      {id:'c2', avatarUrl:'https://i.pravatar.cc/40?img=35', initials:'F', bg:'#33489a', textColor:'#e8eaf6', name:'FajarNugroho', time:'3 jam lalu',
+       text:'Betul! Proses slow-cook itulah yang bikin rendang beda dari olahan daging lainnya. Filosofi kesabaran yang tersirat di situ.',
+       likes:8, nested:[]
+      }
+    ]
+  },
+  {
+    id:3, slug:'tas-tenun-sumba',
+    cat:'lainnya', catLabel:'Lainnya', catColor:'#555',
+    username:'Putri Asmita', avatarUrl:'https://i.pravatar.cc/64?img=25',
+    avatarBg:'#33489a', avatarInitial:'P',
+    time:'31 Mei 2026',
+    title:'Tas Tenun Sumba',
+    img:'https://images.unsplash.com/photo-1590736704728-f4730bb30770?w=900&q=80',
+    fullText:`Kemaren liat tas tenun sumba yg gua cari selama ini, karena selain size nya lumayan besar buat sehari hari, dalamnya warnanya cerah dan motifnya keren banget.
+
+Tenun Sumba atau yang dikenal sebagai 'Hinggi' ini dibuat dengan teknik ikat yang prosesnya bisa memakan waktu berbulan-bulan. Setiap helai benang diikat dan dicelup dengan pewarna alami sebelum ditenun.
+
+Setiap motif punya cerita dan makna spiritual yang berbeda-beda, mencerminkan status sosial, kepercayaan, dan identitas pemakainya. Motif kuda misalnya, melambangkan kebangsawanan dan kekuatan.
+
+Kalau kalian mau support pengrajin lokal, membeli tenun langsung dari pengrajin adalah salah satu cara terbaik untuk memastikan warisan ini terus hidup!`,
+    likes:312, replies:56,
+    comments:[
+      {id:'c1', avatarUrl:'https://i.pravatar.cc/40?img=41', initials:'A', bg:'#33489a', textColor:'#e8eaf6', name:'AnggaKusuma', time:'30 Mei lalu',
+       text:'Tenun Sumba emang luar biasa. Ada yang tau toko online terpercaya yang jual langsung dari pengrajinnya?',
+       likes:18, nested:[
+         {id:'r1', initials:'D', bg:'#2e7d32', textColor:'#e8f5e9', name:'DewiSartika', time:'30 Mei lalu',
+          text:'Coba cek di marketplace official Dekranas atau langsung ke koperasi pengrajin di NTB!', likes:7}
+       ]
+      },
+      {id:'c2', avatarUrl:'https://i.pravatar.cc/40?img=48', initials:'H', bg:'#795900', textColor:'#fff8e1', name:'HendraLim', time:'1 hari lalu',
+       text:'Motif kuda yang ada di Hinggi itu punya makna kebangsawanan. Saya pernah riset tentang ini untuk tesis saya.',
+       likes:24, nested:[]
+      }
+    ]
+  },
+  {
+    id:4, slug:'baju-bodo',
+    cat:'pakaian', catLabel:'Pakaian Adat', catColor:'#9e2016',
+    username:'Michelle Putri', avatarUrl:'https://i.pravatar.cc/64?img=32',
+    avatarBg:'#9e2016', avatarInitial:'M',
+    time:'14 Mei 2026',
+    title:'Baju Bodo se-underrated itu?',
+    img:'https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=900&q=80',
+    fullText:`Gila ya, gw baru sadar kalau selama ini Baju Bodo tuh se-underrated itu. Padahal aslinya keren banget!
+
+Jadi ceritanya kemaren gw sempet ada acara dan mutusin buat nyoba pakai Baju Bodo yang udah lama nangkring di lemari. Dan jujur, banyak yang nanya 'itu baju apa?' dengan nada takjub.
+
+Baju Bodo adalah salah satu pakaian adat tertua di dunia yang berasal dari Sulawesi Selatan, khususnya suku Bugis-Makassar. Kainnya yang tipis transparan terbuat dari sutera atau kain muslin yang ditenun dengan teknik tradisional.
+
+Warnanya yang mencolok punya makna mendalam — setiap warna melambangkan status sosial pemakainya. Merah untuk gadis remaja, jingga untuk wanita muda yang belum menikah, hijau untuk bangsawan, ungu untuk janda, dan putih untuk orang yang sudah tua.
+
+Udah saatnya kita bangga pakai ini sehari-hari!`,
+    likes:145, replies:58,
+    comments:[
+      {id:'c1', avatarUrl:'https://i.pravatar.cc/40?img=53', initials:'N', bg:'#9e2016', textColor:'#ffe5e1', name:'NurulHidayah', time:'13 Mei lalu',
+       text:'Iya baju Bodo emang cantik banget! Warna merah untuk gadis remaja, putih untuk yang sudah tua. Filosofinya dalam banget.',
+       likes:31, nested:[]
+      }
+    ]
+  },
+  {
+    id:5, slug:'belajar-sasando',
+    cat:'musik', catLabel:'Musik Tradisional', catColor:'#444',
+    username:'Muhammad Haikal', avatarUrl:'https://i.pravatar.cc/64?img=59',
+    avatarBg:'#333', avatarInitial:'M',
+    time:'5 Mei 2026',
+    title:'Belajar Main Sasando',
+    img:'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=900&q=80',
+    fullText:`Gila ya, hari ini gw abis ikut workshop yang bener-bener eye-opening banget.
+
+Gw sempetin ikut kelas belajar Sasando, soalnya dipikir-pikir kapan lagi kan bisa belajar alat musik tradisional NTT yang langka ini.
+
+Sasando adalah alat musik petik yang terbuat dari daun lontar yang dibentuk seperti kipas dan diberi senar. Cara membuatnya pun unik — daun lontar harus dipilih yang sempurna, lalu dirangkai membentuk resonator alami yang memberikan suara khas.
+
+Bunyi yang dihasilkan tuh unik banget, seperti harpa tapi punya nuansa yang lebih etnik dan organik. Ada sentuhan mistis yang sulit dijelaskan tapi langsung terasa saat pertama kali mendengarnya.
+
+Pengrajinnya pun makin sedikit karena butuh keahlian khusus yang membutuhkan waktu bertahun-tahun untuk dikuasai. Gw harap makin banyak yang mau belajar dan melestarikan alat musik ini.`,
+    likes:415, replies:67,
+    comments:[
+      {id:'c1', avatarUrl:'https://i.pravatar.cc/40?img=62', initials:'Y', bg:'#33489a', textColor:'#e8eaf6', name:'YusufTambelo', time:'4 Mei lalu',
+       text:'Sasando itu keajaiban dari NTT! Saya orang Rote dan bangga banget alat ini mulai dikenal luas.',
+       likes:42, nested:[]
+      },
+      {id:'c2', avatarUrl:'https://i.pravatar.cc/40?img=65', initials:'C', bg:'#c0392b', textColor:'#ffe5e1', name:'CintaLarasati', time:'4 Mei lalu',
+       text:'Ada info workshopnya lagi ga? Pengen banget ikut belajar!',
+       likes:19, nested:[]
+      }
+    ]
+  }
+];
+
+const RELATED = {
+  tari:[
+    {cat:'Sejarah',catColor:'#9e2016',title:'Perbedaan Mendasar Motif Parang Rusak dan Parang Barong',meta:'Oleh Ki Dalang • 12 Balasan'},
+    {cat:'Teknik',catColor:'#795900',title:'Mengapa Proses Malam (Lilin) Sering Bocor pada Kain Sutra?',meta:'Oleh PengrajinMuda • 45 Balasan'},
+    {cat:'Seni Rupa',catColor:'#2a5b3b',title:'Pameran Wastra Nusantara di Museum Nasional Minggu Ini',meta:'Oleh InfoBudaya • 8 Balasan'}
+  ],
+  kuliner:[
+    {cat:'Tradisi',catColor:'#cc8800',title:'Filosofi di Balik Upacara Makan Bersama Suku Jawa',meta:'Oleh BudayaJawa • 20 Balasan'},
+    {cat:'Resep',catColor:'#2a5b3b',title:'Bagaimana Cara Membuat Bumbu Rendang yang Autentik',meta:'Oleh ChefMinang • 34 Balasan'},
+    {cat:'Sejarah',catColor:'#9e2016',title:'Rendang di Mata Dunia: Dari Lokal Jadi Warisan UNESCO',meta:'Oleh InfoKuliner • 15 Balasan'}
+  ],
+  lainnya:[
+    {cat:'Teknik',catColor:'#555',title:'Perbedaan Teknik Ikat dan Songket dalam Tenun Nusantara',meta:'Oleh PengrajinSumba • 18 Balasan'},
+    {cat:'Motif',catColor:'#795900',title:'Makna Simbol Hewan dalam Motif Tenun NTT',meta:'Oleh BudayaNTT • 27 Balasan'},
+    {cat:'Komunitas',catColor:'#2a5b3b',title:'Koperasi Pengrajin Tenun di Sumba: Cara Bergabung',meta:'Oleh InfoKoperasi • 9 Balasan'}
+  ],
+  pakaian:[
+    {cat:'Sejarah',catColor:'#9e2016',title:'Pakaian Adat yang Hampir Punah di Indonesia',meta:'Oleh SejarahBudaya • 22 Balasan'},
+    {cat:'Fashion',catColor:'#795900',title:'Baju Bodo Modern: Kolaborasi Desainer dan Pengrajin Lokal',meta:'Oleh FashionID • 31 Balasan'},
+    {cat:'Filosofi',catColor:'#33489a',title:'Makna Warna dalam Pakaian Adat Bugis-Makassar',meta:'Oleh FilosofiBudaya • 14 Balasan'}
+  ],
+  musik:[
+    {cat:'Alat Musik',catColor:'#444',title:'5 Alat Musik Tradisional NTT yang Hampir Punah',meta:'Oleh BudayaNTT • 33 Balasan'},
+    {cat:'Workshop',catColor:'#2a5b3b',title:'Jadwal Workshop Musik Tradisional Jakarta 2026',meta:'Oleh InfoEvent • 12 Balasan'},
+    {cat:'Sejarah',catColor:'#9e2016',title:'Sejarah Sasando: Dari Pulau Rote ke Panggung Dunia',meta:'Oleh SejarahMusik • 28 Balasan'}
+  ]
+};
+
+let currentThread = null;
+let likedPost = false;
+let likedComments = new Set();
+
+function getThreadFromURL(){
+  const params = new URLSearchParams(window.location.search);
+  const id = parseInt(params.get('id'));
+  const slug = params.get('slug');
+  return THREADS.find(t => t.id === id || t.slug === slug) || THREADS[0];
+}
+
+function renderPage(){
+  const t = getThreadFromURL();
+  currentThread = t;
+
+  // Page title
+  document.getElementById('pageTitle').textContent = t.title + ' – Warisan';
+
+  // Highlight active category in sidebar
+  document.querySelectorAll('.cat-link').forEach(l => l.classList.remove('active'));
+  const activeLink = document.querySelector(`.cat-link[href*="cat=${t.cat}"]`);
+  if(activeLink) activeLink.classList.add('active');
+
+  // Render related threads for right sidebar
+  const related = RELATED[t.cat] || RELATED.tari;
+  document.getElementById('relatedItems').innerHTML = related.map(r => `
+    <div class="related-item" onclick="showToast('Segera hadir!')">
+      <span class="ri-cat" style="color:${r.catColor}">${r.cat}</span>
+      <p class="ri-title">${r.title}</p>
+      <span class="ri-meta">${r.meta}</span>
+    </div>
+  `).join('');
+
+  // Render main content
+  document.getElementById('mainContent').innerHTML = `
+    <!-- BREADCRUMBS -->
+    <nav class="breadcrumbs">
+      <a href="Forum.html">Forum</a>
+      <span><i class="bi bi-chevron-right" style="font-size:9px"></i></span>
+      <a href="Forum.html?cat=${t.cat}">${t.catLabel}</a>
+      <span><i class="bi bi-chevron-right" style="font-size:9px"></i></span>
+      <span class="current">${t.title}</span>
+    </nav>
+
+    <!-- OP CARD -->
+    <div class="op-card">
+      <div class="op-body">
+        <div class="op-meta">
+          <div class="op-author">
+            ${t.avatarUrl
+              ? `<img class="op-avatar" src="${t.avatarUrl}" alt="${t.username}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+              : ''}
+            <div class="op-avatar-placeholder" style="background:${t.avatarBg};color:#fff;display:${t.avatarUrl?'none':'flex'}">${t.avatarInitial}</div>
+            <div>
+              <div class="op-name">${t.username}</div>
+              <div class="op-time">${t.time}</div>
+            </div>
+          </div>
+          <button class="op-menu" onclick="showToast('Opsi lainnya segera hadir!')">
+            <i class="bi bi-three-dots-vertical"></i>
+          </button>
+        </div>
+        <h1 class="op-title">${t.title}</h1>
+        <p class="op-text">${escapeHtml(t.fullText)}</p>
+        <img class="op-img" src="${t.img}" alt="${t.title}" onerror="this.style.display='none'">
+      </div>
+      <div class="interact-bar">
+        <button class="ibar-btn" id="likePostBtn" onclick="toggleLikePost()">
+          <i class="bi bi-heart" id="likePostIcon"></i>
+          <span id="likePostCount">${t.likes} Dukungan</span>
+        </button>
+        <button class="ibar-btn" onclick="document.getElementById('commentTextarea').focus()">
+          <i class="bi bi-chat"></i>
+          <span>${t.replies} Balasan</span>
+        </button>
+        <button class="ibar-btn ibar-share" onclick="shareThread()">
+          <i class="bi bi-share"></i>
+          <span>Bagikan</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- DISCUSSION SECTION -->
+    <div class="discussion-section">
+      <h2 class="discussion-title">Diskusi</h2>
+
+      <!-- Comment Form -->
+      <div class="comment-form">
+        <div class="cf-avatar">A</div>
+        <div class="cf-right">
+          <textarea class="cf-textarea" id="commentTextarea" placeholder="Tuliskan pandangan Anda..." rows="3"></textarea>
+          <div class="cf-submit-row">
+            <button class="cf-submit" onclick="submitComment()">Kirim Balasan</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comment Thread -->
+      <div class="comment-thread" id="commentThread">
+        ${renderComments(t.comments)}
+      </div>
+    </div>
+  `;
+}
+
+function renderComments(comments){
+  return comments.map(c => `
+    <div class="comment-item">
+      ${c.avatarUrl
+        ? `<img class="comment-avatar" src="${c.avatarUrl}" alt="${c.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="comment-avatar-initials" style="background:${c.bg};color:${c.textColor};display:none">${c.initials}</div>`
+        : `<div class="comment-avatar-initials" style="background:${c.bg};color:${c.textColor}">${c.initials}</div>`
+      }
+      <div class="comment-right">
+        <div class="comment-bubble">
+          <div class="comment-header">
+            <span class="comment-name">${c.name}</span>
+            <span class="comment-time">${c.time}</span>
+          </div>
+          <p class="comment-text">${escapeHtml(c.text)}</p>
+        </div>
+        <div class="comment-actions">
+          <button class="ca-btn" onclick="toggleCommentLike('${c.id}',this)">
+            <i class="bi ${likedComments.has(c.id)?'bi-heart-fill':'bi-heart'}" style="color:${likedComments.has(c.id)?'#9e2016':''}"></i>
+            <span id="clikes-${c.id}">${c.likes}</span>
+          </button>
+          <button class="ca-btn" onclick="showToast('Fitur balas segera hadir!')">
+            <i class="bi bi-reply"></i> Balas
+          </button>
+        </div>
+        ${c.nested && c.nested.length ? `
+        <div class="nested-replies">
+          ${c.nested.map(r => `
+            <div class="reply-item">
+              <div class="reply-avatar-initials" style="background:${r.bg};color:${r.textColor}">${r.initials}</div>
+              <div>
+                <div class="reply-bubble">
+                  <div class="reply-header">
+                    <span class="reply-name">${r.name}</span>
+                    <span class="reply-time">${r.time}</span>
+                  </div>
+                  <p class="reply-text">${escapeHtml(r.text)}</p>
+                </div>
+                <div class="reply-actions">
+                  <button class="ra-btn" onclick="toggleCommentLike('${r.id}',this)">
+                    <i class="bi ${likedComments.has(r.id)?'bi-heart-fill':'bi-heart'}" style="color:${likedComments.has(r.id)?'#9e2016':''}"></i>
+                    <span id="clikes-${r.id}">${r.likes}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function escapeHtml(str){
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ── LIKE POST ── */
+function toggleLikePost(){
+  const btn = document.getElementById('likePostBtn');
+  const icon = document.getElementById('likePostIcon');
+  const countEl = document.getElementById('likePostCount');
+  likedPost = !likedPost;
+  if(likedPost){
+    icon.className = 'bi bi-heart-fill';
+    icon.style.color = '#9e2016';
+    currentThread.likes++;
+    btn.classList.add('liked');
+    icon.style.transform = 'scale(1.4)';
+    setTimeout(()=>icon.style.transform='',180);
+    showToast('Kamu mendukung thread ini ❤️','success');
+  } else {
+    icon.className = 'bi bi-heart';
+    icon.style.color = '';
+    currentThread.likes--;
+    btn.classList.remove('liked');
+  }
+  countEl.textContent = currentThread.likes + ' Dukungan';
+}
+
+/* ── LIKE COMMENT ── */
+function toggleCommentLike(cid, btn){
+  const icon = btn.querySelector('i');
+  const countEl = document.getElementById('clikes-'+cid);
+  const liked = likedComments.has(cid);
+  if(liked){
+    likedComments.delete(cid);
+    icon.className='bi bi-heart';icon.style.color='';
+    if(countEl) countEl.textContent=parseInt(countEl.textContent)-1;
+  } else {
+    likedComments.add(cid);
+    icon.className='bi bi-heart-fill';icon.style.color='#9e2016';
+    if(countEl) countEl.textContent=parseInt(countEl.textContent)+1;
+    icon.style.transform='scale(1.4)';setTimeout(()=>icon.style.transform='',160);
+  }
+}
+
+/* ── SUBMIT COMMENT ── */
+function submitComment(){
+  const ta = document.getElementById('commentTextarea');
+  const text = ta.value.trim();
+  if(!text){ showToast('Tulis komentar dulu ya!'); return; }
+  const newId = 'new-'+Date.now();
+  const newComment = {id:newId, avatarUrl:'', initials:'K', bg:'#c0392b', textColor:'#ffe5e1', name:'Kamu', time:'Baru saja', text, likes:0, nested:[]};
+  currentThread.comments.push(newComment);
+  ta.value='';
+  const thread = document.getElementById('commentThread');
+  const div = document.createElement('div');
+  div.innerHTML = renderComments([newComment]);
+  thread.appendChild(div.firstElementChild);
+  showToast('Balasan terkirim!','success');
+  div.firstElementChild.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+/* ── SHARE ── */
+function shareThread(){
+  if(navigator.share){
+    navigator.share({title:currentThread.title,text:currentThread.fullText.slice(0,120)+'...',url:window.location.href}).catch(()=>{});
+  } else {
+    navigator.clipboard?.writeText(window.location.href)
+      .then(()=>showToast('Link disalin!','success'))
+      .catch(()=>showToast('Link: '+window.location.href));
+  }
+}
+
+/* ── DRAWER ── */
+function openDrawer(){document.getElementById('drawerOverlay').classList.add('open');document.getElementById('mobileDrawer').classList.add('open');document.body.classList.add('locked')}
+function closeDrawer(){document.getElementById('drawerOverlay').classList.remove('open');document.getElementById('mobileDrawer').classList.remove('open');document.body.classList.remove('locked')}
+
+/* ── TOAST ── */
+function showToast(msg,type=''){
+  const c=document.getElementById('toastContainer');
+  const t=document.createElement('div');
+  t.className='toast-item'+(type?' '+type:'');t.textContent=msg;
+  c.appendChild(t);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add('show')));
+  const timer=setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),320)},3500);
+  t.addEventListener('click',()=>{clearTimeout(timer);t.classList.remove('show');setTimeout(()=>t.remove(),320)});
+}
+
+/* ── NAV SCROLL ── */
+window.addEventListener('scroll',()=>document.getElementById('mainNav').classList.toggle('scrolled',window.scrollY>8),{passive:true});
+
+/* ── INIT ── */
+renderPage();
+</script>
+</body>
+</html>

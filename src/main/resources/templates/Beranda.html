@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>Warisan – Jaga Budaya, Hidupkan Warisan</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+:root{
+  --primary:#9e2016;--primary-dark:#7a1810;--primary-light:#fff1ec;--primary-bg:#fff8f6;
+  --text-dark:#2a170f;--text-mid:#59413d;--border-soft:rgba(225,191,185,0.2);
+  --border-card:rgba(44,24,16,0.06);--card-shadow:0 2px 10px rgba(44,24,16,0.06);
+  --ease:cubic-bezier(0.23,1,0.32,1);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+  --safe-left:env(safe-area-inset-left,0px);
+  --safe-right:env(safe-area-inset-right,0px);
+}
+*,*::before,*::after{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+  font-family:'DM Sans',sans-serif;background:var(--primary-bg);
+  color:var(--text-dark);margin:0;min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── SCROLL LOCK ── */
+body.locked{overflow:hidden;position:fixed;width:100%}
+
+/* ── NAVBAR ── */
+.wastra-nav{
+  position:sticky;top:0;z-index:200;
+  background:rgba(255,248,246,0.92);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border-soft);
+  transition:box-shadow .2s var(--ease);
+}
+.wastra-nav.scrolled{box-shadow:0 2px 20px rgba(44,24,16,0.09)}
+.nav-inner{
+  max-width:100%;height:72px;
+  padding:0 48px;display:flex;align-items:center;gap:14px;
+  position:relative;
+}
+.nav-brand{
+  font-family:'Playfair Display',serif;font-weight:700;
+  font-size:24px;color:var(--primary);text-decoration:none;flex-shrink:0;
+}
+.nav-links{
+  display:flex;align-items:center;gap:28px;
+  list-style:none;margin:0;padding:0;
+  position:absolute;left:50%;transform:translateX(-50%);
+}
+.nav-links a{
+  font-size:15px;font-weight:600;color:var(--text-mid);
+  text-decoration:none;letter-spacing:.1px;padding-bottom:2px;
+  transition:color .15s;
+}
+.nav-links a:hover,.nav-links a.active{color:var(--primary)}
+.nav-links a.active{border-bottom:2px solid var(--primary)}
+.nav-search{width:260px;flex-shrink:0;position:relative}
+.nav-search input{
+  width:100%;background:var(--primary-light);
+  border:1.5px solid rgba(225,191,185,0.4);border-radius:9999px;
+  font-family:inherit;font-size:15px;color:var(--text-dark);
+  padding:10px 18px 10px 40px;outline:none;
+  transition:border-color .15s,box-shadow .15s;
+}
+.nav-search input::placeholder{color:#9b8780}
+.nav-search input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(158,32,22,.1)}
+.nav-search .search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#9b8780;font-size:14px;pointer-events:none}
+.nav-auth{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.btn-masuk{
+  font-family:inherit;font-size:15px;font-weight:600;
+  color:var(--primary);background:none;border:none;
+  padding:9px 16px;border-radius:9999px;cursor:pointer;
+  transition:background .15s,transform .1s;
+}
+.btn-masuk:hover{background:var(--primary-light)}
+.btn-masuk:active{transform:scale(.96)}
+.btn-daftar{
+  font-family:inherit;font-size:15px;font-weight:600;
+  color:#fff;background:var(--primary);border:none;
+  padding:9px 22px;border-radius:9999px;cursor:pointer;
+  transition:background .15s,transform .1s;
+}
+.btn-daftar:hover{background:var(--primary-dark)}
+.btn-daftar:active{transform:scale(.96)}
+
+/* hamburger */
+.btn-hamburger{
+  display:none;width:40px;height:40px;align-items:center;justify-content:center;
+  border:none;background:none;cursor:pointer;border-radius:9999px;
+  color:var(--text-dark);font-size:20px;margin-left:auto;flex-shrink:0;
+  transition:background .15s,transform .1s;
+}
+.btn-hamburger:hover{background:var(--primary-light)}
+.btn-hamburger:active{transform:scale(.92)}
+
+/* ── MOBILE DRAWER ── */
+.drawer-overlay{
+  position:fixed;inset:0;z-index:300;background:rgba(42,23,15,.4);
+  opacity:0;pointer-events:none;transition:opacity .25s var(--ease);
+  backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);
+}
+.drawer-overlay.open{opacity:1;pointer-events:all}
+.drawer{
+  position:fixed;top:0;right:0;bottom:0;z-index:301;
+  width:min(300px,85vw);background:var(--primary-bg);
+  padding:24px 24px calc(24px + var(--safe-bottom));
+  transform:translateX(105%);transition:transform .28s var(--ease);
+  display:flex;flex-direction:column;gap:0;
+  overflow-y:auto;
+}
+.drawer.open{transform:translateX(0)}
+.drawer-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-bottom:20px;border-bottom:1px solid var(--border-soft);
+  margin-bottom:8px;
+}
+.drawer-brand{font-family:'Playfair Display',serif;font-weight:700;font-size:20px;color:var(--primary)}
+.drawer-close{
+  width:36px;height:36px;display:flex;align-items:center;justify-content:center;
+  border:none;background:none;cursor:pointer;border-radius:9999px;
+  color:var(--text-mid);font-size:20px;
+  transition:background .15s,transform .1s;
+}
+.drawer-close:hover{background:var(--primary-light)}
+.drawer-close:active{transform:scale(.9)}
+.drawer-search{position:relative;margin:16px 0}
+.drawer-search input{
+  width:100%;background:var(--primary-light);
+  border:1.5px solid rgba(225,191,185,.4);border-radius:9999px;
+  font-family:inherit;font-size:14px;color:var(--text-dark);
+  padding:10px 16px 10px 40px;outline:none;
+  transition:border-color .15s;
+}
+.drawer-search input:focus{border-color:var(--primary)}
+.drawer-search .search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#9b8780;font-size:15px;pointer-events:none}
+.drawer-nav{list-style:none;padding:0;margin:8px 0 20px;display:flex;flex-direction:column;gap:2px}
+.drawer-nav a{
+  display:flex;align-items:center;gap:10px;
+  font-size:15px;font-weight:600;color:var(--text-mid);
+  text-decoration:none;padding:12px 10px;border-radius:10px;
+  transition:background .15s,color .15s;
+}
+.drawer-nav a:hover,.drawer-nav a.active{background:var(--primary-light);color:var(--primary)}
+.drawer-nav a i{font-size:18px}
+.drawer-divider{height:1px;background:var(--border-soft);margin:8px 0}
+.drawer-auth{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.drawer-btn-masuk{
+  width:100%;font-family:inherit;font-size:14px;font-weight:600;
+  color:var(--primary);background:var(--primary-light);border:none;
+  padding:12px;border-radius:9999px;cursor:pointer;transition:background .15s;
+}
+.drawer-btn-masuk:hover{background:#ffdbd0}
+.drawer-btn-daftar{
+  width:100%;font-family:inherit;font-size:14px;font-weight:600;
+  color:#fff;background:var(--primary);border:none;
+  padding:12px;border-radius:9999px;cursor:pointer;transition:background .15s;
+}
+.drawer-btn-daftar:hover{background:var(--primary-dark)}
+
+/* ── TOAST ── */
+.toast-container{
+  position:fixed;bottom:calc(24px + var(--safe-bottom));right:24px;z-index:9999;
+  display:flex;flex-direction:column;gap:8px;pointer-events:none;
+  max-width:calc(100vw - 48px);
+}
+.toast-item{
+  background:var(--text-dark);color:#fff;
+  padding:12px 18px;border-radius:10px;
+  font-size:13px;font-weight:500;max-width:300px;word-break:break-word;
+  box-shadow:0 4px 20px rgba(0,0,0,.2);
+  opacity:0;transform:translateX(20px);
+  transition:opacity .25s var(--ease),transform .25s var(--ease);
+  pointer-events:auto;
+}
+.toast-item.show{opacity:1;transform:translateX(0)}
+.toast-item.success{background:#2e7d32}
+.toast-item.error{background:#c0392b}
+
+/* ── PAGE WRAPPER ── */
+.page-wrapper{width:100%;padding:36px 56px calc(36px + var(--safe-bottom))}
+
+/* ── HERO ── */
+.hero{
+  background:linear-gradient(135deg,#ffd8c6 0%,#ffebe0 60%,#ffd5b8 100%);
+  border-radius:16px;min-height:260px;
+  position:relative;overflow:hidden;
+  padding:40px 36px;display:flex;align-items:center;
+  margin-bottom:24px;
+}
+.hero-pattern{
+  position:absolute;inset:0;opacity:.06;
+  background-image:
+    radial-gradient(circle at 20% 50%, #9e2016 2px, transparent 2px),
+    radial-gradient(circle at 80% 20%, #9e2016 2px, transparent 2px),
+    radial-gradient(circle at 60% 80%, #9e2016 2px, transparent 2px);
+  background-size:60px 60px,80px 80px,50px 50px;
+}
+.hero-content{
+  position:relative;z-index:1;max-width:560px;
+  display:flex;flex-direction:column;gap:12px;
+}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(158,32,22,.12);color:var(--primary);
+  font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  padding:4px 12px;border-radius:9999px;width:fit-content;
+}
+.hero-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(28px,5vw,46px);font-weight:700;
+  letter-spacing:-.5px;line-height:1.2;
+  color:var(--text-dark);margin:0;
+}
+.hero-title em{font-style:italic;font-weight:400;color:var(--primary)}
+.hero-sub{font-size:clamp(14px,2vw,16px);line-height:1.65;color:var(--text-mid);margin:0}
+.hero-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding-top:8px}
+.btn-hero-fill{
+  font-family:inherit;font-size:14px;font-weight:600;
+  color:#fff;background:var(--primary);border:none;
+  border-radius:9999px;padding:12px 22px;cursor:pointer;
+  display:flex;align-items:center;gap:6px;
+  box-shadow:0 2px 8px rgba(158,32,22,.3);
+  transition:background .15s,transform .1s,box-shadow .15s;
+}
+.btn-hero-fill:hover{background:var(--primary-dark);box-shadow:0 4px 16px rgba(158,32,22,.35)}
+.btn-hero-fill:active{transform:scale(.96)}
+.btn-hero-outline{
+  font-family:inherit;font-size:14px;font-weight:600;
+  color:var(--text-dark);background:rgba(255,255,255,.6);
+  border:1.5px solid rgba(121,89,0,.3);
+  border-radius:9999px;padding:10px 22px;cursor:pointer;
+  display:flex;align-items:center;gap:6px;
+  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  transition:background .15s,transform .1s;
+}
+.btn-hero-outline:hover{background:rgba(255,255,255,.85)}
+.btn-hero-outline:active{transform:scale(.96)}
+
+/* ── FILTER BAR ── */
+.filter-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;padding-bottom:16px;border-bottom:1px solid var(--border-soft);
+  margin-bottom:20px;flex-wrap:wrap;
+}
+.filter-tabs{display:inline-flex;background:var(--primary-light);border-radius:9999px;padding:4px;gap:4px}
+.filter-tab{
+  font-family:inherit;font-size:15px;font-weight:600;
+  color:var(--text-mid);background:none;border:none;
+  border-radius:9999px;padding:7px 18px;cursor:pointer;
+  letter-spacing:.1px;
+  transition:background .15s,color .15s,transform .1s;
+}
+.filter-tab:active{transform:scale(.95)}
+.filter-tab.active{background:white;color:var(--text-dark);box-shadow:0 1px 4px rgba(44,24,16,.08)}
+.sort-count{font-size:14px;color:var(--text-mid);font-weight:500}
+
+/* ── SKELETON ── */
+.skeleton{
+  background:linear-gradient(90deg,#f0e8e0 25%,#faf7f2 50%,#f0e8e0 75%);
+  background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px;
+}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ── FEED GRID ── */
+.feed-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:24px;
+}
+
+/* ── POST CARD ── */
+.post-card{
+  background:rgba(255,255,255,.9);
+  border:1px solid var(--border-card);
+  border-radius:14px;box-shadow:var(--card-shadow);
+  overflow:hidden;display:flex;flex-direction:column;
+  cursor:pointer;
+  animation:fadeUp .28s var(--ease) both;
+  transition:transform .2s var(--ease),box-shadow .2s var(--ease);
+}
+@media(hover:hover) and (pointer:fine){
+  .post-card:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(44,24,16,.11)}
+}
+.post-card.hidden{display:none}
+.post-card:nth-child(1){animation-delay:0ms}
+.post-card:nth-child(2){animation-delay:50ms}
+.post-card:nth-child(3){animation-delay:100ms}
+.post-card:nth-child(4){animation-delay:150ms}
+.post-card:nth-child(5){animation-delay:200ms}
+
+.card-thumb{position:relative;height:260px;overflow:hidden;flex-shrink:0}
+.card-thumb img.thumb-img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .28s var(--ease);
+}
+@media(hover:hover) and (pointer:fine){
+  .post-card:hover .thumb-img{transform:scale(1.04)}
+}
+
+/* category label below image */
+.card-cat-label{
+  font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  margin-bottom:8px;
+}
+
+.cat-icon{
+  position:absolute;top:10px;right:10px;
+  width:34px;height:34px;border-radius:9999px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 8px rgba(0,0,0,.2);
+}
+.cat-icon i{font-size:14px}
+.cat-tari{background:#2e7d32;color:#fff}
+.cat-kuliner{background:#f59f00;color:#fff}
+.cat-tekstil{background:#33489a;color:#fff}
+.cat-pakaian{background:var(--primary);color:#fff}
+.cat-musik{background:#0e0e0e;color:#fff}
+
+.card-body{padding:18px 20px;display:flex;flex-direction:column;flex:1}
+.card-cat-label{
+  font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
+  margin-bottom:6px;
+}
+.card-title{
+  font-family:'Playfair Display',serif;font-weight:700;
+  font-size:23px;line-height:1.3;color:var(--text-dark);margin:0 0 10px;
+}
+.card-excerpt{
+  font-size:15px;line-height:1.6;color:var(--text-mid);margin:0 0 16px;
+  display:-webkit-box;-webkit-line-clamp:3;
+  -webkit-box-orient:vertical;overflow:hidden;flex:1;
+}
+.card-foot{
+  border-top:1px solid var(--border-soft);padding-top:12px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.author{display:flex;align-items:center;gap:8px;min-width:0}
+.author-avatar{
+  width:36px;height:36px;border-radius:9999px;
+  border:1.5px solid rgba(225,191,185,.4);object-fit:cover;flex-shrink:0;
+}
+.author-name{font-size:13px;font-weight:600;color:var(--text-dark);letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:90px}
+.author-time{font-size:12px;color:var(--text-mid)}
+.card-actions{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.act-btn{
+  display:flex;align-items:center;gap:4px;
+  font-family:inherit;font-size:13px;color:var(--text-mid);
+  background:none;border:none;cursor:pointer;padding:5px 8px;border-radius:6px;
+  transition:color .15s,background .15s,transform .1s;user-select:none;
+}
+.act-btn i{font-size:15px;transition:transform .15s var(--ease),color .15s}
+.act-btn:hover{color:var(--primary);background:var(--primary-light)}
+.act-btn:active{transform:scale(.88)}
+
+/* ── SWIPE RIPPLE (mobile) ── */
+.post-card{-webkit-user-select:none;user-select:none}
+
+/* ── EMPTY STATE ── */
+.empty-state{
+  grid-column:1/-1;text-align:center;padding:60px 20px;
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+}
+.empty-state i{font-size:48px;color:rgba(158,32,22,.2)}
+.empty-state h3{font-size:18px;color:var(--text-mid);margin:0}
+.empty-state p{font-size:14px;color:var(--text-mid);margin:0;opacity:.7}
+
+/* ── MODAL OVERLAY (full screen on mobile) ── */
+.modal-overlay{
+  position:fixed;inset:0;z-index:400;
+  background:rgba(42,23,15,.5);opacity:0;
+  transition:opacity .22s var(--ease);pointer-events:none;
+}
+.modal-overlay.open{opacity:1;pointer-events:all}
+
+.modal-box{
+  position:fixed;left:50%;z-index:401;
+  width:min(620px,96vw);
+  background:var(--primary-bg);
+  border-radius:16px;
+  box-shadow:0 24px 64px rgba(42,23,15,.22);
+  overflow-y:auto;overflow-x:hidden;
+  transform:translate(-50%,-48%) scale(.95);opacity:0;
+  transition:transform .24s var(--ease),opacity .24s var(--ease);
+  pointer-events:none;
+  max-height:88vh;
+}
+.modal-box.open{transform:translate(-50%,-50%) scale(1);opacity:1;pointer-events:all;top:50%}
+@media(max-width:600px){
+  .modal-box{
+    width:100%;border-radius:20px 20px 0 0;
+    bottom:0;top:auto !important;left:0;transform:translateY(100%);max-height:92vh;
+    transform:translateY(100%);
+  }
+  .modal-box.open{transform:translateY(0) !important}
+}
+
+/* modal drag handle */
+.modal-handle{
+  display:none;width:40px;height:4px;border-radius:9999px;
+  background:rgba(44,24,16,.15);margin:10px auto 0;
+}
+@media(max-width:600px){.modal-handle{display:block}}
+
+.modal-img{width:100%;height:220px;object-fit:cover;display:block}
+@media(max-width:600px){.modal-img{height:190px}}
+.modal-body{padding:20px}
+.modal-cat-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:10px;font-weight:700;letter-spacing:.6px;
+  padding:3px 10px;border-radius:9999px;margin-bottom:10px;text-transform:uppercase;
+}
+.modal-title{
+  font-family:'Playfair Display',serif;font-weight:700;
+  font-size:22px;line-height:1.3;color:var(--text-dark);margin:0 0 12px;
+}
+.modal-meta{
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:16px;padding-bottom:14px;
+  border-bottom:1px solid var(--border-soft);
+}
+.modal-meta img{width:34px;height:34px;border-radius:9999px;object-fit:cover;border:1.5px solid rgba(225,191,185,.4)}
+.modal-author-name{font-size:13px;font-weight:600;color:var(--text-dark)}
+.modal-author-time{font-size:11px;color:var(--text-mid)}
+.modal-content-text{font-size:14px;line-height:1.8;color:var(--text-mid);margin:0 0 20px}
+.modal-actions{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding-top:14px;border-top:1px solid var(--border-soft);
+}
+.modal-act-btn{
+  display:flex;align-items:center;gap:6px;
+  font-family:inherit;font-size:13px;font-weight:600;
+  color:var(--text-mid);background:var(--primary-light);
+  border:none;border-radius:9999px;padding:9px 16px;cursor:pointer;
+  transition:background .15s,color .15s,transform .1s;user-select:none;
+}
+.modal-act-btn:hover{background:#ffdbd0;color:var(--primary)}
+.modal-act-btn:active{transform:scale(.95)}
+.modal-act-btn.liked{color:var(--primary);background:#fde8e5}
+.modal-close{
+  position:absolute;top:10px;right:10px;
+  width:34px;height:34px;border-radius:9999px;
+  background:rgba(42,23,15,.55);color:#fff;
+  border:none;cursor:pointer;font-size:16px;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .15s,transform .1s;z-index:10;
+}
+.modal-close:hover{background:rgba(42,23,15,.8)}
+.modal-close:active{transform:scale(.9)}
+
+/* ── BOTTOM NAVIGATION (mobile) ── */
+.bottom-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:rgba(255,248,246,.95);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-top:1px solid var(--border-soft);
+  padding:8px 0 calc(8px + var(--safe-bottom));
+}
+.bottom-nav-inner{
+  display:flex;align-items:center;justify-content:space-around;
+  max-width:480px;margin:0 auto;
+}
+.bnav-btn{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  font-family:inherit;font-size:10px;font-weight:600;
+  color:var(--text-mid);background:none;border:none;cursor:pointer;
+  padding:4px 16px;border-radius:12px;
+  transition:color .15s,background .15s,transform .1s;
+  min-width:52px;
+}
+.bnav-btn i{font-size:20px;transition:transform .15s}
+.bnav-btn.active{color:var(--primary)}
+.bnav-btn.active i{transform:scale(1.1)}
+.bnav-btn:active{transform:scale(.9)}
+
+/* ── FAB (mobile create post) ── */
+.fab{
+  display:none;
+  position:fixed;bottom:calc(72px + var(--safe-bottom));right:20px;z-index:199;
+  width:52px;height:52px;border-radius:9999px;
+  background:var(--primary);color:#fff;border:none;cursor:pointer;
+  font-size:22px;
+  box-shadow:0 4px 16px rgba(158,32,22,.45);
+  display:none;align-items:center;justify-content:center;
+  transition:background .15s,transform .15s,box-shadow .15s;
+}
+.fab:hover{background:var(--primary-dark);box-shadow:0 6px 20px rgba(158,32,22,.5)}
+.fab:active{transform:scale(.92)}
+
+/* ── FOOTER ── */
+.wastra-footer{
+  background:#ffdbce;border-top:1px solid var(--border-soft);
+  padding:40px 0 calc(40px + var(--safe-bottom));
+}
+.footer-inner{
+  width:100%;padding:0 56px;
+  display:flex;align-items:flex-start;
+  justify-content:space-between;gap:24px;flex-wrap:wrap;
+}
+.footer-brand{font-family:'Playfair Display',serif;font-weight:700;font-size:24px;color:var(--primary);margin-bottom:4px}
+.footer-tagline{font-size:16px;color:var(--text-mid);margin-bottom:12px}
+.footer-copy{font-size:13px;font-weight:500;color:var(--text-mid);opacity:.65}
+.footer-links{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.footer-links a{font-size:13px;font-weight:500;color:var(--text-mid);text-decoration:none;letter-spacing:.2px;transition:color .15s}
+.footer-links a:hover{color:var(--primary)}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1023px){.nav-links{display:none}}
+@media(max-width:767px){
+  .nav-search{display:none}
+  .nav-auth{display:none}
+  .btn-hamburger{display:flex}
+  .bottom-nav{display:block}
+  .fab{display:flex}
+  .page-wrapper{padding-bottom:calc(80px + var(--safe-bottom));padding-left:20px;padding-right:20px}
+  .wastra-footer{padding-bottom:calc(80px + var(--safe-bottom))}
+  .hero{padding:28px 20px;min-height:220px}
+  .hero-actions{gap:8px}
+}
+@media(max-width:480px){
+  .feed-grid{grid-template-columns:1fr}
+  .filter-bar{gap:8px}
+}
+@media(min-width:481px) and (max-width:767px){
+  .feed-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(min-width:768px) and (max-width:1023px){
+  .feed-grid{grid-template-columns:repeat(2,1fr)}
+  .nav-auth .btn-masuk{display:none}
+}
+@media(min-width:1024px) and (max-width:1279px){
+  .feed-grid{grid-template-columns:repeat(3,1fr)}
+}
+
+/* ── PULL TO REFRESH INDICATOR ── */
+.ptr-indicator{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:16px;font-size:13px;color:var(--text-mid);
+  overflow:hidden;max-height:0;transition:max-height .3s var(--ease),opacity .3s;
+  opacity:0;
+}
+.ptr-indicator.visible{max-height:60px;opacity:1}
+.ptr-spin{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- DRAWER OVERLAY -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+
+<!-- MOBILE DRAWER -->
+<div class="drawer" id="mobileDrawer" role="dialog" aria-label="Menu Navigasi">
+  <div class="drawer-header">
+    <span class="drawer-brand">Warisan</span>
+    <button class="drawer-close" onclick="closeDrawer()" aria-label="Tutup menu"><i class="bi bi-x"></i></button>
+  </div>
+  <div class="drawer-search">
+    <i class="bi bi-search search-icon"></i>
+    <input type="search" id="drawerSearch" placeholder="Cari budaya, tarian..." oninput="handleSearch(this.value)">
+  </div>
+  <ul class="drawer-nav">
+    <li><a href="#" class="active"><i class="bi bi-house"></i>Beranda</a></li>
+    <li><a href="Forum.html" onclick="closeDrawer()"><i class="bi bi-chat-dots"></i>Forum</a></li>
+    <li><a href="#" onclick="closeDrawer();showToast('Halaman Dokumentasi segera hadir!');return false"><i class="bi bi-journal-richtext"></i>Dokumentasi</a></li>
+    <li><a href="#" onclick="closeDrawer();showToast('Halaman Tentang segera hadir!');return false"><i class="bi bi-info-circle"></i>Tentang</a></li>
+  </ul>
+  <div class="drawer-divider"></div>
+  <div class="drawer-auth">
+    <button class="drawer-btn-masuk" onclick="closeDrawer();showToast('Fitur login segera hadir!','success')">Masuk</button>
+    <button class="drawer-btn-daftar" onclick="closeDrawer();showToast('Fitur daftar segera hadir!','success')">Daftar Sekarang</button>
+  </div>
+</div>
+
+<!-- MODAL OVERLAY -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal()"></div>
+
+<!-- POST MODAL -->
+<div class="modal-box" id="postModal" role="dialog" aria-modal="true">
+  <div class="modal-handle"></div>
+  <button class="modal-close" onclick="closeModal()" aria-label="Tutup"><i class="bi bi-x"></i></button>
+  <img class="modal-img" id="modalImg" src="" alt="">
+  <div class="modal-body">
+    <span class="modal-cat-badge" id="modalBadge"></span>
+    <h2 class="modal-title" id="modalTitle"></h2>
+    <div class="modal-meta">
+      <img id="modalAvatar" src="" alt="">
+      <div>
+        <div class="modal-author-name" id="modalAuthorName"></div>
+        <div class="modal-author-time" id="modalAuthorTime"></div>
+      </div>
+    </div>
+    <p class="modal-content-text" id="modalText"></p>
+    <div class="modal-actions">
+      <button class="modal-act-btn" id="modalLikeBtn" onclick="toggleModalLike()">
+        <i class="bi bi-heart" id="modalLikeIcon"></i>
+        <span id="modalLikeCount"></span>
+      </button>
+      <button class="modal-act-btn" onclick="showToast('Fitur komentar segera hadir!','success')">
+        <i class="bi bi-chat"></i> Komentar
+      </button>
+      <button class="modal-act-btn" onclick="sharePost()" style="margin-left:auto">
+        <i class="bi bi-share"></i> Bagikan
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="wastra-nav" id="mainNav">
+  <div class="nav-inner">
+    <a href="beranda.html" class="nav-brand">Warisan</a>
+    <ul class="nav-links">
+      <li><a href="beranda.html" class="active">Beranda</a></li>
+      <li><a href="Forum.html">Forum</a></li>
+      <li><a href="#" onclick="showToast('Halaman Dokumentasi segera hadir!');return false">Dokumentasi</a></li>
+      <li><a href="#" onclick="showToast('Halaman Tentang segera hadir!');return false">Tentang</a></li>
+    </ul>
+    <div style="flex:1"></div>
+    <div class="nav-auth">
+      <div class="nav-search" style="margin-right:6px">
+        <i class="bi bi-search search-icon"></i>
+        <input type="search" id="searchInput" placeholder="Cari budaya, tarian, atau kuliner..." oninput="handleSearch(this.value)">
+      </div>
+      <button class="btn-masuk" onclick="showToast('Fitur login segera hadir!','success')">Masuk</button>
+      <button class="btn-daftar" onclick="showToast('Fitur daftar segera hadir!','success')">Daftar</button>
+    </div>
+    <button class="btn-hamburger" onclick="openDrawer()" aria-label="Buka menu"><i class="bi bi-list"></i></button>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="page-wrapper">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-pattern"></div>
+    <div class="hero-content">
+      <span class="hero-tag"><i class="bi bi-globe-asia-australia"></i> Platform Budaya Nusantara</span>
+      <h1 class="hero-title">Jaga Budaya,<br><em>Hidupkan Warisan</em></h1>
+      <p class="hero-sub">Bergabunglah dalam ruang diskusi, berbagi cerita, dan melestarikan kekayaan tradisi Nusantara untuk generasi mendatang.</p>
+      <div class="hero-actions">
+        <button class="btn-hero-fill" onclick="showToast('Fitur diskusi segera hadir!','success')">
+          <i class="bi bi-pencil-square"></i> Mulai Diskusi
+        </button>
+        <button class="btn-hero-outline" onclick="document.getElementById('feedGrid').scrollIntoView({behavior:'smooth'})">
+          <i class="bi bi-compass"></i> Jelajahi
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <div class="filter-tabs">
+      <button class="filter-tab active" onclick="setTab(this,'terbaru')">Terbaru</button>
+      <button class="filter-tab" onclick="setTab(this,'terpopuler')">Terpopuler</button>
+    </div>
+    <span class="sort-count" id="sortCount">5 konten</span>
+  </div>
+
+  <!-- SEARCH RESULT BAR -->
+
+  <!-- FEED GRID -->
+  <div class="feed-grid" id="feedGrid">
+
+    <!-- Card 1 -->
+    <article class="post-card"
+      data-title="Tari Kecak Bali" data-likes="245" data-comments="42"
+      data-img="https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=800&q=80"
+      data-avatar="https://i.pinimg.com/1200x/b0/0f/fb/b00ffb3a94d32e4741c7273338f667c3.jpg"
+      data-author="Maria Damaris" data-time="2 jam yang lalu"
+      data-cat="Tari Tradisional" data-cat-color="#2e7d32"
+      data-text="Mau cerita dikit, kemaren pas liburan ke Bali gw sempetin nonton Tari Kecak di Uluwatu. Dan gila, itu beneran mind-blowing banget! Jadi sebelumnya gw kira Tari Kecak itu cuma pertunjukan biasa buat turis. Tapi pas gw nonton langsung, vibes-nya beda banget. Suara 'cak cak cak' dari ratusan penari yang ngelilingin api itu bikin bulu kuduk berdiri. Baru tau ternyata tarian ini asal mulanya dari ritual keagamaan Hindu Bali yang udah ada sejak berabad-abad lalu. Setiap gerakan punya makna spiritual yang dalam banget, bukan sekadar hiburan. Highly recommend kalau kalian ke Bali!"
+      onclick="window.location.href='ForumDetail.html?id=1&slug=tari-kecak-bali'">
+      <div class="card-thumb">
+        <img class="thumb-img" src="https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=600&q=80" alt="Tari Kecak Bali" loading="lazy" onerror="this.src='https://placehold.co/600x360/ffdbce/9e2016?text=Tari+Kecak'">
+        <div class="cat-icon cat-tari"><i class="bi bi-music-note-beamed"></i></div>
+      </div>
+      <div class="card-body">
+        <div class="card-cat-label" style="color:#2e7d32">Tari Tradisional</div>
+        <h3 class="card-title">Tari Kecak Bali</h3>
+        <p class="card-excerpt">Mau cerita dikit, kemaren pas liburan ke Bali gw sempetin nonton Tari Kecak di Uluwatu, dan gila itu beneran mind-blowing banget...</p>
+        <div class="card-foot">
+          <div class="author">
+            <img class="author-avatar" src="https://i.pravatar.cc/64?img=47" alt="Maria Damaris" onerror="this.src='https://placehold.co/64/ffdbce/9e2016?text=M'">
+            <div><div class="author-name">Maria Damaris</div><div class="author-time">2 jam lalu</div></div>
+          </div>
+          <div class="card-actions">
+            <button class="act-btn like-btn" onclick="toggleLike(event,this)"><i class="bi bi-heart"></i><span>245</span></button>
+            <button class="act-btn" onclick="event.stopPropagation();window.location.href='ForumDetail.html?id=1&slug=tari-kecak-bali'"><i class="bi bi-chat"></i><span>42</span></button>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 2 -->
+    <article class="post-card"
+      data-title="Sepiring Rendang" data-likes="189" data-comments="28"
+      data-img="https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=600&q=80"
+      data-avatar="https://i.pravatar.cc/64?img=11"
+      data-author="Marcel Tandiawan" data-time="5 jam yang lalu"
+      data-cat="Kuliner" data-cat-color="#f59f00"
+      data-text="Setiap kali membicarakan kuliner Nusantara, Rendang hampir selalu mengambil panggung utama. Dan memang layak! Kemarin gw sempat ngobrol sama nenek gw yang asli Minang, dan dia cerita kalau resep rendang yang dia punya itu udah turun-temurun dari buyut gw. Proses memasaknya bisa sampai 4-6 jam, dan itu bukan sekadar masak, tapi semacam ritual. Setiap tahap punya makna: dari cara motong daging, urutan bumbu yang dimasukkan, sampai api yang harus dijaga. Rendang bukan cuma makanan — ini adalah wujud kesabaran dan kecintaan orang Minang terhadap budayanya."
+      onclick="window.location.href='ForumDetail.html?id=2&slug=sepiring-rendang'">
+      <div class="card-thumb">
+        <img class="thumb-img" src="https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=600&q=80" alt="Sepiring Rendang" loading="lazy" onerror="this.src='https://placehold.co/600x360/ffdbce/9e2016?text=Rendang'">
+        <div class="cat-icon cat-kuliner"><i class="bi bi-egg-fried"></i></div>
+      </div>
+      <div class="card-body">
+        <div class="card-cat-label" style="color:#cc8800">Kuliner</div>
+        <h3 class="card-title">Sepiring Rendang</h3>
+        <p class="card-excerpt">Setiap kali membicarakan kuliner Nusantara, Rendang hampir selalu mengambil panggung utama. Dan memang layak banget...</p>
+        <div class="card-foot">
+          <div class="author">
+            <img class="author-avatar" src="https://i.pravatar.cc/64?img=11" alt="Marcel Tandiawan" onerror="this.src='https://placehold.co/64/ffdbce/9e2016?text=M'">
+            <div><div class="author-name">Marcel Tandiawan</div><div class="author-time">5 jam lalu</div></div>
+          </div>
+          <div class="card-actions">
+            <button class="act-btn like-btn" onclick="toggleLike(event,this)"><i class="bi bi-heart"></i><span>189</span></button>
+            <button class="act-btn" onclick="event.stopPropagation();window.location.href='ForumDetail.html?id=2&slug=sepiring-rendang'"><i class="bi bi-chat"></i><span>28</span></button>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 3 -->
+    <article class="post-card"
+      data-title="Tas Tenun Sumba" data-likes="312" data-comments="56"
+      data-img="https://images.unsplash.com/photo-1590736704728-f4730bb30770?w=600&q=80"
+      data-avatar="https://i.pravatar.cc/64?img=25"
+      data-author="Putri Asmita" data-time="31 Mei 2026"
+      data-cat="Tekstil" data-cat-color="#33489a"
+      data-text="Kemaren liat tas tenun sumba yg gua cari selama ini, karena selain size nya lumayan besar buat sehari hari, dalamnya warnanya cerah dan motifnya keren banget. Tenun Sumba atau yang dikenal sebagai 'Hinggi' ini dibuat dengan teknik ikat yang prosesnya bisa memakan waktu berbulan-bulan. Setiap motif punya cerita dan makna spiritual yang berbeda-beda, mencerminkan status sosial, kepercayaan, dan identitas pemakainya. Kalau kalian mau support pengrajin lokal, ini salah satu cara terbaik!"
+      onclick="window.location.href='ForumDetail.html?id=3&slug=tas-tenun-sumba'">
+      <div class="card-thumb">
+        <img class="thumb-img" src="https://images.unsplash.com/photo-1590736704728-f4730bb30770?w=600&q=80" alt="Tas Tenun Sumba" loading="lazy" onerror="this.src='https://placehold.co/600x360/ffdbce/9e2016?text=Tenun+Sumba'">
+        <div class="cat-icon cat-tekstil"><i class="bi bi-grid-3x3"></i></div>
+      </div>
+      <div class="card-body">
+        <div class="card-cat-label" style="color:#33489a">Tekstil</div>
+        <h3 class="card-title">Tas Tenun Sumba</h3>
+        <p class="card-excerpt">Kemaren liat tas tenun sumba yg gua cari selama ini, karena selain size nya lumayan besar buat sehari hari, warnanya cerah...</p>
+        <div class="card-foot">
+          <div class="author">
+            <img class="author-avatar" src="https://i.pravatar.cc/64?img=25" alt="Putri Asmita" onerror="this.src='https://placehold.co/64/ffdbce/9e2016?text=P'">
+            <div><div class="author-name">Putri Asmita</div><div class="author-time">31 Mei 2026</div></div>
+          </div>
+          <div class="card-actions">
+            <button class="act-btn like-btn" onclick="toggleLike(event,this)"><i class="bi bi-heart"></i><span>312</span></button>
+            <button class="act-btn" onclick="event.stopPropagation();window.location.href='ForumDetail.html?id=3&slug=tas-tenun-sumba'"><i class="bi bi-chat"></i><span>56</span></button>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 4 -->
+    <article class="post-card"
+      data-title="Baju Bodo se-underrated itu?" data-likes="145" data-comments="58"
+      data-img="https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=600&q=80"
+      data-avatar="https://i.pravatar.cc/64?img=32"
+      data-author="Michelle Putri" data-time="14 Mei 2026"
+      data-cat="Pakaian Adat" data-cat-color="#9e2016"
+      data-text="Gila ya, gw baru sadar kalau selama ini Baju Bodo tuh se-underrated itu. Padahal aslinya keren banget! Jadi ceritanya kemaren gw sempet ada acara dan mutusin buat nyoba pakai Baju Bodo yang udah lama nangkring di lemari. Dan jujur, banyak yang nanya 'itu baju apa?' dengan nada takjub. Baju Bodo adalah salah satu pakaian adat tertua di dunia yang berasal dari Sulawesi Selatan, khususnya suku Bugis-Makassar. Warnanya yang mencolok dan kainnya yang tipis transparan punya makna mendalam — setiap warna melambangkan status sosial pemakainya. Udah saatnya kita bangga pakai ini sehari-hari!"
+      onclick="window.location.href='ForumDetail.html?id=4&slug=baju-bodo'">
+      <div class="card-thumb">
+        <img class="thumb-img" src="https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=600&q=80" alt="Baju Bodo" loading="lazy" onerror="this.src='https://placehold.co/600x360/ffdbce/9e2016?text=Baju+Bodo'">
+        <div class="cat-icon cat-pakaian"><i class="bi bi-stars"></i></div>
+      </div>
+      <div class="card-body">
+        <div class="card-cat-label" style="color:#9e2016">Pakaian Adat</div>
+        <h3 class="card-title">Baju Bodo se-underrated itu?</h3>
+        <p class="card-excerpt">Gila ya, gw baru sadar kalau selama ini Baju Bodo tuh se-underrated itu. Padahal aslinya keren banget dan punya makna mendalam...</p>
+        <div class="card-foot">
+          <div class="author">
+            <img class="author-avatar" src="https://i.pravatar.cc/64?img=32" alt="Michelle Putri" onerror="this.src='https://placehold.co/64/ffdbce/9e2016?text=M'">
+            <div><div class="author-name">Michelle Putri</div><div class="author-time">14 Mei 2026</div></div>
+          </div>
+          <div class="card-actions">
+            <button class="act-btn like-btn" onclick="toggleLike(event,this)"><i class="bi bi-heart"></i><span>145</span></button>
+            <button class="act-btn" onclick="event.stopPropagation();window.location.href='ForumDetail.html?id=4&slug=baju-bodo'"><i class="bi bi-chat"></i><span>58</span></button>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Card 5 -->
+    <article class="post-card"
+      data-title="Belajar Main Sasando" data-likes="415" data-comments="67"
+      data-img="https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=600&q=80"
+      data-avatar="https://i.pravatar.cc/64?img=59"
+      data-author="Muhammad Haikal" data-time="5 Mei 2026"
+      data-cat="Musik" data-cat-color="#0e0e0e"
+      data-text="Gila ya, hari ini gw abis ikut workshop yang bener-bener eye-opening banget. Gw sempetin ikut kelas belajar Sasando, soalnya dipikir-pikir kapan lagi kan bisa belajar alat musik tradisional NTT yang langka ini. Sasando adalah alat musik petik yang terbuat dari daun lontar yang dibentuk seperti kipas dan diberi senar. Bunyi yang dihasilkan tuh unik banget, seperti harpa tapi punya nuansa yang lebih etnik dan organik. Pengrajinnya pun makin sedikit karena butuh keahlian khusus. Gw harap makin banyak yang mau belajar dan melestarikan alat musik ini."
+      onclick="window.location.href='ForumDetail.html?id=5&slug=belajar-sasando'">
+      <div class="card-thumb">
+        <img class="thumb-img" src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=600&q=80" alt="Sasando" loading="lazy" onerror="this.src='https://placehold.co/600x360/ffdbce/9e2016?text=Sasando'">
+        <div class="cat-icon cat-musik"><i class="bi bi-music-note"></i></div>
+      </div>
+      <div class="card-body">
+        <div class="card-cat-label" style="color:#555">Musik Tradisional</div>
+        <h3 class="card-title">Belajar Main Sasando</h3>
+        <p class="card-excerpt">Gw sempetin ikut kelas belajar Sasando — alat musik petik dari daun lontar NTT yang langka dan bunyinya unik banget...</p>
+        <div class="card-foot">
+          <div class="author">
+            <img class="author-avatar" src="https://i.pravatar.cc/64?img=59" alt="Muhammad Haikal" onerror="this.src='https://placehold.co/64/ffdbce/9e2016?text=M'">
+            <div><div class="author-name">Muhammad Haikal</div><div class="author-time">5 Mei 2026</div></div>
+          </div>
+          <div class="card-actions">
+            <button class="act-btn like-btn" onclick="toggleLike(event,this)"><i class="bi bi-heart"></i><span>415</span></button>
+            <button class="act-btn" onclick="event.stopPropagation();window.location.href='ForumDetail.html?id=5&slug=belajar-sasando'"><i class="bi bi-chat"></i><span>67</span></button>
+          </div>
+        </div>
+      </div>
+    </article>
+
+  </div><!-- /feed-grid -->
+</div><!-- /page-wrapper -->
+
+<!-- FOOTER -->
+<footer class="wastra-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">Warisan</div>
+      <div class="footer-tagline">Melestarikan Budaya, Menghubungkan Bangsa.</div>
+      <div class="footer-copy">© 2026 Warisan. Seluruh hak cipta dilindungi.</div>
+    </div>
+    <div class="footer-links">
+      <a href="#" onclick="showToast('Segera hadir!');return false">Panduan Komunitas</a>
+      <a href="#" onclick="showToast('Segera hadir!');return false">Kebijakan Privasi</a>
+      <a href="#" onclick="showToast('Segera hadir!');return false">Kontak</a>
+    </div>
+  </div>
+</footer>
+
+<!-- BOTTOM NAVIGATION (mobile) -->
+<nav class="bottom-nav" id="bottomNav">
+  <div class="bottom-nav-inner">
+    <button class="bnav-btn active" onclick="bnavActive(this);window.scrollTo({top:0,behavior:'smooth'})">
+      <i class="bi bi-house"></i>Beranda
+    </button>
+    <button class="bnav-btn" onclick="bnavActive(this);showToast('Halaman Jelajah segera hadir!')">
+      <i class="bi bi-compass"></i>Jelajah
+    </button>
+    <button class="bnav-btn" onclick="bnavActive(this);location.href='Forum.html'">
+      <i class="bi bi-chat-dots"></i>Forum
+    </button>
+    <button class="bnav-btn" onclick="bnavActive(this);showToast('Fitur profil segera hadir!')">
+      <i class="bi bi-person"></i>Profil
+    </button>
+  </div>
+</nav>
+
+<!-- FAB -->
+<button class="fab" id="fabBtn" onclick="showToast('Fitur buat post segera hadir!','success')" aria-label="Buat post baru">
+  <i class="bi bi-plus-lg"></i>
+</button>
+
+<script>
+const EASE='cubic-bezier(0.23,1,0.32,1)';
+
+/* ── NAV SCROLL ── */
+const nav=document.getElementById('mainNav');
+window.addEventListener('scroll',()=>{
+  nav.classList.toggle('scrolled',window.scrollY>8);
+},{passive:true});
+
+/* ── DRAWER ── */
+function openDrawer(){
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.getElementById('mobileDrawer').classList.add('open');
+  document.body.classList.add('locked');
+}
+function closeDrawer(){
+  document.getElementById('drawerOverlay').classList.remove('open');
+  document.getElementById('mobileDrawer').classList.remove('open');
+  document.body.classList.remove('locked');
+}
+
+/* ── BOTTOM NAV ACTIVE ── */
+function bnavActive(btn){
+  document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+/* ── FILTER TABS ── */
+const originalOrder=[];
+document.querySelectorAll('.post-card').forEach((c,i)=>originalOrder.push(c));
+function setTab(btn,mode){
+  document.querySelectorAll('.filter-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const grid=document.getElementById('feedGrid');
+  const cards=[...document.querySelectorAll('.post-card')];
+  if(mode==='terpopuler'){
+    cards.sort((a,b)=>parseInt(b.dataset.likes)-parseInt(a.dataset.likes));
+  } else {
+    originalOrder.forEach(c=>grid.appendChild(c));
+    updateSortCount();return;
+  }
+  cards.forEach((c,i)=>{
+    c.style.animation='none';
+    void c.offsetWidth;
+    c.style.animationDelay=(i*40)+'ms';
+    c.style.animation='';
+    grid.appendChild(c);
+  });
+  updateSortCount();
+}
+
+/* ── SEARCH ── */
+function handleSearch(val){
+  const q=val.trim().toLowerCase();
+  const cards=document.querySelectorAll('.post-card');
+  const bar=document.getElementById('searchBar');
+  const barText=document.getElementById('searchBarText');
+  let found=0;
+  cards.forEach(card=>{
+    const match=!q||
+      card.dataset.title.toLowerCase().includes(q)||
+      card.dataset.cat.toLowerCase().includes(q)||
+      card.dataset.text.toLowerCase().includes(q)||
+      card.dataset.author.toLowerCase().includes(q);
+    card.classList.toggle('hidden',!match);
+    if(match)found++;
+  });
+  // sync both search inputs
+  document.getElementById('searchInput').value=val;
+  document.getElementById('drawerSearch').value=val;
+  if(q){
+    barText.textContent=`${found} hasil untuk "${val}"`;
+    bar.classList.add('visible');
+  } else {
+    bar.classList.remove('visible');
+  }
+  updateSortCount(found,!!q);
+  // show empty state
+  const grid=document.getElementById('feedGrid');
+  const existing=grid.querySelector('.empty-state');
+  if(existing)existing.remove();
+  if(found===0&&q){
+    const empty=document.createElement('div');
+    empty.className='empty-state';
+    empty.innerHTML=`<i class="bi bi-search"></i><h3>Tidak ada hasil</h3><p>Coba kata kunci lain seperti "batik", "gamelan", atau "wayang"</p>`;
+    grid.appendChild(empty);
+  }
+}
+function clearSearch(){
+  document.getElementById('searchInput').value='';
+  document.getElementById('drawerSearch').value='';
+  handleSearch('');
+}
+function updateSortCount(n,isSearch){
+  const all=document.querySelectorAll('.post-card:not(.hidden)').length;
+  document.getElementById('sortCount').textContent=(isSearch?n:all)+' konten';
+}
+
+/* ── LIKE BUTTON ── */
+function toggleLike(e,btn){
+  e.stopPropagation();
+  const icon=btn.querySelector('i');
+  const countEl=btn.querySelector('span');
+  const count=parseInt(countEl.textContent);
+  const liked=icon.classList.contains('bi-heart-fill');
+  if(liked){
+    icon.classList.replace('bi-heart-fill','bi-heart');
+    icon.style.color='';countEl.textContent=count-1;
+  } else {
+    icon.classList.replace('bi-heart','bi-heart-fill');
+    icon.style.color='#9e2016';countEl.textContent=count+1;
+    icon.style.transform='scale(1.5)';
+    setTimeout(()=>icon.style.transform='scale(1)',180);
+    showToast('Kamu menyukai post ini ❤️','success');
+  }
+  if(btn.closest('.post-card')===currentCard)updateModalLike();
+}
+
+/* ── MODAL ── */
+let currentCard=null;
+function openModal(card){
+  currentCard=card;
+  document.getElementById('modalImg').src=card.dataset.img;
+  document.getElementById('modalImg').alt=card.dataset.title;
+  document.getElementById('modalTitle').textContent=card.dataset.title;
+  document.getElementById('modalAvatar').src=card.dataset.avatar;
+  document.getElementById('modalAuthorName').textContent=card.dataset.author;
+  document.getElementById('modalAuthorTime').textContent=card.dataset.time;
+  document.getElementById('modalText').textContent=card.dataset.text;
+  const badge=document.getElementById('modalBadge');
+  badge.textContent=card.dataset.cat;
+  badge.style.background=card.dataset.catColor+'22';
+  badge.style.color=card.dataset.catColor;
+  updateModalLike();
+  document.getElementById('modalOverlay').classList.add('open');
+  document.getElementById('postModal').classList.add('open');
+  document.body.classList.add('locked');
+  // mobile swipe to close
+  setupSwipeClose();
+}
+function updateModalLike(){
+  if(!currentCard)return;
+  const lb=currentCard.querySelector('.like-btn');
+  const icon=lb.querySelector('i');
+  const count=parseInt(lb.querySelector('span').textContent);
+  const liked=icon.classList.contains('bi-heart-fill');
+  const mIcon=document.getElementById('modalLikeIcon');
+  const mCount=document.getElementById('modalLikeCount');
+  const mBtn=document.getElementById('modalLikeBtn');
+  mIcon.className=liked?'bi bi-heart-fill':'bi bi-heart';
+  mIcon.style.color=liked?'#9e2016':'';
+  mCount.textContent=count+' Suka';
+  mBtn.classList.toggle('liked',liked);
+}
+function toggleModalLike(){
+  if(!currentCard)return;
+  const lb=currentCard.querySelector('.like-btn');
+  toggleLike({stopPropagation:()=>{}},lb);
+  updateModalLike();
+}
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.getElementById('postModal').classList.remove('open');
+  document.body.classList.remove('locked');
+  currentCard=null;
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+/* ── SWIPE-DOWN TO CLOSE MODAL (mobile) ── */
+function setupSwipeClose(){
+  const modal=document.getElementById('postModal');
+  let startY=0,moved=false;
+  function onStart(e){
+    startY=(e.touches?e.touches[0].clientY:e.clientY);
+    moved=false;
+  }
+  function onMove(e){
+    const dy=(e.touches?e.touches[0].clientY:e.clientY)-startY;
+    if(dy>60){moved=true;closeModal();modal.removeEventListener('touchstart',onStart);modal.removeEventListener('touchmove',onMove);}
+  }
+  modal.addEventListener('touchstart',onStart,{passive:true});
+  modal.addEventListener('touchmove',onMove,{passive:true});
+}
+
+/* ── SHARE ── */
+function sharePost(){
+  if(navigator.share&&currentCard){
+    navigator.share({title:currentCard.dataset.title,text:currentCard.dataset.text.slice(0,120)+'...',url:window.location.href}).catch(()=>{});
+  } else {
+    navigator.clipboard?.writeText(window.location.href)
+      .then(()=>showToast('Link disalin ke clipboard!','success'))
+      .catch(()=>showToast('Salin link: '+window.location.href));
+  }
+}
+
+/* ── TOAST ── */
+function showToast(msg,type=''){
+  const container=document.getElementById('toastContainer');
+  const toast=document.createElement('div');
+  toast.className='toast-item'+(type?' '+type:'');
+  toast.textContent=msg;
+  container.appendChild(toast);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>toast.classList.add('show')));
+  const t=setTimeout(()=>{toast.classList.remove('show');setTimeout(()=>toast.remove(),320);},3500);
+  toast.addEventListener('click',()=>{clearTimeout(t);toast.classList.remove('show');setTimeout(()=>toast.remove(),320);});
+}
+
+/* ── FAB HIDE ON SCROLL DOWN ── */
+let lastScroll=0;
+const fab=document.getElementById('fabBtn');
+window.addEventListener('scroll',()=>{
+  const cur=window.scrollY;
+  if(cur>lastScroll+10&&cur>100){
+    fab.style.transform='scale(0) translateY(20px)';fab.style.opacity='0';
+  } else if(cur<lastScroll-10||cur<100){
+    fab.style.transform='';fab.style.opacity='';
+  }
+  lastScroll=cur;
+},{passive:true});
+
+/* ── INITIAL COUNT ── */
+updateSortCount();
+</script>
+</body>
+</html>
