@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 <title>Warisan – Jaga Budaya, Hidupkan Warisan</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-<link rel="stylesheet" href="../static/css/Shared.css">
-<link rel="stylesheet" href="/src/main/resources/static/css/Shared.css">
+<link rel="stylesheet" th:href="@{/css/Shared.css}">
+<link rel="stylesheet" th:href="@{/css/Beranda.css}">
+<link rel="stylesheet" th:href="@{/css/Global.css}">
 </head>
 <body>
 
@@ -26,23 +27,23 @@
   </div>
   <ul class="drawer-nav">
     <li><a href="#" class="active"><i class="bi bi-house"></i>Beranda</a></li>
-    <li><a href="Forum.html" onclick="closeDrawer()"><i class="bi bi-chat-dots"></i>Forum</a></li>
-    <li><a href="Dokumentasi.html" onclick="closeDrawer()"><i class="bi bi-journal-richtext"></i>Dokumentasi</a></li>
+    <li><a href="/forum" onclick="closeDrawer()"><i class="bi bi-chat-dots"></i>Forum</a></li>
+    <li><a href="/dokumentasi" onclick="closeDrawer()"><i class="bi bi-journal-richtext"></i>Dokumentasi</a></li>
   </ul>
   <div class="drawer-divider"></div>
   <div class="drawer-auth">
     <button class="drawer-btn-masuk" onclick="openAuthModal('masuk')">Masuk</button>
-<button class="drawer-btn-daftar" onclick="openAuthModal('daftar')">Daftar Sekarang</button>
+    <button class="drawer-btn-daftar" onclick="openAuthModal('daftar')">Daftar Sekarang</button>
   </div>
 </div>
 
 <nav class="wastra-nav" id="mainNav">
   <div class="nav-inner">
-    <a href="beranda.html" class="nav-brand">Warisan</a>
+    <a href="/" class="nav-brand">Warisan</a>
     <ul class="nav-links">
-      <li><a href="beranda.html" class="active">Beranda</a></li>
-      <li><a href="Forum.html">Forum</a></li>
-      <li><a href="Dokumentasi.html">Dokumentasi</a></li>
+      <li><a href="/" class="active">Beranda</a></li>
+      <li><a href="/forum">Forum</a></li>
+      <li><a href="/dokumentasi">Dokumentasi</a></li>
     </ul>
     <div style="flex:1"></div>
     <div class="nav-auth">
@@ -50,8 +51,8 @@
         <i class="bi bi-search search-icon"></i>
         <input type="search" id="searchInput" placeholder="Cari budaya, tarian, atau kuliner..." oninput="handleSearch(this.value)">
       </div>
-        <button class="btn-masuk" onclick="openAuthModal('masuk')">Masuk</button>
-        <button class="btn-daftar" onclick="openAuthModal('daftar')">Daftar</button>
+      <button class="btn-masuk" onclick="openAuthModal('masuk')">Masuk</button>
+      <button class="btn-daftar" onclick="openAuthModal('daftar')">Daftar</button>
     </div>
     <button class="btn-hamburger" onclick="openDrawer()" aria-label="Buka menu"><i class="bi bi-list"></i></button>
   </div>
@@ -66,10 +67,10 @@
       <h1 class="hero-title">Jaga Budaya,<br><em>Hidupkan Warisan</em></h1>
       <p class="hero-sub">Bergabunglah dalam ruang diskusi, berbagi cerita, dan melestarikan kekayaan tradisi Nusantara untuk generasi mendatang.</p>
       <div class="hero-actions">
-        <button class="btn-hero-fill" onclick="location.href='Forum.html'">
+        <button class="btn-hero-fill" onclick="location.href='/forum'">
           <i class="bi bi-pencil-square"></i> Mulai Diskusi
         </button>
-        <button class="btn-hero-outline" onclick="location.href='Dokumentasi.html'">
+        <button class="btn-hero-outline" onclick="location.href='/dokumentasi'">
           <i class="bi bi-compass"></i> Jelajahi
         </button>
       </div>
@@ -87,7 +88,7 @@
 
     <article class="post-card" data-likes="245" data-comments="42"
       data-cat="Tari"
-      onclick="window.location.href='DokumentasiDetail.html?id=1&slug=tari-kecak-bali'">
+      onclick="window.location.href='/dokumentasi/1'">
       <div class="card-thumb">
         <img class="thumb-img" src="https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=600&q=80" alt="Tari Kecak Bali" loading="lazy" onerror="this.src='https://placehold.co/600x360/ffdbce/9e2016?text=Tari+Kecak'">
         <div class="card-cat-badge" style="background:#fff;color:#2e7d32"><i class="bi bi-person-arms-up" style="font-size:10px;margin-right:4px"></i>Tari</div>
@@ -102,7 +103,7 @@
           </div>
           <div class="card-actions">
             <button class="act-btn like-btn" onclick="toggleLike(event,this)"><i class="bi bi-heart"></i><span>245</span></button>
-            <button class="act-btn" onclick="event.stopPropagation();window.location.href='DokumentasiDetail.html?id=1&slug=tari-kecak-bali'"><i class="bi bi-chat"></i><span>42</span></button>
+            <button class="act-btn" onclick="event.stopPropagation();window.location.href='/dokumentasi/1'"><i class="bi bi-chat"></i><span>42</span></button>
           </div>
         </div>
       </div>
@@ -110,7 +111,7 @@
 
     <article class="post-card" data-likes="189" data-comments="28"
       data-cat="Kuliner"
-      onclick="window.location.href='DokumentasiDetail.html?id=2&slug=sepiring-rendang'">
+      onclick="window.location.href='/dokumentasi/2'">
       <div class="card-thumb">
         <img class="thumb-img" src="https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=600&q=80" alt="Sepiring Rendang" loading="lazy" onerror="this.src='https://placehold.co/600x360/ffdbce/9e2016?text=Rendang'">
         <div class="card-cat-badge" style="background:#fff;color:#cc8800"><i class="bi bi-egg-fried" style="font-size:10px;margin-right:4px"></i>Kuliner</div>
@@ -125,7 +126,7 @@
           </div>
           <div class="card-actions">
             <button class="act-btn like-btn" onclick="toggleLike(event,this)"><i class="bi bi-heart"></i><span>189</span></button>
-            <button class="act-btn" onclick="event.stopPropagation();window.location.href='DokumentasiDetail.html?id=2&slug=sepiring-rendang'"><i class="bi bi-chat"></i><span>28</span></button>
+            <button class="act-btn" onclick="event.stopPropagation();window.location.href='/dokumentasi/2'"><i class="bi bi-chat"></i><span>28</span></button>
           </div>
         </div>
       </div>
@@ -133,7 +134,7 @@
 
     <article class="post-card" data-likes="312" data-comments="56"
       data-cat="Seni & Kriya"
-      onclick="window.location.href='DokumentasiDetail.html?id=3&slug=tas-tenun-sumba'">
+      onclick="window.location.href='/dokumentasi/3'">
       <div class="card-thumb">
         <img class="thumb-img" src="https://images.unsplash.com/photo-1590736704728-f4730bb30770?w=600&q=80" alt="Tas Tenun Sumba" loading="lazy" onerror="this.src='https://placehold.co/600x360/ffdbce/9e2016?text=Tenun+Sumba'">
         <div class="card-cat-badge" style="background:#fff;color:#555"><i class="bi bi-palette" style="font-size:10px;margin-right:4px"></i>Seni & Kriya</div>
@@ -148,7 +149,7 @@
           </div>
           <div class="card-actions">
             <button class="act-btn like-btn" onclick="toggleLike(event,this)"><i class="bi bi-heart"></i><span>312</span></button>
-            <button class="act-btn" onclick="event.stopPropagation();window.location.href='DokumentasiDetail.html?id=3&slug=tas-tenun-sumba'"><i class="bi bi-chat"></i><span>56</span></button>
+            <button class="act-btn" onclick="event.stopPropagation();window.location.href='/dokumentasi/3'"><i class="bi bi-chat"></i><span>56</span></button>
           </div>
         </div>
       </div>
@@ -156,7 +157,7 @@
 
     <article class="post-card" data-likes="145" data-comments="58"
       data-cat="Pakaian Adat"
-      onclick="window.location.href='DokumentasiDetail.html?id=4&slug=baju-bodo'">
+      onclick="window.location.href='/dokumentasi/4'">
       <div class="card-thumb">
         <img class="thumb-img" src="https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=600&q=80" alt="Baju Bodo" loading="lazy" onerror="this.src='https://placehold.co/600x360/ffdbce/9e2016?text=Baju+Bodo'">
         <div class="card-cat-badge" style="background:#fff;color:#9e2016"><i class="bi bi-stars" style="font-size:10px;margin-right:4px"></i>Pakaian Adat</div>
@@ -171,7 +172,7 @@
           </div>
           <div class="card-actions">
             <button class="act-btn like-btn" onclick="toggleLike(event,this)"><i class="bi bi-heart"></i><span>145</span></button>
-            <button class="act-btn" onclick="event.stopPropagation();window.location.href='DokumentasiDetail.html?id=4&slug=baju-bodo'"><i class="bi bi-chat"></i><span>58</span></button>
+            <button class="act-btn" onclick="event.stopPropagation();window.location.href='/dokumentasi/4'"><i class="bi bi-chat"></i><span>58</span></button>
           </div>
         </div>
       </div>
@@ -179,7 +180,7 @@
 
     <article class="post-card" data-likes="415" data-comments="67"
       data-cat="Musik"
-      onclick="window.location.href='DokumentasiDetail.html?id=5&slug=belajar-sasando'">
+      onclick="window.location.href='/dokumentasi/5'">
       <div class="card-thumb">
         <img class="thumb-img" src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=600&q=80" alt="Sasando" loading="lazy" onerror="this.src='https://placehold.co/600x360/ffdbce/9e2016?text=Sasando'">
         <div class="card-cat-badge" style="background:#fff;color:#444"><i class="bi bi-music-note" style="font-size:10px;margin-right:4px"></i>Musik Tradisional</div>
@@ -194,26 +195,25 @@
           </div>
           <div class="card-actions">
             <button class="act-btn like-btn" onclick="toggleLike(event,this)"><i class="bi bi-heart"></i><span>415</span></button>
-            <button class="act-btn" onclick="event.stopPropagation();window.location.href='DokumentasiDetail.html?id=5&slug=belajar-sasando'"><i class="bi bi-chat"></i><span>67</span></button>
+            <button class="act-btn" onclick="event.stopPropagation();window.location.href='/dokumentasi/5'"><i class="bi bi-chat"></i><span>67</span></button>
           </div>
         </div>
       </div>
     </article>
 
-  </div></div>
-  
+  </div>
+</div>
+
 <footer class="wastra-footer">
   <div class="footer-inner">
     <div>
       <div class="footer-brand">Warisan</div>
       <div class="footer-tagline">Melestarikan Budaya, Menghubungkan Bangsa.</div>
-      
       <div class="footer-links" style="margin-bottom: 16px;">
         <a href="https://wa.me/6282261137206" target="_blank" rel="noopener noreferrer">
           <i class="bi bi-whatsapp" style="margin-right: 4px;"></i> Hubungi Kami
         </a>
       </div>
-      
       <div class="footer-copy">© 2026 Warisan. Seluruh hak cipta dilindungi.</div>
     </div>
   </div>
@@ -227,7 +227,7 @@
     <button class="bnav-btn" onclick="bnavActive(this);showToast('Halaman Jelajah segera hadir!')">
       <i class="bi bi-compass"></i>Jelajah
     </button>
-    <button class="bnav-btn" onclick="bnavActive(this);location.href='Forum.html'">
+    <button class="bnav-btn" onclick="bnavActive(this);location.href='/forum'">
       <i class="bi bi-chat-dots"></i>Forum
     </button>
     <button class="bnav-btn" onclick="bnavActive(this);showToast('Fitur profil segera hadir!')">
@@ -240,163 +240,15 @@
   <i class="bi bi-plus-lg"></i>
 </button>
 
-<script>
-const EASE='cubic-bezier(0.23,1,0.32,1)';
-
-/* ── NAV SCROLL ── */
-const nav=document.getElementById('mainNav');
-window.addEventListener('scroll',()=>{
-  nav.classList.toggle('scrolled',window.scrollY>8);
-},{passive:true});
-
-/* ── DRAWER ── */
-function openDrawer(){
-  document.getElementById('drawerOverlay').classList.add('open');
-  document.getElementById('mobileDrawer').classList.add('open');
-  document.body.classList.add('locked');
-}
-function closeDrawer(){
-  document.getElementById('drawerOverlay').classList.remove('open');
-  document.getElementById('mobileDrawer').classList.remove('open');
-  document.body.classList.remove('locked');
-}
-
-/* ── BOTTOM NAV ACTIVE ── */
-function bnavActive(btn){
-  document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-}
-
-/* ── FILTER TABS ── */
-const originalOrder=[];
-document.querySelectorAll('.post-card').forEach((c,i)=>originalOrder.push(c));
-function setTab(btn,mode){
-  document.querySelectorAll('.filter-tab').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  const grid=document.getElementById('feedGrid');
-  const cards=[...document.querySelectorAll('.post-card')];
-  if(mode==='terpopuler'){
-    cards.sort((a,b)=>parseInt(b.dataset.likes)-parseInt(a.dataset.likes));
-  } else {
-    originalOrder.forEach(c=>grid.appendChild(c));
-    updateSortCount();return;
-  }
-  cards.forEach((c,i)=>{
-    c.style.animation='none';
-    void c.offsetWidth;
-    c.style.animationDelay=(i*40)+'ms';
-    c.style.animation='';
-    grid.appendChild(c);
-  });
-  updateSortCount();
-}
-
-/* ── SEARCH ── */
-function handleSearch(val){
-  const q=val.trim().toLowerCase();
-  const cards=document.querySelectorAll('.post-card');
-  const bar=document.getElementById('searchBar');
-  const barText=document.getElementById('searchBarText');
-  let found=0;
-  cards.forEach(card=>{
-    const match=!q||
-      (card.querySelector('.card-title')?.textContent||'').toLowerCase().includes(q)||
-      (card.querySelector('.card-cat-label')?.textContent||'').toLowerCase().includes(q)||
-      (card.querySelector('.card-excerpt')?.textContent||'').toLowerCase().includes(q)||
-      (card.querySelector('.author-name')?.textContent||'').toLowerCase().includes(q);
-    card.classList.toggle('hidden',!match);
-    if(match)found++;
-  });
-  // sync both search inputs
-  document.getElementById('searchInput').value=val;
-  document.getElementById('drawerSearch').value=val;
-  if(q){
-    barText.textContent=`${found} hasil untuk "${val}"`;
-    bar.classList.add('visible');
-  } else {
-    bar.classList.remove('visible');
-  }
-  updateSortCount(found,!!q);
-  // show empty state
-  const grid=document.getElementById('feedGrid');
-  const existing=grid.querySelector('.empty-state');
-  if(existing)existing.remove();
-  if(found===0&&q){
-    const empty=document.createElement('div');
-    empty.className='empty-state';
-    empty.innerHTML=`<i class="bi bi-search"></i><h3>Tidak ada hasil</h3><p>Coba kata kunci lain seperti "batik", "gamelan", atau "wayang"</p>`;
-    grid.appendChild(empty);
-  }
-}
-function clearSearch(){
-  document.getElementById('searchInput').value='';
-  document.getElementById('drawerSearch').value='';
-  handleSearch('');
-}
-function updateSortCount(n,isSearch){
-  const all=document.querySelectorAll('.post-card:not(.hidden)').length;
-  document.getElementById('sortCount').textContent=(isSearch?n:all)+' konten';
-}
-
-/* ── LIKE BUTTON ── */
-function toggleLike(e,btn){
-  e.stopPropagation();
-  const icon=btn.querySelector('i');
-  const countEl=btn.querySelector('span');
-  const count=parseInt(countEl.textContent);
-  const liked=icon.classList.contains('bi-heart-fill');
-  if(liked){
-    icon.classList.replace('bi-heart-fill','bi-heart');
-    icon.style.color='';countEl.textContent=count-1;
-  } else {
-    icon.classList.replace('bi-heart','bi-heart-fill');
-    icon.style.color='#9e2016';countEl.textContent=count+1;
-    icon.style.transform='scale(1.5)';
-    setTimeout(()=>icon.style.transform='scale(1)',180);
-    showToast('Kamu menyukai post ini ❤️','success');
-  }
-}
-
-/* ── TOAST ── */
-function showToast(msg,type=''){
-  const container=document.getElementById('toastContainer');
-  const toast=document.createElement('div');
-  toast.className='toast-item'+(type?' '+type:'');
-  toast.textContent=msg;
-  container.appendChild(toast);
-  requestAnimationFrame(()=>requestAnimationFrame(()=>toast.classList.add('show')));
-  const t=setTimeout(()=>{toast.classList.remove('show');setTimeout(()=>toast.remove(),320);},3500);
-  toast.addEventListener('click',()=>{clearTimeout(t);toast.classList.remove('show');setTimeout(()=>toast.remove(),320);});
-}
-
-/* ── FAB HIDE ON SCROLL DOWN ── */
-let lastScroll=0;
-const fab=document.getElementById('fabBtn');
-window.addEventListener('scroll',()=>{
-  const cur=window.scrollY;
-  if(cur>lastScroll+10&&cur>100){
-    fab.style.transform='scale(0) translateY(20px)';fab.style.opacity='0';
-  } else if(cur<lastScroll-10||cur<100){
-    fab.style.transform='';fab.style.opacity='';
-  }
-  lastScroll=cur;
-},{passive:true});
-
-/* ── INITIAL COUNT ── */
-updateSortCount();
-</script>
-
 <div class="auth-overlay" id="authOverlay" onclick="if(event.target===this) closeAuthModal()">
   <div class="auth-modal-card">
     <button class="auth-close" onclick="closeAuthModal()"><i class="bi bi-x-lg"></i></button>
-    
     <div id="authMainSection">
       <div class="auth-tab-toggle" id="authTabToggle" data-active="masuk">
         <div class="auth-tab-indicator" id="authTabIndicator"></div>
         <button class="auth-tab-btn active" id="btnAuthMasuk" onclick="switchAuthTab('masuk')">Masuk</button>
         <button class="auth-tab-btn inactive" id="btnAuthDaftar" onclick="switchAuthTab('daftar')">Daftar</button>
       </div>
-
       <div class="auth-form-panel active" id="authFormMasuk">
         <div class="auth-heading">
           <h2>Selamat Datang Kembali</h2>
@@ -414,7 +266,6 @@ updateSortCount();
         <div class="auth-divider"><span>atau</span></div>
         <button class="auth-btn-google" onclick="showToast('Login Google segera hadir!','success')"><i class="bi bi-google" style="color:#EA4335;"></i> Lanjutkan dengan Google</button>
       </div>
-
       <div class="auth-form-panel" id="authFormDaftar">
         <div class="auth-heading">
           <h2>Buat Akun Baru</h2>
@@ -434,9 +285,11 @@ updateSortCount();
         </div>
         <button class="auth-btn-primary" onclick="showToast('Akun berhasil dibuat! 🎉','success'); closeAuthModal();">Daftar Sekarang</button>
       </div>
-    </div></div>
+    </div>
+  </div>
 </div>
 
-<script src="../static/js/Shared.js"></script>
+<script th:src="@{/js/Shared.js}"></script>
+<script th:src="@{/js/Beranda.js}"></script>
 </body>
 </html>
