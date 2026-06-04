@@ -26,8 +26,6 @@ public class PostsController {
 
     @GetMapping("/dokumentasi/{id}")
     public String dokumentasiDetail(@PathVariable Integer id, Model model) {
-        model.addAttribute("post", postsRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Post tidak ditemukan: " + id)));
         return "DokumentasiDetail";
     }
 }

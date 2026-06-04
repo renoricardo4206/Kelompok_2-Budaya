@@ -194,10 +194,9 @@ function escapeHtml(str) {
 }
 
 function getThreadFromURL() {
-  const params = new URLSearchParams(window.location.search);
-  const id     = parseInt(params.get('id'));
-  const slug   = params.get('slug');
-  return THREADS.find(t => t.id === id || t.slug === slug) || THREADS[0];
+  const pathparts = window.location.pathname.split('/')
+  const id     = parseInt(pathparts[pathparts.length-1]);
+  return THREADS.find(t => t.id === id) || THREADS[0];
 }
 
 /* ── RENDER COMMENTS ── */
@@ -279,9 +278,9 @@ function renderPage() {
   // Render konten utama
   document.getElementById('mainContent').innerHTML = `
     <nav class="breadcrumbs">
-      <a href="Dokumentasi.html">Dokumentasi</a>
+      <a href="/dokumentasi">Dokumentasi</a>
       <span><i class="bi bi-chevron-right" style="font-size:9px"></i></span>
-      <a href="Dokumentasi.html?cat=${t.cat}">${t.catLabel}</a>
+      <a href="/dokumentasi?cat=${t.cat}">${t.catLabel}</a>
       <span><i class="bi bi-chevron-right" style="font-size:9px"></i></span>
       <span class="current">${t.title}</span>
     </nav>

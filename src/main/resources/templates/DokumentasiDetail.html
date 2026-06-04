@@ -250,9 +250,9 @@ body.locked{overflow:hidden;position:fixed;width:100%}
     <button class="drawer-close" onclick="closeDrawer()"><i class="bi bi-x"></i></button>
   </div>
   <ul class="drawer-nav">
-    <li><a href="Beranda.html"><i class="bi bi-house"></i>Beranda</a></li>
-    <li><a href="Forum.html"><i class="bi bi-chat-dots"></i>Forum</a></li>
-    <li><a href="Dokumentasi.html" class="active" onclick="closeDrawer()"><i class="bi bi-journal-richtext"></i>Dokumentasi</a></li>
+    <li><a href="/"><i class="bi bi-house"></i>Beranda</a></li>
+    <li><a href="/forum"><i class="bi bi-chat-dots"></i>Forum</a></li>
+    <li><a href="/dokumentasi" class="active" onclick="closeDrawer()"><i class="bi bi-journal-richtext"></i>Dokumentasi</a></li>
   </ul>
   <div class="drawer-divider"></div>
   <div class="drawer-auth">
@@ -264,11 +264,11 @@ body.locked{overflow:hidden;position:fixed;width:100%}
 <!-- NAVBAR -->
 <nav class="wastra-nav" id="mainNav">
   <div class="nav-inner">
-    <a href="Beranda.html" class="nav-brand">Warisan</a>
+    <a href="/" class="nav-brand">Warisan</a>
     <ul class="nav-links">
-      <li><a href="Beranda.html">Beranda</a></li>
-      <li><a href="Forum.html">Forum</a></li>
-      <li><a href="Dokumentasi.html" class="active">Dokumentasi</a></li>
+      <li><a href="/">Beranda</a></li>
+      <li><a href="/forum">Forum</a></li>
+      <li><a href="/dokumentasi" class="active">Dokumentasi</a></li>
     </ul>
     <div style="flex:1"></div>
     <div class="nav-auth">
@@ -292,17 +292,17 @@ body.locked{overflow:hidden;position:fixed;width:100%}
       <div class="sidebar-title">Kategori Budaya</div>
       <div class="sidebar-subtitle">Filter dokumentasi</div>
       <nav class="cat-nav" id="sidebarCatNav">
-        <a href="Dokumentasi.html" class="cat-link"><i class="bi bi-compass"></i>Semua Dokumentasi</a>
-        <a href="Dokumentasi.html?cat=tari" class="cat-link" id="sideCatTari"><i class="bi bi-person-arms-up"></i>Tari</a>
-        <a href="Dokumentasi.html?cat=bahasa" class="cat-link"><i class="bi bi-translate"></i>Bahasa</a>
-        <a href="Dokumentasi.html?cat=seni" class="cat-link"><i class="bi bi-palette"></i>Seni &amp; Kriya</a>
-        <a href="Dokumentasi.html?cat=musik" class="cat-link" id="sideCatMusik"><i class="bi bi-music-note"></i>Musik</a>
-        <a href="Dokumentasi.html?cat=pakaian" class="cat-link" id="sideCatPakaian"><i class="bi bi-stars"></i>Pakaian Adat</a>
-        <a href="Dokumentasi.html?cat=kuliner" class="cat-link" id="sideCatKuliner"><i class="bi bi-egg-fried"></i>Kuliner</a>
+        <a href="/dokumentasi" class="cat-link"><i class="bi bi-compass"></i>Semua Dokumentasi</a>
+        <a href="/dokumentasi?cat=tari" class="cat-link" id="sideCatTari"><i class="bi bi-person-arms-up"></i>Tari</a>
+        <a href="/dokumentasi?cat=bahasa" class="cat-link"><i class="bi bi-translate"></i>Bahasa</a>
+        <a href="/dokumentasi?cat=seni" class="cat-link"><i class="bi bi-palette"></i>Seni &amp; Kriya</a>
+        <a href="/dokumentasi?cat=musik" class="cat-link" id="sideCatMusik"><i class="bi bi-music-note"></i>Musik</a>
+        <a href="/dokumentasi?cat=pakaian" class="cat-link" id="sideCatPakaian"><i class="bi bi-stars"></i>Pakaian Adat</a>
+        <a href="/dokumentasi?cat=kuliner" class="cat-link" id="sideCatKuliner"><i class="bi bi-egg-fried"></i>Kuliner</a>
         
-        <a href="Dokumentasi.html?cat=lainnya" class="cat-link"><i class="bi bi-three-dots"></i>Lainnya</a>
+        <a href="/dokumentasi?cat=lainnya" class="cat-link"><i class="bi bi-three-dots"></i>Lainnya</a>
       </nav>
-      <button class="btn-new-thread" onclick="location.href='Dokumentasi.html'">
+      <button class="btn-new-thread" onclick="location.href='/dokumentasi/upload'">
         <i class="bi bi-cloud-arrow-up"></i> Upload Konten
       </button>
     </aside>
@@ -347,9 +347,9 @@ body.locked{overflow:hidden;position:fixed;width:100%}
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <div class="bottom-nav-inner">
-    <button class="bnav-btn" onclick="location.href='Beranda.html'"><i class="bi bi-house"></i>Beranda</button>
-    <button class="bnav-btn" onclick="location.href='Forum.html'"><i class="bi bi-chat-dots"></i>Forum</button>
-    <button class="bnav-btn active"><i class="bi bi-journal-richtext"></i>Dokumen</button>
+    <button class="bnav-btn" onclick="location.href='/'"><i class="bi bi-house"></i>Beranda</button>
+    <button class="bnav-btn" onclick="location.href='/forum'"><i class="bi bi-chat-dots"></i>Forum</button>
+    <button class="bnav-btn active" onclick="location.href='/dokumentasi'"><i class="bi bi-journal-richtext"></i>Dokumen</button>
     <button class="bnav-btn" onclick="showToast('Segera hadir!')"><i class="bi bi-person"></i>Profil</button>
   </div>
 </nav>
@@ -541,10 +541,9 @@ let likedPost = false;
 let likedComments = new Set();
 
 function getThreadFromURL(){
-  const params = new URLSearchParams(window.location.search);
-  const id = parseInt(params.get('id'));
-  const slug = params.get('slug');
-  return THREADS.find(t => t.id === id || t.slug === slug) || THREADS[0];
+  const pathparts = window.location.pathname.split('/')
+  const id = parseInt(pathparts[pathparts.length-1])
+  return THREADS.find(t => t.id === id) || THREADS[0];
 }
 
 function renderPage(){
@@ -573,9 +572,9 @@ function renderPage(){
   document.getElementById('mainContent').innerHTML = `
     <!-- BREADCRUMBS -->
     <nav class="breadcrumbs">
-      <a href="Dokumentasi.html">Dokumentasi</a>
+      <a href="/dokumentasi">Dokumentasi</a>
       <span><i class="bi bi-chevron-right" style="font-size:9px"></i></span>
-      <a href="Dokumentasi.html?cat=${t.cat}">${t.catLabel}</a>
+      <a href="/dokumentasi?cat=${t.cat}">${t.catLabel}</a>
       <span><i class="bi bi-chevron-right" style="font-size:9px"></i></span>
       <span class="current">${t.title}</span>
     </nav>

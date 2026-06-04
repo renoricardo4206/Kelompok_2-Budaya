@@ -316,9 +316,9 @@ select.form-input{cursor:pointer}
     <button class="drawer-close" onclick="closeDrawer()"><i class="bi bi-x-lg"></i></button>
   </div>
   <ul class="drawer-links">
-    <li><a href="Beranda.html" onclick="closeDrawer()"><i class="bi bi-house"></i>Beranda</a></li>
-    <li><a href="Forum.html" onclick="closeDrawer()"><i class="bi bi-chat-dots"></i>Forum</a></li>
-    <li><a href="Dokumentasi.html" class="active" onclick="closeDrawer()"><i class="bi bi-journal-richtext"></i>Dokumentasi</a></li>
+    <li><a href="/" onclick="closeDrawer()"><i class="bi bi-house"></i>Beranda</a></li>
+    <li><a href="/forum" onclick="closeDrawer()"><i class="bi bi-chat-dots"></i>Forum</a></li>
+    <li><a href="/dokumentasi" class="active" onclick="closeDrawer()"><i class="bi bi-journal-richtext"></i>Dokumentasi</a></li>
   </ul>
 </div>
 
@@ -436,8 +436,8 @@ select.form-input{cursor:pointer}
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav" id="bottomNav">
   <div class="bottom-nav-inner">
-    <button class="bnav-btn" onclick="location.href='Beranda.html'"><i class="bi bi-house"></i>Beranda</button>
-    <button class="bnav-btn" onclick="location.href='Forum.html'"><i class="bi bi-chat-dots"></i>Forum</button>
+    <button class="bnav-btn" onclick="location.href='/'"><i class="bi bi-house"></i>Beranda</button>
+    <button class="bnav-btn" onclick="location.href='/forum'"><i class="bi bi-chat-dots"></i>Forum</button>
     <button class="bnav-btn active"><i class="bi bi-journal-richtext"></i>Dokumen</button>
     <button class="bnav-btn" onclick="showToast('Segera hadir!')"><i class="bi bi-person"></i>Profil</button>
   </div>
@@ -572,7 +572,7 @@ function renderDocs(q=''){
 
 /* ── OPEN DOC (go to DokumentasiDetail) ── */
 function openDoc(id){
-  window.location.href = 'DokumentasiDetail.html?id=' + id;
+  window.location.href = `/dokumentasi/${id}`;
 }
 
 /* ── UPLOAD MODAL ── */
@@ -720,6 +720,6 @@ if (catParam) {
     </div></div>
 </div>
 <script th:src="@{/js/Shared.js}"></script>
-<script th:src="@{/js/Beranda.js}"></script>
+<script th:src="@{/js/Dokumentasi.js}"></script>
 </body>
 </html>
