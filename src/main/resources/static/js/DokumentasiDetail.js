@@ -152,34 +152,6 @@ Pengrajinnya pun makin sedikit karena butuh keahlian khusus yang membutuhkan wak
   }
 ];
 
-const RELATED = {
-  tari:[
-    {cat:'Sejarah',catColor:'#9e2016',title:'Perbedaan Mendasar Motif Parang Rusak dan Parang Barong',meta:'Oleh Ki Dalang • 12 Balasan'},
-    {cat:'Teknik',catColor:'#795900',title:'Mengapa Proses Malam (Lilin) Sering Bocor pada Kain Sutra?',meta:'Oleh PengrajinMuda • 45 Balasan'},
-    {cat:'Seni Rupa',catColor:'#2a5b3b',title:'Pameran Wastra Nusantara di Museum Nasional Minggu Ini',meta:'Oleh InfoBudaya • 8 Balasan'}
-  ],
-  kuliner:[
-    {cat:'Tradisi',catColor:'#cc8800',title:'Filosofi di Balik Upacara Makan Bersama Suku Jawa',meta:'Oleh BudayaJawa • 20 Balasan'},
-    {cat:'Resep',catColor:'#2a5b3b',title:'Bagaimana Cara Membuat Bumbu Rendang yang Autentik',meta:'Oleh ChefMinang • 34 Balasan'},
-    {cat:'Sejarah',catColor:'#9e2016',title:'Rendang di Mata Dunia: Dari Lokal Jadi Warisan UNESCO',meta:'Oleh InfoKuliner • 15 Balasan'}
-  ],
-  lainnya:[
-    {cat:'Teknik',catColor:'#555',title:'Perbedaan Teknik Ikat dan Songket dalam Tenun Nusantara',meta:'Oleh PengrajinSumba • 18 Balasan'},
-    {cat:'Motif',catColor:'#795900',title:'Makna Simbol Hewan dalam Motif Tenun NTT',meta:'Oleh BudayaNTT • 27 Balasan'},
-    {cat:'Komunitas',catColor:'#2a5b3b',title:'Koperasi Pengrajin Tenun di Sumba: Cara Bergabung',meta:'Oleh InfoKoperasi • 9 Balasan'}
-  ],
-  pakaian:[
-    {cat:'Sejarah',catColor:'#9e2016',title:'Pakaian Adat yang Hampir Punah di Indonesia',meta:'Oleh SejarahBudaya • 22 Balasan'},
-    {cat:'Fashion',catColor:'#795900',title:'Baju Bodo Modern: Kolaborasi Desainer dan Pengrajin Lokal',meta:'Oleh FashionID • 31 Balasan'},
-    {cat:'Filosofi',catColor:'#33489a',title:'Makna Warna dalam Pakaian Adat Bugis-Makassar',meta:'Oleh FilosofiBudaya • 14 Balasan'}
-  ],
-  musik:[
-    {cat:'Alat Musik',catColor:'#444',title:'5 Alat Musik Tradisional NTT yang Hampir Punah',meta:'Oleh BudayaNTT • 33 Balasan'},
-    {cat:'Workshop',catColor:'#2a5b3b',title:'Jadwal Workshop Musik Tradisional Jakarta 2026',meta:'Oleh InfoEvent • 12 Balasan'},
-    {cat:'Sejarah',catColor:'#9e2016',title:'Sejarah Sasando: Dari Pulau Rote ke Panggung Dunia',meta:'Oleh SejarahMusik • 28 Balasan'}
-  ]
-};
-
 let currentThread = null;
 let likedPost = false;
 let likedComments = new Set();
@@ -201,16 +173,6 @@ function renderPage(){
   document.querySelectorAll('.cat-link').forEach(l => l.classList.remove('active'));
   const activeLink = document.querySelector(`.cat-link[href*="cat=${t.cat}"]`);
   if(activeLink) activeLink.classList.add('active');
-
-  // Render related threads for right sidebar
-  const related = RELATED[t.cat] || RELATED.tari;
-  document.getElementById('relatedItems').innerHTML = related.map(r => `
-    <div class="related-item" onclick="showToast('Segera hadir!')">
-      <span class="ri-cat" style="color:${r.catColor}">${r.cat}</span>
-      <p class="ri-title">${r.title}</p>
-      <span class="ri-meta">${r.meta}</span>
-    </div>
-  `).join('');
 
   // Render main content
   document.getElementById('mainContent').innerHTML = `
@@ -410,3 +372,70 @@ function shareThread(){
 
 /* ── INIT ── */
 renderPage();
+/* ── UPLOAD MODAL LOGIC ── */
+const CAT_COLORS_DETAIL = {
+  tari:{c:'#2e7d32',bg:'rgba(46,125,50,0.12)',label:'Tari'},
+  kuliner:{c:'#cc8800',bg:'rgba(245,159,0,0.12)',label:'Kuliner'},
+  pakaian:{c:'#9e2016',bg:'rgba(158,32,22,0.1)',label:'Pakaian Adat'},
+  musik:{c:'#444',bg:'rgba(14,14,14,0.08)',label:'Musik'},
+  bahasa:{c:'#1a56a0',bg:'rgba(26,86,160,0.1)',label:'Bahasa'},
+  seni:{c:'#555',bg:'rgba(85,85,85,0.10)',label:'Seni & Kriya'},
+  lainnya:{c:'#555',bg:'rgba(85,85,85,0.10)',label:'Lainnya'}
+};
+
+function openModal() {
+  document.getElementById('uploadModal').classList.add('open');
+  document.body.classList.add('locked');
+}
+function closeModal() {
+  document.getElementById('uploadModal').classList.remove('open');
+  document.body.classList.remove('locked');
+}
+
+const _um = document.getElementById('uploadModal');
+if (_um) _um.addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+function handleDrag(e, on) {
+  e.preventDefault();
+  document.getElementById('uploadArea').classList.toggle('dragover', on);
+}
+function handleDrop(e) {
+  e.preventDefault();
+  handleDrag(e, false);
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) loadPreview(file);
+}
+function handleFile(input) {
+  if (input.files[0]) loadPreview(input.files[0]);
+}
+function loadPreview(file) {
+  const r = new FileReader();
+  r.onload = e => {
+    document.getElementById('uploadArea').style.display = 'none';
+    document.getElementById('uploadPreview').style.display = 'block';
+    document.getElementById('uploadPreviewImg').src = e.target.result;
+  };
+  r.readAsDataURL(file);
+}
+function removePreview(e) {
+  e.stopPropagation();
+  document.getElementById('uploadArea').style.display = 'block';
+  document.getElementById('uploadPreview').style.display = 'none';
+  document.getElementById('fileInput').value = '';
+}
+function submitUpload() {
+  const judul = document.getElementById('inputJudul').value.trim();
+  const kat   = document.getElementById('inputKategori').value;
+  const desk  = document.getElementById('inputDeskripsi').value.trim();
+  if (!judul) { showToast('Masukkan judul konten'); return; }
+  if (!kat)   { showToast('Pilih kategori'); return; }
+  if (!desk)  { showToast('Masukkan deskripsi'); return; }
+  closeModal();
+  showToast('Konten berhasil diupload! 🎉', 'success');
+  document.getElementById('inputJudul').value = '';
+  document.getElementById('inputKategori').value = '';
+  document.getElementById('inputDeskripsi').value = '';
+  removePreview({ stopPropagation: () => {} });
+}

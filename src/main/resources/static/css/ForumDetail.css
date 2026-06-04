@@ -4,7 +4,7 @@
 .page-wrapper { width: 100%; padding: 36px 56px calc(56px + var(--safe-bottom)); }
 
 /* ── LAYOUT ── */
-.detail-layout { display: grid; grid-template-columns: 260px 1fr 300px; gap: 28px; align-items: start; }
+.detail-layout { display: grid; grid-template-columns: 260px 1fr; gap: 28px; align-items: start; }
 
 /* ── SIDEBAR LEFT ── */
 .sidebar-left {
@@ -106,24 +106,88 @@
 .btn-load-more { width: 100%; border: 1.5px solid #8d706c; background: none; border-radius: 9999px; padding: 10px; font-family: inherit; font-size: 14px; font-weight: 600; color: var(--text-mid); cursor: pointer; margin-top: 20px; transition: background .15s, color .15s; }
 .btn-load-more:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
 
-/* ── SIDEBAR RIGHT ── */
-.sidebar-right { position: sticky; top: 80px; }
-.related-widget { background: var(--primary-light); border: 1px solid var(--border-soft); border-radius: 12px; box-shadow: var(--card-shadow); padding: 20px; }
-.related-title { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 22px; color: var(--text-dark); margin: 0 0 16px; padding-bottom: 14px; border-bottom: 1px solid var(--border-soft); }
-.related-items { display: flex; flex-direction: column; gap: 0; }
-.related-item { padding: 14px 0; border-bottom: 1px solid rgba(225, 191, 185, .15); cursor: pointer; transition: opacity .15s; }
-.related-item:last-child { border-bottom: none; }
-.related-item:hover { opacity: .75; }
-.ri-cat { font-size: 13px; font-weight: 600; margin-bottom: 4px; display: block; }
-.ri-title { font-size: 13px; font-weight: 600; color: var(--text-dark); line-height: 1.45; margin: 0 0 4px; }
-.ri-meta { font-size: 13px; color: var(--text-mid); }
-.btn-lihat-lebih { width: 100%; border: 1.5px solid #8d706c; background: none; border-radius: 9999px; padding: 9px; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--text-mid); cursor: pointer; margin-top: 14px; transition: background .15s, color .15s; }
-.btn-lihat-lebih:hover { background: var(--primary-light); color: var(--primary); }
+/* ── THREAD MODAL — persis sama dengan Dokumentasi.css ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(42, 23, 15, .5); z-index: 400;
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+  opacity: 0; pointer-events: none; transition: opacity .25s var(--ease);
+}
+.modal-overlay.open { opacity: 1; pointer-events: auto; }
+.modal {
+  background: white; border-radius: 16px; width: 100%; max-width: 560px; padding: 32px;
+  box-shadow: 0 20px 60px rgba(44, 24, 16, .2); transform: translateY(16px); transition: transform .28s var(--ease);
+}
+.modal-overlay.open .modal { transform: translateY(0); }
+.modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.modal-head h2 { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: var(--text-dark); margin: 0; }
+.modal-close {
+  width: 36px; height: 36px; border-radius: 9999px; border: none; background: var(--primary-light);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 18px; color: var(--text-mid); transition: background .15s;
+}
+.modal-close:hover { background: rgba(158, 32, 22, .15); }
+.form-group { margin-bottom: 18px; }
+.form-label { display: block; font-size: 14px; font-weight: 600; color: var(--text-dark); margin-bottom: 6px; }
+.form-input {
+  width: 100%; font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--text-dark);
+  background: var(--primary-light); border: 1.5px solid rgba(225, 191, 185, .5);
+  border-radius: 10px; padding: 11px 14px; outline: none; transition: border-color .15s;
+}
+.form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(158, 32, 22, .08); }
+textarea.form-input { resize: vertical; min-height: 100px; }
+.form-input.error { border-color: #c0392b; }
+.upload-area {
+  border: 2px dashed rgba(225, 191, 185, .6); border-radius: 10px; padding: 28px; text-align: center;
+  cursor: pointer; transition: border-color .15s, background .15s; background: var(--primary-light);
+}
+.upload-area:hover, .upload-area.dragover { border-color: var(--primary); background: rgba(158, 32, 22, .04); }
+.upload-area i { font-size: 32px; color: var(--text-mid); display: block; margin-bottom: 8px; }
+.upload-area p { font-size: 14px; font-weight: 600; color: var(--text-mid); margin: 0 0 4px; }
+.upload-area span { font-size: 12px; color: #9b8780; }
+.upload-preview { border-radius: 10px; overflow: hidden; border: 1.5px solid var(--border-soft); position: relative; }
+.upload-preview img { width: 100%; height: 180px; object-fit: cover; display: block; }
+.upload-preview-remove {
+  position: absolute; top: 8px; right: 8px; width: 28px; height: 28px;
+  background: rgba(42, 23, 15, .7); color: #fff; border-radius: 9999px;
+  border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px;
+}
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+.btn-cancel {
+  font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+  color: var(--text-mid); background: var(--primary-light); border: none;
+  padding: 11px 22px; border-radius: 10px; cursor: pointer; transition: background .15s;
+}
+.btn-cancel:hover { background: rgba(225, 191, 185, .4); }
+.btn-submit {
+  font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+  color: #fff; background: var(--primary); border: none;
+  padding: 11px 28px; border-radius: 10px; cursor: pointer; transition: background .15s;
+}
+.btn-submit:hover { background: var(--primary-dark); }
+
+/* ── KATEGORI BUTTONS (khusus thread modal) ── */
+.thread-cat-options {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 6px;
+}
+.cat-option {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+  color: var(--text-mid); background: var(--primary-light);
+  border: 1.5px solid rgba(225, 191, 185, .5); border-radius: 9999px;
+  padding: 7px 14px; cursor: pointer; transition: background .15s, border-color .15s, color .15s;
+}
+.cat-option:hover { background: rgba(158,32,22,.08); border-color: rgba(158,32,22,.25); color: var(--text-dark); }
+.cat-option.selected { background: var(--primary); border-color: var(--primary); color: #fff; }
+.cat-option:active { transform: scale(0.95); }
+
+/* ── ERROR TEXT ── */
+.field-error {
+  display: none; font-size: 12px; color: #c0392b; margin-top: 5px;
+}
 
 /* ── RESPONSIVE ── */
 @media(max-width: 1023px) {
   .detail-layout { grid-template-columns: 200px 1fr; gap: 16px; }
-  .sidebar-right { display: none; }
 }
 @media(max-width: 767px) {
   .detail-layout { grid-template-columns: 1fr; }

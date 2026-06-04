@@ -70,7 +70,7 @@ let currentCat = 'semua', currentSort = 'terbaru';
 function renderFeed() {
   const feed = document.getElementById('threadFeed');
   let data = [...THREADS];
-  
+
   if (currentCat !== 'semua') data = data.filter(t => t.cat === currentCat);
   if (currentSort === 'populer') data.sort((a, b) => b.likes - a.likes);
 
@@ -88,7 +88,7 @@ function renderFeed() {
     const totalReplies = (t.replies || []).length;
     const participants = [t.avatar, ...(t.replies || []).slice(0, 2).map(r => r.avatar)];
     const avatarHtml = participants.map(a => `<img src="${a}" alt="" onerror="this.style.display='none'">`).join('');
-    
+
     return `<a class="thread-card" href="/forum/${t.id}" data-cat="${t.cat}">
       <div class="thread-top">
         <img class="thread-avatar" src="${t.avatar}" alt="${t.username}" onerror="this.src='https://placehold.co/36/ffdbce/9e2016?text=${t.username[0]}'">
@@ -131,7 +131,7 @@ function handleSearch(val) {
   const q = val.trim().toLowerCase();
   document.querySelectorAll('.thread-card').forEach(card => {
     const title = card.querySelector('.thread-title')?.textContent.toLowerCase() || '';
-    const prev = card.querySelector('.thread-excerpt')?.textContent.toLowerCase() || '';
+    const prev  = card.querySelector('.thread-excerpt')?.textContent.toLowerCase() || '';
     card.style.display = (!q || title.includes(q) || prev.includes(q)) ? '' : 'none';
   });
 }
@@ -142,7 +142,156 @@ function shareThread(id) {
   else showToast('Link disalin!', 'success');
 }
 
-// ── INIT ──
+/* ── THREAD MODAL ── */
+const THREAD_CATS = {
+  tari:    { label:'Tari',         color:'#2e7d32', bg:'rgba(46,125,50,0.08)' },
+  bahasa:  { label:'Bahasa',       color:'#1565c0', bg:'rgba(21,101,192,0.08)' },
+  seni:    { label:'Seni',         color:'#6a1b9a', bg:'rgba(106,27,154,0.08)' },
+  musik:   { label:'Musik',        color:'#555',    bg:'rgba(85,85,85,0.08)' },
+  pakaian: { label:'Pakaian Adat', color:'#9e2016', bg:'rgba(158,32,22,0.08)' },
+  kuliner: { label:'Kuliner',      color:'#cc8800', bg:'rgba(204,136,0,0.08)' },
+  lainnya: { label:'Lainnya',      color:'#555',    bg:'rgba(85,85,85,0.08)' },
+};
+
+let selectedThreadCat = null;
+
+function openThreadModal() {
+  document.getElementById('threadModal').classList.add('open');
+  document.body.classList.add('locked');
+}
+
+function closeThreadModal() {
+  document.getElementById('threadModal').classList.remove('open');
+  document.body.classList.remove('locked');
+  resetThreadModal();
+}
+
+function resetThreadModal() {
+  selectedThreadCat = null;
+  document.querySelectorAll('.cat-option').forEach(b => b.classList.remove('selected'));
+  document.getElementById('threadInputJudul').value = '';
+  document.getElementById('threadInputIsi').value = '';
+  document.getElementById('errThreadKategori').style.display = 'none';
+  document.getElementById('errThreadJudul').style.display = 'none';
+  document.getElementById('errThreadIsi').style.display = 'none';
+  threadRemovePreview({ stopPropagation: () => {} });
+  const btn = document.getElementById('btnThreadSubmit');
+  btn.disabled = false;
+  btn.textContent = 'Posting Thread';
+}
+
+function selectThreadCat(btn) {
+  document.querySelectorAll('#threadCatOptions .cat-option').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedThreadCat = btn.dataset.cat;
+  document.getElementById('errThreadKategori').style.display = 'none';
+}
+
+function clearThreadErr(inputId, errId) {
+  document.getElementById(inputId).classList.remove('error');
+  document.getElementById(errId).style.display = 'none';
+}
+
+function threadHandleDrag(e, on) {
+  e.preventDefault();
+  document.getElementById('threadUploadArea').classList.toggle('dragover', on);
+}
+
+function threadHandleDrop(e) {
+  e.preventDefault();
+  threadHandleDrag(e, false);
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) threadLoadPreview(file);
+}
+
+function threadHandleFile(input) {
+  if (input.files[0]) threadLoadPreview(input.files[0]);
+}
+
+function threadLoadPreview(file) {
+  if (file.size > 5 * 1024 * 1024) { showToast('Ukuran gambar maksimal 5 MB'); return; }
+  const r = new FileReader();
+  r.onload = e => {
+    document.getElementById('threadUploadArea').style.display = 'none';
+    document.getElementById('threadUploadPreview').style.display = 'block';
+    document.getElementById('threadPreviewImg').src = e.target.result;
+  };
+  r.readAsDataURL(file);
+}
+
+function threadRemovePreview(e) {
+  e.stopPropagation();
+  document.getElementById('threadUploadArea').style.display = 'block';
+  document.getElementById('threadUploadPreview').style.display = 'none';
+  document.getElementById('threadPreviewImg').src = '';
+  document.getElementById('threadFileInput').value = '';
+}
+
+function validateThreadForm() {
+  let ok = true;
+  if (!selectedThreadCat) {
+    document.getElementById('errThreadKategori').style.display = 'block';
+    ok = false;
+  }
+  const judul = document.getElementById('threadInputJudul').value.trim();
+  if (!judul) {
+    document.getElementById('threadInputJudul').classList.add('error');
+    document.getElementById('errThreadJudul').style.display = 'block';
+    ok = false;
+  }
+  const isi = document.getElementById('threadInputIsi').value.trim();
+  if (!isi) {
+    document.getElementById('threadInputIsi').classList.add('error');
+    document.getElementById('errThreadIsi').style.display = 'block';
+    ok = false;
+  }
+  return ok;
+}
+
+async function submitThread() {
+  if (!validateThreadForm()) return;
+
+  const btn = document.getElementById('btnThreadSubmit');
+  btn.disabled = true;
+  btn.textContent = 'Memposting...';
+
+  const body = {
+    title:   document.getElementById('threadInputJudul').value.trim(),
+    content: document.getElementById('threadInputIsi').value.trim(),
+    forum:   { id: 1 },  // ganti dengan forum id yang sesuai
+    user:    { id: 1 },  // ganti dengan id user yang sedang login
+  };
+
+  try {
+    const res = await fetch('/api/threads', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    if (res.ok) {
+      closeThreadModal();
+      showToast('Thread berhasil diposting! 🎉', 'success');
+      // Reload feed setelah backend siap
+      // renderFeed();
+    } else {
+      showToast('Gagal memposting thread. Coba lagi.', 'error');
+      btn.disabled = false;
+      btn.textContent = 'Posting Thread';
+    }
+  } catch (err) {
+    showToast('Terjadi kesalahan koneksi.', 'error');
+    btn.disabled = false;
+    btn.textContent = 'Posting Thread';
+  }
+}
+
+// Tutup modal jika klik di luar konten
+const _tm = document.getElementById('threadModal'); if (_tm) _tm.addEventListener('click', function(e) {
+  if (e.target === this) closeThreadModal();
+});
+
+/* ── INIT ── */
 const urlParams = new URLSearchParams(window.location.search);
 const catParam = urlParams.get('cat');
 if (catParam) {

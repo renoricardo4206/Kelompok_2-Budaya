@@ -187,34 +187,6 @@ Jadi pertanyaan gw buat komunitas ini: gimana cara yang paling efektif buat meng
   }
 ];
 
-const RELATED = {
-  tari:[
-    {cat:'Sejarah',catColor:'#9e2016',title:'Perbedaan Mendasar Motif Parang Rusak dan Parang Barong',meta:'Oleh Ki Dalang • 12 Balasan'},
-    {cat:'Teknik',catColor:'#795900',title:'Mengapa Proses Malam (Lilin) Sering Bocor pada Kain Sutra?',meta:'Oleh PengrajinMuda • 45 Balasan'},
-    {cat:'Seni Rupa',catColor:'#2a5b3b',title:'Pameran Wastra Nusantara di Museum Nasional Minggu Ini',meta:'Oleh InfoBudaya • 8 Balasan'}
-  ],
-  kuliner:[
-    {cat:'Tradisi',catColor:'#cc8800',title:'Filosofi di Balik Upacara Makan Bersama Suku Jawa',meta:'Oleh BudayaJawa • 20 Balasan'},
-    {cat:'Resep',catColor:'#2a5b3b',title:'Bagaimana Cara Membuat Bumbu Rendang yang Autentik',meta:'Oleh ChefMinang • 34 Balasan'},
-    {cat:'Sejarah',catColor:'#9e2016',title:'Rendang di Mata Dunia: Dari Lokal Jadi Warisan UNESCO',meta:'Oleh InfoKuliner • 15 Balasan'}
-  ],
-  lainnya:[
-    {cat:'Teknik',catColor:'#555',title:'Perbedaan Teknik Ikat dan Songket dalam Tenun Nusantara',meta:'Oleh PengrajinSumba • 18 Balasan'},
-    {cat:'Motif',catColor:'#795900',title:'Makna Simbol Hewan dalam Motif Tenun NTT',meta:'Oleh BudayaNTT • 27 Balasan'},
-    {cat:'Komunitas',catColor:'#2a5b3b',title:'Koperasi Pengrajin Tenun di Sumba: Cara Bergabung',meta:'Oleh InfoKoperasi • 9 Balasan'}
-  ],
-  pakaian:[
-    {cat:'Sejarah',catColor:'#9e2016',title:'Pakaian Adat yang Hampir Punah di Indonesia',meta:'Oleh SejarahBudaya • 22 Balasan'},
-    {cat:'Fashion',catColor:'#795900',title:'Baju Bodo Modern: Kolaborasi Desainer dan Pengrajin Lokal',meta:'Oleh FashionID • 31 Balasan'},
-    {cat:'Filosofi',catColor:'#33489a',title:'Makna Warna dalam Pakaian Adat Bugis-Makassar',meta:'Oleh FilosofiBudaya • 14 Balasan'}
-  ],
-  musik:[
-    {cat:'Alat Musik',catColor:'#444',title:'5 Alat Musik Tradisional NTT yang Hampir Punah',meta:'Oleh BudayaNTT • 33 Balasan'},
-    {cat:'Workshop',catColor:'#2a5b3b',title:'Jadwal Workshop Musik Tradisional Jakarta 2026',meta:'Oleh InfoEvent • 12 Balasan'},
-    {cat:'Sejarah',catColor:'#9e2016',title:'Sejarah Sasando: Dari Pulau Rote ke Panggung Dunia',meta:'Oleh SejarahMusik • 28 Balasan'}
-  ]
-};
-
 let currentThread = null;
 let likedPost = false;
 let likedComments = new Set();
@@ -236,16 +208,6 @@ function renderPage(){
   document.querySelectorAll('.cat-link').forEach(l => l.classList.remove('active'));
   const activeLink = document.querySelector(`.cat-link[href*="cat=${t.cat}"]`);
   if(activeLink) activeLink.classList.add('active');
-
-  // Render related threads for right sidebar
-  const related = RELATED[t.cat] || RELATED.tari;
-  document.getElementById('relatedItems').innerHTML = related.map(r => `
-    <div class="related-item" onclick="showToast('Segera hadir!')">
-      <span class="ri-cat" style="color:${r.catColor}">${r.cat}</span>
-      <p class="ri-title">${r.title}</p>
-      <span class="ri-meta">${r.meta}</span>
-    </div>
-  `).join('');
 
   // Render main content
   document.getElementById('mainContent').innerHTML = `
@@ -442,6 +404,142 @@ function shareThread(){
       .catch(()=>showToast('Link: '+window.location.href));
   }
 }
+
+function openThreadModal() {
+  document.getElementById('threadModal').classList.add('open');
+  document.body.classList.add('locked');
+}
+
+function closeThreadModal() {
+  document.getElementById('threadModal').classList.remove('open');
+  document.body.classList.remove('locked');
+  resetThreadModal();
+}
+
+function resetThreadModal() {
+  selectedThreadCat = null;
+  document.querySelectorAll('.cat-option').forEach(b => b.classList.remove('selected'));
+  document.getElementById('threadInputJudul').value = '';
+  document.getElementById('threadInputIsi').value = '';
+  document.getElementById('errThreadKategori').style.display = 'none';
+  document.getElementById('errThreadJudul').style.display = 'none';
+  document.getElementById('errThreadIsi').style.display = 'none';
+  threadRemovePreview({ stopPropagation: () => {} });
+  const btn = document.getElementById('btnThreadSubmit');
+  btn.disabled = false;
+  btn.textContent = 'Posting Thread';
+}
+
+function selectThreadCat(btn) {
+  document.querySelectorAll('#threadCatOptions .cat-option').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedThreadCat = btn.dataset.cat;
+  document.getElementById('errThreadKategori').style.display = 'none';
+}
+
+function clearThreadErr(inputId, errId) {
+  document.getElementById(inputId).classList.remove('error');
+  document.getElementById(errId).style.display = 'none';
+}
+
+function threadHandleDrag(e, on) {
+  e.preventDefault();
+  document.getElementById('threadUploadArea').classList.toggle('dragover', on);
+}
+
+function threadHandleDrop(e) {
+  e.preventDefault();
+  threadHandleDrag(e, false);
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) threadLoadPreview(file);
+}
+
+function threadHandleFile(input) {
+  if (input.files[0]) threadLoadPreview(input.files[0]);
+}
+
+function threadLoadPreview(file) {
+  if (file.size > 5 * 1024 * 1024) { showToast('Ukuran gambar maksimal 5 MB'); return; }
+  const r = new FileReader();
+  r.onload = e => {
+    document.getElementById('threadUploadArea').style.display = 'none';
+    document.getElementById('threadUploadPreview').style.display = 'block';
+    document.getElementById('threadPreviewImg').src = e.target.result;
+  };
+  r.readAsDataURL(file);
+}
+
+function threadRemovePreview(e) {
+  e.stopPropagation();
+  document.getElementById('threadUploadArea').style.display = 'block';
+  document.getElementById('threadUploadPreview').style.display = 'none';
+  document.getElementById('threadPreviewImg').src = '';
+  document.getElementById('threadFileInput').value = '';
+}
+
+function validateThreadForm() {
+  let ok = true;
+  if (!selectedThreadCat) {
+    document.getElementById('errThreadKategori').style.display = 'block';
+    ok = false;
+  }
+  const judul = document.getElementById('threadInputJudul').value.trim();
+  if (!judul) {
+    document.getElementById('threadInputJudul').classList.add('error');
+    document.getElementById('errThreadJudul').style.display = 'block';
+    ok = false;
+  }
+  const isi = document.getElementById('threadInputIsi').value.trim();
+  if (!isi) {
+    document.getElementById('threadInputIsi').classList.add('error');
+    document.getElementById('errThreadIsi').style.display = 'block';
+    ok = false;
+  }
+  return ok;
+}
+
+async function submitThread() {
+  if (!validateThreadForm()) return;
+
+  const btn = document.getElementById('btnThreadSubmit');
+  btn.disabled = true;
+  btn.textContent = 'Memposting...';
+
+  const body = {
+    title:   document.getElementById('threadInputJudul').value.trim(),
+    content: document.getElementById('threadInputIsi').value.trim(),
+    forum:   { id: 1 },  // ganti dengan forum id yang sesuai
+    user:    { id: 1 },  // ganti dengan id user yang sedang login
+  };
+
+  try {
+    const res = await fetch('/api/threads', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    if (res.ok) {
+      closeThreadModal();
+      showToast('Thread berhasil diposting! 🎉', 'success');
+      // Reload feed setelah backend siap
+      // renderFeed();
+    } else {
+      showToast('Gagal memposting thread. Coba lagi.', 'error');
+      btn.disabled = false;
+      btn.textContent = 'Posting Thread';
+    }
+  } catch (err) {
+    showToast('Terjadi kesalahan koneksi.', 'error');
+    btn.disabled = false;
+    btn.textContent = 'Posting Thread';
+  }
+}
+
+// Tutup modal jika klik di luar konten
+const _tm = document.getElementById('threadModal'); if (_tm) _tm.addEventListener('click', function(e) {
+  if (e.target === this) closeThreadModal();
+});
 
 /* ── INIT ── */
 renderPage();

@@ -12,6 +12,56 @@
 </head>
 <body>
 
+<!-- THREAD MODAL -->
+<div class="modal-overlay" id="threadModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Buat Thread Baru</h2>
+      <button class="modal-close" onclick="closeThreadModal()"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Kategori *</label>
+      <div class="thread-cat-options" id="threadCatOptions">
+        <button class="cat-option" data-cat="tari" onclick="selectThreadCat(this)"><i class="bi bi-person-arms-up"></i> Tari</button>
+        <button class="cat-option" data-cat="bahasa" onclick="selectThreadCat(this)"><i class="bi bi-translate"></i> Bahasa</button>
+        <button class="cat-option" data-cat="seni" onclick="selectThreadCat(this)"><i class="bi bi-palette"></i> Seni & Kriya</button>
+        <button class="cat-option" data-cat="musik" onclick="selectThreadCat(this)"><i class="bi bi-music-note"></i> Musik</button>
+        <button class="cat-option" data-cat="pakaian" onclick="selectThreadCat(this)"><i class="bi bi-stars"></i> Pakaian Adat</button>
+        <button class="cat-option" data-cat="kuliner" onclick="selectThreadCat(this)"><i class="bi bi-egg-fried"></i> Kuliner</button>
+        <button class="cat-option" data-cat="lainnya" onclick="selectThreadCat(this)"><i class="bi bi-three-dots"></i> Lainnya</button>
+      </div>
+      <span class="field-error" id="errThreadKategori">Pilih kategori terlebih dahulu</span>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Judul Thread *</label>
+      <input type="text" class="form-input" id="threadInputJudul" placeholder="Contoh: Batik printing vs batik tulis — beda produk atau beda budaya?" maxlength="150" oninput="clearThreadErr('threadInputJudul','errThreadJudul')">
+      <span class="field-error" id="errThreadJudul">Judul tidak boleh kosong</span>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Isi Thread *</label>
+      <textarea class="form-input" id="threadInputIsi" placeholder="Ceritakan topik atau pertanyaan yang ingin kamu diskusikan..." rows="5" oninput="clearThreadErr('threadInputIsi','errThreadIsi')"></textarea>
+      <span class="field-error" id="errThreadIsi">Isi thread tidak boleh kosong</span>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Gambar <span style="font-weight:400;color:var(--text-mid)">(opsional)</span></label>
+      <div class="upload-area" id="threadUploadArea" onclick="document.getElementById('threadFileInput').click()" ondragover="threadHandleDrag(event,true)" ondragleave="threadHandleDrag(event,false)" ondrop="threadHandleDrop(event)">
+        <i class="bi bi-cloud-arrow-up"></i>
+        <p>Klik atau seret gambar ke sini</p>
+        <span>PNG, JPG, WEBP — maks. 5MB</span>
+      </div>
+      <div class="upload-preview" id="threadUploadPreview" style="display:none">
+        <img id="threadPreviewImg" src="" alt="preview">
+        <button class="upload-preview-remove" onclick="threadRemovePreview(event)"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <input type="file" id="threadFileInput" accept="image/*" style="display:none" onchange="threadHandleFile(this)">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeThreadModal()">Batal</button>
+      <button class="btn-submit" id="btnThreadSubmit" onclick="submitThread()">Posting Thread</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast-container" id="toastContainer"></div>
 
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
@@ -86,7 +136,7 @@
         <button class="cat-link" onclick="filterCat('kuliner',this)" id="cat-kuliner"><i class="bi bi-egg-fried"></i> Kuliner</button>
         <button class="cat-link" onclick="filterCat('lainnya',this)" id="cat-lainnya"><i class="bi bi-three-dots"></i> Lainnya</button>
       </nav>
-      <button class="btn-new-thread" onclick="location.href='/threads/create'"><i class="bi bi-plus-lg"></i> Buat Thread Baru</button>
+      <button class="btn-new-thread" onclick="openThreadModal()"><i class="bi bi-plus-lg"></i> Buat Thread Baru</button>
     </aside>
 
     <main>
@@ -108,7 +158,7 @@
       <div class="footer-brand">Warisan</div>
       <div class="footer-tagline">Melestarikan Budaya, Menghubungkan Bangsa.</div>
       <div class="footer-links" style="margin-bottom: 16px;">
-        <a href="https://wa.me/628XXXXXXXXXX" target="_blank" rel="noopener noreferrer">
+        <a href="https://wa.me/6282261137206" target="_blank" rel="noopener noreferrer">
           <i class="bi bi-whatsapp" style="margin-right: 4px;"></i> Hubungi Kami
         </a>
       </div>
@@ -149,8 +199,6 @@
           <input type="password" placeholder="Min. 8 karakter">
         </div>
         <button class="auth-btn-primary" onclick="showToast('Berhasil masuk!','success'); closeAuthModal();">Masuk</button>
-        <div class="auth-divider"><span>atau</span></div>
-        <button class="auth-btn-google" onclick="showToast('Login Google segera hadir!','success')"><i class="bi bi-google" style="color:#EA4335;"></i> Lanjutkan dengan Google</button>
       </div>
       <div class="auth-form-panel" id="authFormDaftar">
         <div class="auth-heading">

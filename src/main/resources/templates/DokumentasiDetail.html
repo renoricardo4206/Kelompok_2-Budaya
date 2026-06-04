@@ -12,6 +12,52 @@
 </head>
 <body>
 
+<div class="modal-overlay" id="uploadModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Upload Konten</h2>
+      <button class="modal-close" onclick="closeModal()"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Judul Konten *</label>
+      <input type="text" class="form-input" id="inputJudul" placeholder="Contoh: Mengenal Batik Parang dari Yogyakarta">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Kategori *</label>
+      <select class="form-input" id="inputKategori">
+        <option value="">Pilih kategori...</option>
+        <option value="tari">Tari</option>
+        <option value="kuliner">Kuliner</option>
+        <option value="pakaian">Pakaian Adat</option>
+        <option value="musik">Musik</option>
+        <option value="bahasa">Bahasa</option>
+        <option value="seni">Seni & Kriya</option>
+        <option value="lainnya">Lainnya</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Deskripsi Singkat *</label>
+      <textarea class="form-input" id="inputDeskripsi" placeholder="Ceritakan isi konten kamu secara singkat..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Foto / Gambar</label>
+      <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()" ondragover="handleDrag(event,true)" ondragleave="handleDrag(event,false)" ondrop="handleDrop(event)">
+        <i class="bi bi-cloud-arrow-up"></i>
+        <p>Klik atau seret gambar ke sini</p>
+        <span>PNG, JPG, WEBP — maks. 5MB</span>
+      </div>
+      <div class="upload-preview" id="uploadPreview" style="display:none">
+        <img id="uploadPreviewImg" src="" alt="preview">
+        <button class="upload-preview-remove" onclick="removePreview(event)"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFile(this)">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-submit" onclick="submitUpload()">Upload Konten</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast-container" id="toastContainer"></div>
 
@@ -74,7 +120,7 @@
         <a href="/dokumentasi?cat=kuliner" class="cat-link" id="sideCatKuliner"><i class="bi bi-egg-fried"></i>Kuliner</a>
         <a href="/dokumentasi?cat=lainnya" class="cat-link"><i class="bi bi-three-dots"></i>Lainnya</a>
       </nav>
-      <button class="btn-new-thread" onclick="location.href='/dokumentasi/upload'">
+      <button class="btn-new-thread" onclick="openModal()">
         <i class="bi bi-cloud-arrow-up"></i> Upload Konten
       </button>
     </aside>
@@ -84,16 +130,7 @@
       <!-- populated by JS -->
     </main>
 
-    <!-- SIDEBAR RIGHT -->
-    <aside class="sidebar-right">
-      <div class="related-widget">
-        <div class="related-title">Dokumentasi Terkait</div>
-        <div class="related-items" id="relatedItems">
-          <!-- populated by JS -->
-        </div>
-        <button class="btn-lihat-lebih" onclick="showToast('Segera hadir!')">Lihat Lebih Banyak</button>
-      </div>
-    </aside>
+
 
   </div>
 </div>
@@ -105,7 +142,7 @@
       <div class="footer-brand">Warisan</div>
       <div class="footer-tagline">Melestarikan Budaya, Menghubungkan Bangsa.</div>
       <div class="footer-links" style="margin-bottom: 16px;">
-        <a href="https://wa.me/628XXXXXXXXXX" target="_blank" rel="noopener noreferrer">
+        <a href="https://wa.me/6282261137206" target="_blank" rel="noopener noreferrer">
           <i class="bi bi-whatsapp" style="margin-right: 4px;"></i> Hubungi Kami
         </a>
       </div>
@@ -147,11 +184,9 @@
         </div>
         <div class="auth-field">
           <label>Kata Sandi</label>
-          <input type="password" placeholder="••••••••">
+          <input type="password" placeholder="Min. 8 karakter">
         </div>
         <button class="auth-btn-primary" onclick="showToast('Berhasil masuk!','success'); closeAuthModal();">Masuk</button>
-        <div class="auth-divider"><span>atau</span></div>
-        <button class="auth-btn-google" onclick="showToast('Login Google segera hadir!','success')"><i class="bi bi-google" style="color:#EA4335;"></i> Lanjutkan dengan Google</button>
       </div>
 
       <div class="auth-form-panel" id="authFormDaftar">
