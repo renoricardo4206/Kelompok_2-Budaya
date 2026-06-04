@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
@@ -206,9 +206,9 @@ body.locked{overflow:hidden;position:fixed;width:100%}
     <button class="drawer-close" onclick="closeDrawer()"><i class="bi bi-x"></i></button>
   </div>
   <ul class="drawer-nav">
-    <li><a href="Beranda.html"><i class="bi bi-house"></i>Beranda</a></li>
-    <li><a href="Forum.html" class="active"><i class="bi bi-chat-dots"></i>Forum</a></li>
-    <li><a href="Dokumentasi.html"><i class="bi bi-journal-richtext"></i>Dokumentasi</a></li>
+    <li><a href="/"><i class="bi bi-house"></i>Beranda</a></li>
+    <li><a href="/forum" class="active"><i class="bi bi-chat-dots"></i>Forum</a></li>
+    <li><a href="/dokumentasi"><i class="bi bi-journal-richtext"></i>Dokumentasi</a></li>
   </ul>
   <div class="drawer-divider"></div>
   <div class="drawer-auth">
@@ -219,11 +219,11 @@ body.locked{overflow:hidden;position:fixed;width:100%}
 
 <nav class="wastra-nav" id="mainNav">
   <div class="nav-inner">
-    <a href="Beranda.html" class="nav-brand">Warisan</a>
+    <a href="/" class="nav-brand">Warisan</a>
     <ul class="nav-links">
-      <li><a href="Beranda.html">Beranda</a></li>
-      <li><a href="Forum.html" class="active">Forum</a></li>
-      <li><a href="Dokumentasi.html">Dokumentasi</a></li>
+      <li><a href="/">Beranda</a></li>
+      <li><a href="/forum" class="active">Forum</a></li>
+      <li><a href="/dokumentasi">Dokumentasi</a></li>
     </ul>
     <div class="nav-auth">
   <button class="btn-masuk" onclick="openAuthModal('masuk')">Masuk</button>
@@ -256,8 +256,8 @@ body.locked{overflow:hidden;position:fixed;width:100%}
 
 <nav class="bottom-nav">
   <div class="bottom-nav-inner">
-    <button class="bnav-btn" onclick="location.href='Beranda.html'"><i class="bi bi-house"></i>Beranda</button>
-    <button class="bnav-btn active" onclick="location.href='Forum.html'"><i class="bi bi-chat-dots"></i>Forum</button>
+    <button class="bnav-btn" onclick="location.href='/'"><i class="bi bi-house"></i>Beranda</button>
+    <button class="bnav-btn active" onclick="location.href='/forum'"><i class="bi bi-chat-dots"></i>Forum</button>
     <button class="bnav-btn" onclick="showToast('Segera hadir!')"><i class="bi bi-compass"></i>Jelajah</button>
     <button class="bnav-btn" onclick="showToast('Segera hadir!')"><i class="bi bi-person"></i>Profil</button>
   </div>
@@ -336,8 +336,8 @@ let localReplies = [];
 
 // ── INIT ──
 function init(){
-  const params = new URLSearchParams(window.location.search);
-  const id = parseInt(params.get('id'));
+  const pathParts = window.location.pathname.split('/');
+  const id = parseInt(pathParts[pathParts.length - 1]);
   thread = THREADS.find(t => t.id === id);
   localReplies = thread ? [...(thread.replies || [])] : [];
 
@@ -347,7 +347,7 @@ function init(){
         <i class="bi bi-chat-square-x"></i>
         <h2>Thread tidak ditemukan</h2>
         <p>Thread yang kamu cari sudah dihapus atau tidak tersedia.</p>
-        <a href="Forum.html" style="display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:14px;font-weight:600;color:var(--primary);text-decoration:none">
+        <a href="/forum" style="display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:14px;font-weight:600;color:var(--primary);text-decoration:none">
           <i class="bi bi-arrow-left"></i> Kembali ke Forum
         </a>
       </div>`;
@@ -368,25 +368,25 @@ function render(){
         <div class="sidebar-title">Kategori</div>
         <div class="sidebar-subtitle">Filter diskusi</div>
         <nav class="cat-nav">
-          <a class="cat-link" href="Forum.html"><i class="bi bi-compass"></i> Semua</a>
-          <a class="cat-link${thread.cat==='tari'?' active':''}" href="Forum.html?cat=tari"><i class="bi bi-person-arms-up"></i> Tari</a>
-          <a class="cat-link${thread.cat==='bahasa'?' active':''}" href="Forum.html?cat=bahasa"><i class="bi bi-translate"></i> Bahasa</a>
-          <a class="cat-link${thread.cat==='seni'?' active':''}" href="Forum.html?cat=seni"><i class="bi bi-palette"></i> Seni</a>
-          <a class="cat-link${thread.cat==='musik'?' active':''}" href="Forum.html?cat=musik"><i class="bi bi-music-note"></i> Musik</a>
-          <a class="cat-link${thread.cat==='pakaian'?' active':''}" href="Forum.html?cat=pakaian"><i class="bi bi-stars"></i> Pakaian Adat</a>
-          <a class="cat-link${thread.cat==='kuliner'?' active':''}" href="Forum.html?cat=kuliner"><i class="bi bi-egg-fried"></i> Kuliner</a>
-          <a class="cat-link${thread.cat==='lainnya'?' active':''}" href="Forum.html?cat=lainnya"><i class="bi bi-three-dots"></i> Lainnya</a>
+          <a class="cat-link" href="/forum"><i class="bi bi-compass"></i> Semua</a>
+          <a class="cat-link${thread.cat==='tari'?' active':''}" href="/forum?cat=tari"><i class="bi bi-person-arms-up"></i> Tari</a>
+          <a class="cat-link${thread.cat==='bahasa'?' active':''}" href="/forum?cat=bahasa"><i class="bi bi-translate"></i> Bahasa</a>
+          <a class="cat-link${thread.cat==='seni'?' active':''}" href="/forum?cat=seni"><i class="bi bi-palette"></i> Seni</a>
+          <a class="cat-link${thread.cat==='musik'?' active':''}" href="/forum?cat=musik"><i class="bi bi-music-note"></i> Musik</a>
+          <a class="cat-link${thread.cat==='pakaian'?' active':''}" href="/forum?cat=pakaian"><i class="bi bi-stars"></i> Pakaian Adat</a>
+          <a class="cat-link${thread.cat==='kuliner'?' active':''}" href="/forum?cat=kuliner"><i class="bi bi-egg-fried"></i> Kuliner</a>
+          <a class="cat-link${thread.cat==='lainnya'?' active':''}" href="/forum?cat=lainnya"><i class="bi bi-three-dots"></i> Lainnya</a>
         </nav>
-        <button class="btn-new-thread" onclick="location.href='BuatThreadBaru.html'"><i class="bi bi-plus-lg"></i> Buat Thread Baru</button>
+        <button class="btn-new-thread" onclick="location.href='/forum/buat-thread'"><i class="bi bi-plus-lg"></i> Buat Thread Baru</button>
       </aside>
 
       <!-- MAIN -->
       <main>
         <!-- Breadcrumb -->
         <div class="breadcrumbs">
-          <a href="Forum.html">Forum</a>
+          <a href="/forum">Forum</a>
           <span class="sep">/</span>
-          <a href="Forum.html?cat=${thread.cat}">${thread.catLabel}</a>
+          <a href="/forum?cat=${thread.cat}">${thread.catLabel}</a>
           <span class="sep">/</span>
           <span class="current">${thread.title}</span>
         </div>
@@ -416,7 +416,7 @@ function render(){
               <button class="action-share" onclick="shareThread()">
                 <i class="bi bi-link-45deg"></i> Bagikan
               </button>
-              <a href="Forum.html" class="back-btn"><i class="bi bi-arrow-left"></i> Kembali</a>
+              <a href="/forum" class="back-btn"><i class="bi bi-arrow-left"></i> Kembali</a>
             </div>
           </div>
         </div>
@@ -580,6 +580,6 @@ init();
     </div></div>
 </div>
 <script th:src="@{/js/Shared.js}"></script>
-<script th:src="@{/js/Beranda.js}"></script>
+<script th:src="@{/js/ForumDetail.js}"></script>
 </body>
 </html>
