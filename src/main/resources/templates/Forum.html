@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
@@ -20,8 +20,6 @@
 html{scroll-behavior:smooth}
 body{font-family:'DM Sans',sans-serif;background:var(--primary-bg);color:var(--text-dark);margin:0;min-height:100vh;overflow-x:hidden}
 body.locked{overflow:hidden;position:fixed;width:100%}
-
-/* ── NAVBAR ── */
 .wastra-nav{position:sticky;top:0;z-index:200;background:rgba(255,248,246,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border-soft);transition:box-shadow .2s var(--ease)}
 .wastra-nav.scrolled{box-shadow:0 2px 20px rgba(44,24,16,0.09)}
 .nav-inner{max-width:100%;height:72px;padding:0 48px;display:flex;align-items:center;gap:14px;position:relative}
@@ -42,8 +40,6 @@ body.locked{overflow:hidden;position:fixed;width:100%}
 .btn-daftar:hover{background:var(--primary-dark)}
 .btn-hamburger{display:none;width:40px;height:40px;align-items:center;justify-content:center;border:none;background:none;cursor:pointer;border-radius:9999px;color:var(--text-dark);font-size:20px;margin-left:auto;flex-shrink:0;transition:background .15s}
 .btn-hamburger:hover{background:var(--primary-light)}
-
-/* ── MOBILE DRAWER ── */
 .drawer-overlay{position:fixed;inset:0;z-index:300;background:rgba(42,23,15,.4);opacity:0;pointer-events:none;transition:opacity .25s var(--ease);backdrop-filter:blur(2px)}
 .drawer-overlay.open{opacity:1;pointer-events:all}
 .drawer{position:fixed;top:0;right:0;bottom:0;z-index:301;width:min(300px,85vw);background:var(--primary-bg);padding:24px 24px calc(24px + var(--safe-bottom));transform:translateX(105%);transition:transform .28s var(--ease);display:flex;flex-direction:column;overflow-y:auto}
@@ -60,36 +56,18 @@ body.locked{overflow:hidden;position:fixed;width:100%}
 .drawer-auth{display:flex;flex-direction:column;gap:8px;margin-top:8px}
 .drawer-btn-masuk{width:100%;font-family:inherit;font-size:14px;font-weight:600;color:var(--primary);background:var(--primary-light);border:none;padding:12px;border-radius:9999px;cursor:pointer}
 .drawer-btn-daftar{width:100%;font-family:inherit;font-size:14px;font-weight:600;color:#fff;background:var(--primary);border:none;padding:12px;border-radius:9999px;cursor:pointer}
-
-/* ── TOAST ── */
 .toast-container{position:fixed;bottom:calc(24px + var(--safe-bottom));right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;max-width:calc(100vw - 48px)}
 .toast-item{background:var(--text-dark);color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:500;max-width:300px;word-break:break-word;box-shadow:0 4px 20px rgba(0,0,0,.2);opacity:0;transform:translateX(20px);transition:opacity .25s var(--ease),transform .25s var(--ease);pointer-events:auto}
 .toast-item.show{opacity:1;transform:translateX(0)}
 .toast-item.success{background:#2e7d32}
-
-/* ── PAGE WRAPPER ── */
 .page-wrapper{width:100%;padding:36px 56px calc(48px + var(--safe-bottom))}
-
-/* ── FORUM HERO ── */
-.forum-hero{
-  background:linear-gradient(135deg,#ffd8c6 0%,#ffebe0 60%,#ffd5b8 100%);
-  border-radius:16px;padding:36px 40px;margin-bottom:28px;
-  position:relative;overflow:hidden;
-}
-.forum-hero::before{
-  content:'';position:absolute;inset:0;opacity:.06;
-  background-image:radial-gradient(circle at 20% 50%, #9e2016 2px, transparent 2px),radial-gradient(circle at 80% 20%, #9e2016 2px, transparent 2px);
-  background-size:60px 60px,80px 80px;
-}
+.forum-hero{background:linear-gradient(135deg,#ffd8c6 0%,#ffebe0 60%,#ffd5b8 100%);border-radius:16px;padding:36px 40px;margin-bottom:28px;position:relative;overflow:hidden;}
+.forum-hero::before{content:'';position:absolute;inset:0;opacity:.06;background-image:radial-gradient(circle at 20% 50%, #9e2016 2px, transparent 2px),radial-gradient(circle at 80% 20%, #9e2016 2px, transparent 2px);background-size:60px 60px,80px 80px;}
 .forum-hero-content{position:relative;z-index:1}
 .forum-hero-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(158,32,22,.12);color:var(--primary);font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:4px 12px;border-radius:9999px;margin-bottom:12px}
 .forum-hero h1{font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(26px,3vw,38px);color:var(--text-dark);margin:0 0 10px}
 .forum-hero p{font-size:16px;color:var(--text-mid);margin:0;line-height:1.6;max-width:600px}
-
-/* ── LAYOUT ── */
 .forum-layout{display:grid;grid-template-columns:260px 1fr;gap:28px;align-items:start}
-
-/* ── SIDEBAR LEFT ── */
 .sidebar-left{background:white;border:1px solid var(--border-soft);border-radius:14px;box-shadow:var(--card-shadow);padding:24px;position:sticky;top:88px}
 .sidebar-title{font-family:'Playfair Display',serif;font-weight:700;font-size:24px;color:var(--primary);margin:0 0 2px;padding:0 8px}
 .sidebar-subtitle{font-size:14px;font-weight:500;color:var(--text-mid);letter-spacing:.2px;padding:0 8px;margin-bottom:20px}
@@ -102,53 +80,22 @@ body.locked{overflow:hidden;position:fixed;width:100%}
 .btn-new-thread{width:100%;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;color:#fff;background:var(--primary);border:none;padding:12px 18px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,transform .1s}
 .btn-new-thread:hover{background:var(--primary-dark)}
 .btn-new-thread:active{transform:scale(.97)}
-
-/* ── FEED HEADER ── */
 .feed-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
 .feed-label{font-size:16px;font-weight:700;color:var(--text-dark)}
 .feed-sort{display:flex;background:var(--primary-light);border-radius:9999px;padding:3px;gap:3px}
 .sort-btn{font-family:inherit;font-size:13px;font-weight:600;color:var(--text-mid);background:none;border:none;padding:6px 16px;border-radius:9999px;cursor:pointer;transition:background .15s,color .15s}
 .sort-btn.active{background:#fff;color:var(--text-dark);box-shadow:0 1px 4px rgba(44,24,16,.08)}
-
-/* ── THREAD CARDS ── */
-.thread-card{
-  background:#fff;border:1px solid var(--border-card);
-  border-radius:12px;padding:18px 20px;margin-bottom:8px;
-  cursor:pointer;text-decoration:none;display:block;color:inherit;
-  box-shadow:var(--card-shadow);
-  transition:transform .18s var(--ease),box-shadow .18s var(--ease),border-color .15s;
-  animation:fadeUp .25s var(--ease) both;
-}
-@media(hover:hover) and (pointer:fine){
-  .thread-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(44,24,16,.1);border-color:rgba(158,32,22,.15)}
-}
-.thread-card:nth-child(1){animation-delay:0ms}
-.thread-card:nth-child(2){animation-delay:50ms}
-.thread-card:nth-child(3){animation-delay:100ms}
-.thread-card:nth-child(4){animation-delay:150ms}
-.thread-card:nth-child(5){animation-delay:200ms}
-
+.thread-card{background:#fff;border:1px solid var(--border-card);border-radius:12px;padding:18px 20px;margin-bottom:8px;cursor:pointer;text-decoration:none;display:block;color:inherit;box-shadow:var(--card-shadow);transition:transform .18s var(--ease),box-shadow .18s var(--ease),border-color .15s;animation:fadeUp .25s var(--ease) both;}
+@media(hover:hover) and (pointer:fine){.thread-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(44,24,16,.1);border-color:rgba(158,32,22,.15)}}
+.thread-card:nth-child(1){animation-delay:0ms}.thread-card:nth-child(2){animation-delay:50ms}.thread-card:nth-child(3){animation-delay:100ms}.thread-card:nth-child(4){animation-delay:150ms}.thread-card:nth-child(5){animation-delay:200ms}
 .thread-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .thread-avatar{width:36px;height:36px;border-radius:9999px;object-fit:cover;flex-shrink:0;border:1.5px solid rgba(225,191,185,.4)}
 .thread-meta{flex:1;min-width:0}
 .thread-author{font-size:13px;font-weight:600;color:var(--text-dark)}
 .thread-time{font-size:12px;color:var(--text-mid)}
-
-.thread-tag-pill{
-  display:inline-flex;align-items:center;gap:4px;
-  font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
-  padding:3px 10px;border-radius:9999px;
-}
-
-.thread-title{
-  font-family:'Playfair Display',serif;font-size:17px;font-weight:700;
-  color:var(--text-dark);line-height:1.35;margin:0 0 7px;
-}
-.thread-excerpt{
-  font-size:14px;line-height:1.6;color:var(--text-mid);margin:0 0 14px;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
-}
-
+.thread-tag-pill{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:3px 10px;border-radius:9999px;}
+.thread-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--text-dark);line-height:1.35;margin:0 0 7px;}
+.thread-excerpt{font-size:14px;line-height:1.6;color:var(--text-mid);margin:0 0 14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 .thread-foot{display:flex;align-items:center;gap:12px;border-top:1px solid var(--border-soft);padding-top:12px}
 .thread-avatars{display:flex;align-items:center}
 .thread-avatars img{width:22px;height:22px;border-radius:9999px;border:2px solid #fff;object-fit:cover;margin-left:-7px}
@@ -158,24 +105,16 @@ body.locked{overflow:hidden;position:fixed;width:100%}
 .thread-foot-time{font-size:12px;color:var(--text-mid);margin-left:auto}
 .thread-share-btn{width:28px;height:28px;border-radius:6px;background:none;border:none;cursor:pointer;color:var(--text-mid);font-size:14px;display:flex;align-items:center;justify-content:center;transition:background .12s,color .12s;flex-shrink:0}
 .thread-share-btn:hover{background:var(--primary-light);color:var(--primary)}
-
-
-
-/* ── MOBILE ── */
 .mobile-cat-strip{display:none;gap:8px;overflow-x:auto;padding:0 0 4px;margin-bottom:16px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .mobile-cat-strip::-webkit-scrollbar{display:none}
 .mobile-cat-chip{flex-shrink:0;font-family:inherit;font-size:12px;font-weight:600;padding:6px 14px;border-radius:9999px;border:1.5px solid var(--border-soft);background:white;color:var(--text-mid);cursor:pointer;transition:background .15s,color .15s}
 .mobile-cat-chip.active{background:var(--primary);border-color:var(--primary);color:#fff}
-
-/* ── BOTTOM NAV ── */
 .bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(255,248,246,.95);backdrop-filter:blur(12px);border-top:1px solid var(--border-soft);padding:8px 0 calc(8px + var(--safe-bottom))}
 .bottom-nav-inner{display:flex;align-items:center;justify-content:space-around;max-width:480px;margin:0 auto}
 .bnav-btn{display:flex;flex-direction:column;align-items:center;gap:3px;font-family:inherit;font-size:10px;font-weight:600;color:var(--text-mid);background:none;border:none;cursor:pointer;padding:4px 16px;border-radius:12px;transition:color .15s,transform .1s;min-width:52px}
 .bnav-btn i{font-size:20px}
 .bnav-btn.active{color:var(--primary)}
 .bnav-btn:active{transform:scale(.9)}
-
-/* ── FOOTER ── */
 .wastra-footer{background:#ffdbce;border-top:1px solid var(--border-soft);padding:40px 0 calc(40px + var(--safe-bottom))}
 .footer-inner{width:100%;padding:0 56px;display:flex;align-items:flex-start;justify-content:space-between;gap:24px;flex-wrap:wrap}
 .footer-brand{font-family:'Playfair Display',serif;font-weight:700;font-size:24px;color:var(--primary);margin-bottom:4px}
@@ -184,28 +123,11 @@ body.locked{overflow:hidden;position:fixed;width:100%}
 .footer-links{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
 .footer-links a{font-size:13px;font-weight:500;color:var(--text-mid);text-decoration:none;transition:color .15s}
 .footer-links a:hover{color:var(--primary)}
-
-/* ── ANIMATIONS ── */
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important}}
-
-/* ── RESPONSIVE ── */
-@media(max-width:1023px){
-  .nav-links{display:none}
-  .forum-layout{gap:20px}
-}
-@media(max-width:767px){
-  .nav-search{display:none}.nav-auth{display:none}.btn-hamburger{display:flex}
-  .forum-layout{grid-template-columns:1fr}.sidebar-left{display:none}
-  .mobile-cat-strip{display:flex}.bottom-nav{display:block}
-  .page-wrapper{padding:20px 16px calc(80px + var(--safe-bottom))}
-  .wastra-footer{padding-bottom:calc(80px + var(--safe-bottom))}
-  .forum-hero{padding:24px 20px}
-}
-@media(max-width:480px){
-  .forum-hero{padding:20px 16px}
-  .page-wrapper{padding:16px 12px calc(80px + var(--safe-bottom))}
-}
+@media(max-width:1023px){.nav-links{display:none}.forum-layout{gap:20px}}
+@media(max-width:767px){.nav-search{display:none}.nav-auth{display:none}.btn-hamburger{display:flex}.forum-layout{grid-template-columns:1fr}.sidebar-left{display:none}.mobile-cat-strip{display:flex}.bottom-nav{display:block}.page-wrapper{padding:20px 16px calc(80px + var(--safe-bottom))}.wastra-footer{padding-bottom:calc(80px + var(--safe-bottom))}.forum-hero{padding:24px 20px}}
+@media(max-width:480px){.forum-hero{padding:20px 16px}.page-wrapper{padding:16px 12px calc(80px + var(--safe-bottom))}}
 </style>
 </head>
 <body>
@@ -217,24 +139,24 @@ body.locked{overflow:hidden;position:fixed;width:100%}
     <button class="drawer-close" onclick="closeDrawer()"><i class="bi bi-x"></i></button>
   </div>
   <ul class="drawer-nav">
-    <li><a href="Beranda.html"><i class="bi bi-house"></i>Beranda</a></li>
-    <li><a href="Forum.html" class="active"><i class="bi bi-chat-dots"></i>Forum</a></li>
-    <li><a href="Dokumentasi.html"><i class="bi bi-journal-richtext"></i>Dokumentasi</a></li>
+    <li><a href="/"><i class="bi bi-house"></i>Beranda</a></li>
+    <li><a href="/forum" class="active"><i class="bi bi-chat-dots"></i>Forum</a></li>
+    <li><a href="/dokumentasi"><i class="bi bi-journal-richtext"></i>Dokumentasi</a></li>
   </ul>
   <div class="drawer-divider"></div>
   <div class="drawer-auth">
-  <button class="drawer-btn-masuk" onclick="openAuthModal('masuk')">Masuk</button>
-<button class="drawer-btn-daftar" onclick="openAuthModal('daftar')">Daftar Sekarang</button>
-</div>
+    <button class="drawer-btn-masuk" onclick="openAuthModal('masuk')">Masuk</button>
+    <button class="drawer-btn-daftar" onclick="openAuthModal('daftar')">Daftar Sekarang</button>
+  </div>
 </div>
 
 <nav class="wastra-nav" id="mainNav">
   <div class="nav-inner">
-    <a href="Beranda.html" class="nav-brand">Warisan</a>
+    <a href="/" class="nav-brand">Warisan</a>
     <ul class="nav-links">
-      <li><a href="Beranda.html">Beranda</a></li>
-      <li><a href="Forum.html" class="active">Forum</a></li>
-      <li><a href="Dokumentasi.html">Dokumentasi</a></li>
+      <li><a href="/">Beranda</a></li>
+      <li><a href="/forum" class="active">Forum</a></li>
+      <li><a href="/dokumentasi">Dokumentasi</a></li>
     </ul>
     <div style="flex:1"></div>
     <div class="nav-auth">
@@ -280,7 +202,7 @@ body.locked{overflow:hidden;position:fixed;width:100%}
         <button class="cat-link" onclick="filterCat('kuliner',this)" id="cat-kuliner"><i class="bi bi-egg-fried"></i> Kuliner</button>
         <button class="cat-link" onclick="filterCat('lainnya',this)" id="cat-lainnya"><i class="bi bi-three-dots"></i> Lainnya</button>
       </nav>
-      <button class="btn-new-thread" onclick="location.href='BuatThreadBaru.html'"><i class="bi bi-plus-lg"></i> Buat Thread Baru</button>
+      <button class="btn-new-thread" onclick="location.href='/threads/create'"><i class="bi bi-plus-lg"></i> Buat Thread Baru</button>
     </aside>
 
     <main>
@@ -293,8 +215,6 @@ body.locked{overflow:hidden;position:fixed;width:100%}
       </div>
       <div id="threadFeed"></div>
     </main>
-
-
   </div>
 </div>
 
@@ -303,20 +223,19 @@ body.locked{overflow:hidden;position:fixed;width:100%}
     <div>
       <div class="footer-brand">Warisan</div>
       <div class="footer-tagline">Melestarikan Budaya, Menghubungkan Bangsa.</div>
-      
       <div class="footer-links" style="margin-bottom: 16px;">
         <a href="https://wa.me/628XXXXXXXXXX" target="_blank" rel="noopener noreferrer">
           <i class="bi bi-whatsapp" style="margin-right: 4px;"></i> Hubungi Kami
         </a>
       </div>
-      
       <div class="footer-copy">© 2026 Warisan. Seluruh hak cipta dilindungi.</div>
     </div>
   </div>
 </footer>
+
 <nav class="bottom-nav" id="bottomNav">
   <div class="bottom-nav-inner">
-    <button class="bnav-btn" onclick="location.href='Beranda.html'"><i class="bi bi-house"></i>Beranda</button>
+    <button class="bnav-btn" onclick="location.href='/'"><i class="bi bi-house"></i>Beranda</button>
     <button class="bnav-btn active"><i class="bi bi-chat-dots"></i>Forum</button>
     <button class="bnav-btn" onclick="showToast('Segera hadir!')"><i class="bi bi-compass"></i>Jelajah</button>
     <button class="bnav-btn" onclick="showToast('Segera hadir!')"><i class="bi bi-person"></i>Profil</button>
@@ -330,67 +249,60 @@ const THREADS = [
    time:'1 jam yang lalu',timeDate:'3 Jun 2026',timeRaw:'3 Jun 2026, 09:14',
    title:'Bahasa daerah kita bakal punah dalam 50 tahun ke depan — setuju atau tidak?',
    excerpt:'Baru baca laporan UNESCO yang bilang ratusan bahasa daerah di Indonesia masuk kategori terancam punah. Gw jadi mikir, emang kita udah nggak peduli lagi sama bahasa ibu kita sendiri?',
-   fullText:'Baru baca laporan UNESCO yang bilang ratusan bahasa daerah di Indonesia masuk kategori terancam punah. Gw jadi mikir, emang kita udah nggak peduli lagi sama bahasa ibu kita sendiri?\n\nGw orang Jawa tapi jujur aja bahasa Jawa gw payah banget. Ngomong sama nenek aja masih sering minta tolong kakak buat translasi. Dan kayaknya ini relate banget sama banyak orang generasi kita.\n\nPertanyaan gw: ini salah siapa? Salah sistem pendidikan yang terlalu fokus ke Bahasa Indonesia dan Inggris? Atau emang kita sendiri yang males? Atau ini udah takdir evolusi bahasa yang wajar?\n\nMenurut kalian, masih worth it nggak buat belajar dan lestarikan bahasa daerah di era sekarang? Atau energinya mending dialihkan ke bahasa yang lebih "berguna" secara ekonomi?',
    likes:312,comments:4,
    replies:[
-    {avatar:'https://i.pravatar.cc/40?img=20',name:'SariIndrawati',time:'3 Jun 2026, 09:45',text:'Worth it banget! Bahasa daerah bukan cuma alat komunikasi, tapi wadah budaya. Banyak konsep dan filosofi lokal yang literally nggak bisa diterjemahkan ke bahasa lain.',replyTo:null},
-    {avatar:'https://i.pravatar.cc/40?img=33',name:'BramoPratama',time:'3 Jun 2026, 10:02',text:'Salah sistemnya menurut gw. Pelajaran bahasa daerah di sekolah itu cuma formalitas, nggak ada yang beneran serius ngajarinnya.',replyTo:null},
-    {avatar:'https://i.pravatar.cc/40?img=42',name:'NinditaRaras',time:'3 Jun 2026, 10:28',text:'Setuju sama Bramo. Ditambah lagi konten hiburan kita hampir semua pakai Bahasa Indonesia atau Inggris. Anak-anak sekarang lebih familiar sama slang TikTok daripada bahasa neneknya.',replyTo:{name:'BramoPratama',text:'Salah sistemnya menurut gw'}},
-    {avatar:'https://i.pravatar.cc/40?img=55',name:'YogiPangestu',time:'3 Jun 2026, 11:10',text:'Gw rasa ini bukan soal salah-salahan. Ini tanggung jawab kolektif. Mulai dari keluarga dulu — biasakan ngobrol pakai bahasa daerah di rumah.',replyTo:null}
+    {avatar:'https://i.pravatar.cc/40?img=20',name:'SariIndrawati',time:'3 Jun 2026, 09:45',text:'Worth it banget! Bahasa daerah bukan cuma alat komunikasi, tapi wadah budaya.',replyTo:null},
+    {avatar:'https://i.pravatar.cc/40?img=33',name:'BramoPratama',time:'3 Jun 2026, 10:02',text:'Salah sistemnya menurut gw.',replyTo:null},
+    {avatar:'https://i.pravatar.cc/40?img=42',name:'NinditaRaras',time:'3 Jun 2026, 10:28',text:'Setuju sama Bramo.',replyTo:{name:'BramoPratama',text:'Salah sistemnya menurut gw'}},
+    {avatar:'https://i.pravatar.cc/40?img=55',name:'YogiPangestu',time:'3 Jun 2026, 11:10',text:'Ini tanggung jawab kolektif.',replyTo:null}
    ]},
   {id:2,cat:'seni',catLabel:'Seni',catColor:'#6a1b9a',catBg:'rgba(106,27,154,0.08)',
    username:'Clarissa Dewi',avatar:'https://i.pravatar.cc/64?img=47',
    time:'4 jam yang lalu',timeDate:'3 Jun 2026',timeRaw:'3 Jun 2026, 06:30',
    title:'Batik printing vs batik tulis — ini beda produk atau beda budaya?',
-   excerpt:'Kemarin debat sama teman soal ini dan nggak ada yang mau ngalah. Dia bilang batik printing tetap bisa disebut batik karena motifnya sama. Gw nggak setuju. Menurut kalian gimana?',
-   fullText:'Kemarin debat sama teman soal ini dan nggak ada yang mau ngalah. Dia bilang batik printing tetap bisa disebut "batik" karena motifnya sama. Gw nggak setuju.\n\nMenurut gw, batik itu bukan cuma soal motif — tapi soal proses. Proses nglowong, nembok, nyelup, nglorod itu bagian dari jiwanya batik. Kalau itu dilewatin dan diganti mesin cetak, yang tersisa cuma gambarnya doang, bukan budayanya.\n\nTapi di sisi lain, gw juga paham argumen sebaliknya: batik printing bikin motif tradisional lebih terjangkau dan accessible buat semua kalangan. Tanpa batik printing, mungkin generasi muda nggak bakal kenal motif Parang atau Kawung sama sekali.\n\nJadi pertanyaannya: apakah kita harus strict soal definisi "batik"? Atau fleksibilitas itu justru yang bikin budaya bisa bertahan?',
+   excerpt:'Kemarin debat sama teman soal ini dan nggak ada yang mau ngalah.',
    likes:278,comments:3,
    replies:[
-    {avatar:'https://i.pravatar.cc/40?img=14',name:'HafidzNurul',time:'3 Jun 2026, 07:15',text:'Ini pertanyaan yang beneran susah. Tapi gw condong ke camp kamu — kalau proses tradisionalnya hilang, yang kita jual cuma estetika, bukan budaya.',replyTo:null},
-    {avatar:'https://i.pravatar.cc/40?img=28',name:'MirandaKusuma',time:'3 Jun 2026, 08:00',text:'Eh tapi UNESCO sendiri mendefinisikan batik Indonesia berdasarkan motif dan filosofinya, bukan hanya prosesnya. Jadi secara formal, batik printing masih bisa masuk kategori batik.',replyTo:null},
-    {avatar:'https://i.pravatar.cc/40?img=36',name:'HafidzNurul',time:'3 Jun 2026, 08:44',text:'Kalau gitu bedainnya gimana dong waktu beli? Harga doang? Kasian pengrajin batik tulis yang bisa butuh berminggu-minggu buat satu kain.',replyTo:{name:'MirandaKusuma',text:'UNESCO mendefinisikan batik berdasarkan motif'}}
+    {avatar:'https://i.pravatar.cc/40?img=14',name:'HafidzNurul',time:'3 Jun 2026, 07:15',text:'Gw condong ke camp kamu.',replyTo:null},
+    {avatar:'https://i.pravatar.cc/40?img=28',name:'MirandaKusuma',time:'3 Jun 2026, 08:00',text:'UNESCO mendefinisikan batik berdasarkan motif.',replyTo:null},
+    {avatar:'https://i.pravatar.cc/40?img=36',name:'HafidzNurul',time:'3 Jun 2026, 08:44',text:'Kasian pengrajin batik tulis.',replyTo:{name:'MirandaKusuma',text:'UNESCO mendefinisikan batik'}}
    ]},
   {id:3,cat:'musik',catLabel:'Musik',catColor:'#555',catBg:'rgba(85,85,85,0.08)',
    username:'Fadhil Ramadhan',avatar:'https://i.pravatar.cc/64?img=59',
    time:'1 hari yang lalu',timeDate:'2 Jun 2026',timeRaw:'2 Jun 2026, 19:22',
    title:'Kenapa musisi muda Indonesia jarang eksplorasi alat musik tradisional?',
-   excerpt:'Gw nonton konser indie kemarin dan mikir — dari 8 band yang tampil, nggak ada satupun yang pakai alat musik tradisional. Padahal kita punya gamelan, sasando, kolintang, angklung. Ada yang tau kenapa?',
-   fullText:'Gw nonton konser indie kemarin dan mikir — dari 8 band yang tampil, nggak ada satupun yang pakai alat musik tradisional. Padahal kita punya gamelan, sasando, kolintang, angklung, tifa, dan banyak lagi.\n\nGw bukan yang tipe puritan "harus pakai alat tradisional". Tapi gw penasaran kenapa eksplorasi itu jarang banget terjadi di scene musik indie lokal, padahal potensinya luar biasa.\n\nApa karena susah belajarnya? Mahal alatnya? Atau emang nggak ada yang ngajarin dengan cara yang relevan buat anak muda?\n\nSementara itu di luar negeri, banyak banget musisi yang fuse traditional instruments dengan modern sound dan hasilnya keren parah. Kita seharusnya bisa lebih dari itu dengan kekayaan instrumen yang kita punya.\n\nAda yang punya pengalaman belajar alat musik tradisional? Susah nggak aksesnya?',
+   excerpt:'Gw nonton konser indie kemarin dan mikir — dari 8 band yang tampil, nggak ada satupun yang pakai alat musik tradisional.',
    likes:203,comments:3,
    replies:[
-    {avatar:'https://i.pravatar.cc/40?img=62',name:'AldoSantoso',time:'2 Jun 2026, 20:05',text:'Gw belajar gamelan waktu SMA tapi berhenti karena literally nggak ada komunitas yang aktif di kota gw. Itu masalah utamanya — ekosistemnya belum ada.',replyTo:null},
-    {avatar:'https://i.pravatar.cc/40?img=17',name:'RizkiAmelia',time:'2 Jun 2026, 21:30',text:'Coba dengerin Kua Etnika atau Krakatau — mereka udah lama fuse tradisional sama kontemporer. Tapi emang kurang exposure ke anak muda sekarang.',replyTo:null},
-    {avatar:'https://i.pravatar.cc/40?img=38',name:'TommyWijaya',time:'3 Jun 2026, 00:15',text:'Masalahnya juga di persepsi. Alat musik tradisional masih dianggap "kuno" dan nggak cool. Butuh tokoh atau influencer yang bisa reframe itu.',replyTo:{name:'RizkiAmelia',text:'Coba dengerin Kua Etnika atau Krakatau'}}
+    {avatar:'https://i.pravatar.cc/40?img=62',name:'AldoSantoso',time:'2 Jun 2026, 20:05',text:'Gw belajar gamelan waktu SMA tapi berhenti.',replyTo:null},
+    {avatar:'https://i.pravatar.cc/40?img=17',name:'RizkiAmelia',time:'2 Jun 2026, 21:30',text:'Coba dengerin Kua Etnika.',replyTo:null},
+    {avatar:'https://i.pravatar.cc/40?img=38',name:'TommyWijaya',time:'3 Jun 2026, 00:15',text:'Masalahnya di persepsi.',replyTo:{name:'RizkiAmelia',text:'Coba dengerin Kua Etnika'}}
    ]},
   {id:4,cat:'kuliner',catLabel:'Kuliner',catColor:'#cc8800',catBg:'rgba(204,136,0,0.08)',
    username:'Nadhira Putri',avatar:'https://i.pravatar.cc/64?img=25',
    time:'2 hari yang lalu',timeDate:'1 Jun 2026',timeRaw:'1 Jun 2026, 13:45',
    title:'Makanan fusion Indonesia — inovasi yang perlu didukung atau ancaman buat kuliner asli?',
-   excerpt:'Akhir-akhir ini makin banyak restoran yang jual "rendang pasta", "soto ramen", atau "nasi goreng sushi". Gw nggak tau harus excited atau khawatir. Ada yang punya take soal ini?',
-   fullText:'Akhir-akhir ini makin banyak restoran yang jual "rendang pasta", "soto ramen", atau "nasi goreng sushi". Gw nggak tau harus excited atau khawatir.\n\nDi satu sisi, ini bukti bahwa kuliner Indonesia makin percaya diri dan mau bereksperimen. Fusion bisa jadi pintu masuk orang asing buat kenal rasa-rasa Indonesia.\n\nTapi di sisi lain, gw takut identitas kuliner kita jadi blur. Kalau generasi berikutnya lebih kenal "rendang pasta" daripada rendang asli, itu worth it nggak?\n\nGw juga mau tanya soal sudut pandang pengrajin dan pedagang makanan tradisional — mereka diuntungkan atau dirugikan sama tren ini?\n\nMenurut kalian, ada batasnya nggak antara inovasi yang sehat dan komodifikasi yang kebablasan?',
+   excerpt:'Akhir-akhir ini makin banyak restoran yang jual "rendang pasta", "soto ramen", atau "nasi goreng sushi".',
    likes:187,comments:3,
    replies:[
-    {avatar:'https://i.pravatar.cc/40?img=31',name:'GalihPrasetyo',time:'1 Jun 2026, 14:20',text:'Selama yang aslinya juga tetap ada dan dirawat, fusion itu sah-sah aja. Yang bahaya kalau fusion menggantikan, bukan melengkapi.',replyTo:null},
-    {avatar:'https://i.pravatar.cc/40?img=44',name:'FeliksiaAnanda',time:'1 Jun 2026, 15:10',text:'Gw malah optimis. Fusion bisa jadi gateway. Orang yang pertama kali makan rendang pasta bisa jadi penasaran sama rendang aslinya.',replyTo:null},
-    {avatar:'https://i.pravatar.cc/40?img=52',name:'DindaMaharani',time:'1 Jun 2026, 17:55',text:'Masalahnya sering nggak ada edukasi. Orang beli fusion tanpa tau konteks originalnya. Jadi ya otomatis identitasnya hilang perlahan.',replyTo:{name:'FeliksiaAnanda',text:'Fusion bisa jadi gateway'}}
+    {avatar:'https://i.pravatar.cc/40?img=31',name:'GalihPrasetyo',time:'1 Jun 2026, 14:20',text:'Fusion itu sah-sah aja.',replyTo:null},
+    {avatar:'https://i.pravatar.cc/40?img=44',name:'FeliksiaAnanda',time:'1 Jun 2026, 15:10',text:'Gw malah optimis.',replyTo:null},
+    {avatar:'https://i.pravatar.cc/40?img=52',name:'DindaMaharani',time:'1 Jun 2026, 17:55',text:'Masalahnya sering nggak ada edukasi.',replyTo:{name:'FeliksiaAnanda',text:'Fusion bisa jadi gateway'}}
    ]},
   {id:5,cat:'tari',catLabel:'Tari',catColor:'#2e7d32',catBg:'rgba(46,125,50,0.08)',
    username:'Salsa Bening',avatar:'https://i.pravatar.cc/64?img=32',
    time:'3 hari yang lalu',timeDate:'31 Mei 2026',timeRaw:'31 Mei 2026, 10:08',
    title:'Tari tradisional wajib masuk kurikulum sekolah — perlu atau nggak?',
-   excerpt:'Gw guru SD dan lagi debat sama rekan kerja soal ini. Ada yang bilang anak-anak sekarang udah overloaded sama pelajaran, tambah tari malah jadi beban. Tapi ada yang bilang justru ini yang bikin anak kenal budayanya.',
-   fullText:'Gw guru SD dan lagi debat sama rekan kerja soal ini. Ada yang bilang anak-anak sekarang udah overloaded sama pelajaran, tambah tari malah jadi beban. Tapi ada yang bilang justru ini yang bikin anak kenal budayanya.\n\nSekarang di sekolah gw, tari tradisional cuma masuk di ekstrakulikuler — yang artinya opsional dan sering nggak diambil. Hasilnya? Mayoritas murid kelas 6 nggak bisa ngebedain tari Saman sama tari Jaipong.\n\nTapi gw juga paham bahwa memaksakan tari ke semua anak bisa jadi kontraproduktif. Kalau nggak ada passion-nya, jadinya malah hafalan yang dilupain begitu ujian selesai.\n\nJadi pertanyaan gw buat komunitas ini: gimana cara yang paling efektif buat mengenalkan tari tradisional ke generasi muda? Lewat sekolah formal, atau ada pendekatan lain yang lebih berhasil?',
+   excerpt:'Gw guru SD dan lagi debat sama rekan kerja soal ini.',
    likes:156,comments:3,
    replies:[
-    {avatar:'https://i.pravatar.cc/40?img=8',name:'RanggaWibawa',time:'31 Mei 2026, 11:00',text:'Wajib masuk kurikulum tapi jangan dijadikan mata pelajaran yang dinilai dengan angka. Jadikan pengalaman budaya yang menyenangkan.',replyTo:null},
-    {avatar:'https://i.pravatar.cc/40?img=21',name:'LestariHandayani',time:'31 Mei 2026, 12:30',text:'Setuju! Di sekolah tempat gw dulu, ada "Festival Budaya" tahunan yang bikin anak-anak mau belajar tari karena ada panggung-nya, bukan karena takut nilai jelek.',replyTo:{name:'RanggaWibawa',text:'jangan dijadikan mata pelajaran yang dinilai'}},
-    {avatar:'https://i.pravatar.cc/40?img=49',name:'AhmadRifai',time:'31 Mei 2026, 14:15',text:'Yang lebih penting mungkin pelatihnya. Kalau gurunya sendiri nggak antusias, anaknya juga bakal ngerasa itu bukan hal yang penting.',replyTo:null}
+    {avatar:'https://i.pravatar.cc/40?img=8',name:'RanggaWibawa',time:'31 Mei 2026, 11:00',text:'Wajib masuk kurikulum tapi jangan dinilai dengan angka.',replyTo:null},
+    {avatar:'https://i.pravatar.cc/40?img=21',name:'LestariHandayani',time:'31 Mei 2026, 12:30',text:'Setuju!',replyTo:{name:'RanggaWibawa',text:'jangan dijadikan mata pelajaran yang dinilai'}},
+    {avatar:'https://i.pravatar.cc/40?img=49',name:'AhmadRifai',time:'31 Mei 2026, 14:15',text:'Yang lebih penting mungkin pelatihnya.',replyTo:null}
    ]}
 ];
 
-// Export for ForumDetail.html
 window.THREADS_DATA = THREADS;
-
 let currentCat='semua', currentSort='terbaru';
 
 function renderFeed(){
@@ -398,22 +310,19 @@ function renderFeed(){
   let data = [...THREADS];
   if(currentCat !== 'semua') data = data.filter(t => t.cat === currentCat);
   if(currentSort === 'populer') data.sort((a,b) => b.likes - a.likes);
-
   const labelMap = {semua:'Diskusi Terbaru',tari:'Tari',kuliner:'Kuliner',lainnya:'Lainnya',pakaian:'Pakaian Adat',musik:'Musik',bahasa:'Bahasa',seni:'Seni & Kriya'};
   document.getElementById('feedLabel').textContent = currentCat === 'semua'
     ? (currentSort === 'populer' ? 'Diskusi Terpopuler' : 'Diskusi Terbaru')
     : (labelMap[currentCat] || currentCat);
-
   if(data.length === 0){
     feed.innerHTML = '<div style="text-align:center;padding:60px 20px;color:var(--text-mid)"><i class="bi bi-chat-square" style="font-size:40px;opacity:.25;display:block;margin-bottom:12px"></i><p>Belum ada diskusi di kategori ini.</p></div>';
     return;
   }
-
   feed.innerHTML = data.map(t => {
     const totalReplies = (t.replies || []).length;
     const participants = [t.avatar, ...(t.replies || []).slice(0,2).map(r => r.avatar)];
     const avatarHtml = participants.map(a => `<img src="${a}" alt="" onerror="this.style.display='none'">`).join('');
-    return `<a class="thread-card" href="ForumDetail.html?id=${t.id}" data-cat="${t.cat}">
+    return `<a class="thread-card" href="/forum/${t.id}" data-cat="${t.cat}">
       <div class="thread-top">
         <img class="thread-avatar" src="${t.avatar}" alt="${t.username}" onerror="this.src='https://placehold.co/36/ffdbce/9e2016?text=${t.username[0]}'">
         <div class="thread-meta">
@@ -458,8 +367,7 @@ function handleSearch(val){
   });
 }
 function shareThread(id){
-  const t = THREADS.find(x => x.id === id);
-  const url = window.location.origin + window.location.pathname.replace('Forum.html','') + 'ForumDetail.html?id=' + id;
+  const url = window.location.origin + '/forum/' + id;
   if(navigator.clipboard) navigator.clipboard.writeText(url).then(() => showToast('Link disalin!','success'));
   else showToast('Link disalin!','success');
 }
@@ -478,25 +386,23 @@ const nav = document.getElementById('mainNav');
 window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 8), {passive:true});
 const urlParams = new URLSearchParams(window.location.search);
 const catParam = urlParams.get('cat');
-
-if (catParam) {
+if(catParam){
   const mobileBtn = document.querySelector(`.mobile-cat-chip[onclick*="${catParam}"]`);
   filterCat(catParam, mobileBtn);
 } else {
   renderFeed();
 }
 </script>
+
 <div class="auth-overlay" id="authOverlay" onclick="if(event.target===this) closeAuthModal()">
   <div class="auth-modal-card">
     <button class="auth-close" onclick="closeAuthModal()"><i class="bi bi-x-lg"></i></button>
-    
     <div id="authMainSection">
       <div class="auth-tab-toggle" id="authTabToggle" data-active="masuk">
         <div class="auth-tab-indicator" id="authTabIndicator"></div>
         <button class="auth-tab-btn active" id="btnAuthMasuk" onclick="switchAuthTab('masuk')">Masuk</button>
         <button class="auth-tab-btn inactive" id="btnAuthDaftar" onclick="switchAuthTab('daftar')">Daftar</button>
       </div>
-
       <div class="auth-form-panel active" id="authFormMasuk">
         <div class="auth-heading">
           <h2>Selamat Datang Kembali</h2>
@@ -514,7 +420,6 @@ if (catParam) {
         <div class="auth-divider"><span>atau</span></div>
         <button class="auth-btn-google" onclick="showToast('Login Google segera hadir!','success')"><i class="bi bi-google" style="color:#EA4335;"></i> Lanjutkan dengan Google</button>
       </div>
-
       <div class="auth-form-panel" id="authFormDaftar">
         <div class="auth-heading">
           <h2>Buat Akun Baru</h2>
@@ -534,9 +439,11 @@ if (catParam) {
         </div>
         <button class="auth-btn-primary" onclick="showToast('Akun berhasil dibuat! 🎉','success'); closeAuthModal();">Daftar Sekarang</button>
       </div>
-    </div></div>
+    </div>
+  </div>
 </div>
+
 <script th:src="@{/js/Shared.js}"></script>
-<script th:src="@{/js/Beranda.js}"></script>
+<script th:src="@{/js/Forum.js}"></script>
 </body>
 </html>
