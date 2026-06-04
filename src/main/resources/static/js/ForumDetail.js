@@ -2,151 +2,186 @@
 
 const THREADS = [
   {
-    id:1, slug:'tari-kecak-bali',
-    cat:'tari', catLabel:'Tari Tradisional', catColor:'#2e7d32',
-    username:'Maria Damaris', avatarUrl:'https://i.pinimg.com/1200x/b0/0f/fb/b00ffb3a94d32e4741c7273338f667c3.jpg',
-    avatarBg:'#c0392b', avatarInitial:'M',
-    time:'2 jam yang lalu',
-    title:'Tari Kecak Bali',
-    img:'https://i.pinimg.com/1200x/38/ab/0b/38ab0b7acfa7ffe5019c63f9d388f9e0.jpg',
-    fullText:`Mau cerita dikit, kemaren pas liburan ke Bali gw sempetin nonton Tari Kecak di Uluwatu, dan jujur... gw mesmerized parah.
+    id: 1, 
+    cat: 'bahasa', catLabel: 'Bahasa', catColor: '#1565c0',
+    username: 'Revan Athallah', avatarUrl: 'https://i.pravatar.cc/64?img=11',
+    avatarBg: '#1565c0', avatarInitial: 'R',
+    time: '1 jam yang lalu',
+    title: 'Bahasa daerah kita bakal punah dalam 50 tahun ke depan — setuju atau tidak?',
+    img: '',
+    fullText: `Baru baca laporan UNESCO yang bilang ratusan bahasa daerah di Indonesia masuk kategori terancam punah. Gw jadi mikir, emang kita udah nggak peduli lagi sama bahasa ibu kita sendiri?
 
-Selama ini kan gw taunya Bali emang kental banget ama budayanya ya, tapi waktu ngeliat langsung tuh, vibesnya bener-bener beda banget. Pas pertunjukan mulai, gw sempet bingung karena kok sepi, nggak ada suara gamelan atau instrumen musik sama sekali kayak tarian Bali biasanya. Eh tiba-tiba, ada segerombolan orang duduk melingkar terus langsung nyeruin "Cak... cak... cak... cak!" secara ritmis.
+Gw orang Jawa tapi jujur aja bahasa Jawa gw payah banget. Ngomong sama nenek aja masih sering minta tolong kakak buat translasi. Dan kayaknya ini relate banget sama banyak orang generasi kita.
 
-Demi apa, di situ gw langsung merinding beneran. Apa yah, suaranya tuh somehow kayak punya "energi magis"-nya gitu looohh, bukan kayak suara teriakan biasa. Terus tangan mereka yang serempak ke atas bener-bener kek berkesan banget di mata gw. Bener-bener seakan dibawa masuk ke dimensi lain, kayak lagi ngelihat ritual sakral, bukan cuma sekadar tontonan turis doang.
+Pertanyaan gw: ini salah siapa? Salah sistem pendidikan yang terlalu fokus ke Bahasa Indonesia dan Inggris? Atau emang kita sendiri yang males? Atau ini udah takdir evolusi bahasa yang wajar?
 
-Dan karena aku bener-bener sekagum itu, seterpukau itu, gw kepo ya kan ya... pas bubaran gw nggak langsung balik. Gw sempetin ngobrol-ngobrol santai ama warga setempat di sana. Untungnya mereka ramah banget dan mau sharing. Dari situ baru deh gw paham sejarah ama maknanya yang ternyata dalem banget.
-
-Kata mereka, tarian ini sebenernya udah ada dari tahun 1930-an, aslinya dari ritual sakral namanya Sanghyang. Jadi tarian ini emang dipercaya sebagai sarana komunikasi antara manusia ama dunia spiritual. Malah katanya dulu penarinya bisa sampai kesurupan karena emang lagi interaksi ama dewa atau roh leluhur buat minta berkat ama perlindungan. Filosofinya tuh soal penyatuan manusia ama kekuatan supranatural.
-
-Nah, kalau plot pertunjukan yang gw tonton tadi, mereka cerita kalau itu diambil dari kisah Ramayana. Khususnya pas bagian Dewi Sinta diculik ama Rahwana, terus perjuangan Rama yang dibantu ama Hanoman dan pasukan kera buat nyelametin Sinta.
-
-Asli sih, kalo kapan-kapan kalian ke Bali juga dan punya kesempatan buat nonton tari kecak, jangan sampe kelewatan deh. Itu bakalan jadi pengalaman yang berkesan banget.`,
-    likes:124, replies:32,
-    comments:[
-      {id:'c1', avatarUrl:'https://i.pravatar.cc/40?img=5', avatarBg:'', name:'Siti Aminah', time:'1 jam yang lalu', initials:'S', bg:'#427452', textColor:'#c1f8cd',
-       text:'Sama mbaa. dulu pas pertama kali aku liet tari kecak, aku juga mesmerized bangett. soalnya emang kayak unik banget kan. aku kena goosebumps sih., dari keliatannya aja aku tuh uda bisa sense kalo dia nih maknanya dalem banget, dan ternyata emang bener?!?! jadi pengen liet lagi 😭',
-       likes:15,
-       nested:[
-         {id:'r1', initials:'S', bg:'#795900', textColor:'#fff8e1', name:'Setiawan', time:'45 mnt yang lalu',
-          text:'duh pada bilang gini.... lama-lama gw jadi penasaran juga mau nonton tari kecak secara langsung... when yahh....',
-          likes:8}
-       ]
+Menurut kalian, masih worth it nggak buat belajar dan lestarikan bahasa daerah di era sekarang? Atau energinya mending dialihkan ke bahasa yang lebih "berguna" secara ekonomi?`,
+    likes: 312, replies: 4,
+    comments: [
+      {
+        id: 'c1', avatarUrl: 'https://i.pravatar.cc/40?img=20', initials: 'S', bg: '#427452', textColor: '#c1f8cd', name: 'SariIndrawati', time: '1 jam lalu',
+        text: 'Worth it banget! Bahasa daerah bukan cuma alat komunikasi, tapi wadah budaya. Banyak konsep dan filosofi lokal yang literally nggak bisa diterjemahkan ke bahasa lain.',
+        likes: 15, nested: []
       },
-      {id:'c2', avatarUrl:'', initials:'G', bg:'#427452', textColor:'#c1f8cd', name:'Gilang Mulyo', time:'30 mnt yang lalu',
-       text:'loh sedalam itu yah ternyata maknanya?? jujur aku ga ekspek sih... bner-bener tarian-tarian tradisional indonesia tu pada keren-keren yah',
-       likes:3, nested:[]
+      {
+        id: 'c2', avatarUrl: 'https://i.pravatar.cc/40?img=33', initials: 'B', bg: '#c0392b', textColor: '#ffe5e1', name: 'BramoPratama', time: '50 mnt lalu',
+        text: 'Salah sistemnya menurut gw. Pelajaran bahasa daerah di sekolah itu cuma formalitas, nggak ada yang beneran serius ngajarinnya.',
+        likes: 24,
+        nested: [
+          {
+            id: 'r1', initials: 'N', bg: '#795900', textColor: '#fff8e1', name: 'NinditaRaras', time: '20 mnt lalu',
+            text: 'Setuju sama Bramo. Ditambah lagi konten hiburan kita hampir semua pakai Bahasa Indonesia atau Inggris. Anak-anak sekarang lebih familiar sama slang TikTok daripada bahasa neneknya.',
+            likes: 18
+          }
+        ]
       }
     ]
   },
   {
-    id:2, slug:'sepiring-rendang',
-    cat:'kuliner', catLabel:'Kuliner', catColor:'#cc8800',
-    username:'Marcel Tandiawan', avatarUrl:'https://i.pinimg.com/webp/1200x/09/a0/a2/09a0a23164fddfe5027ba6b10dc0315a.webp',
-    avatarBg:'#cc8800', avatarInitial:'M',
-    time:'5 jam yang lalu',
-    title:'Sepiring Rendang',
-    img:'https://i.pinimg.com/736x/3e/bb/15/3ebb15899546fec87c3e9d51abb0a019.jpg',
-    fullText:`Setiap kali membicarakan kuliner Nusantara, Rendang hampir selalu mengambil panggung utama. Dan memang layak!
+    id: 2, 
+    cat: 'seni', catLabel: 'Seni & Kriya', catColor: '#6a1b9a',
+    username: 'Clarissa Dewi', avatarUrl: 'https://i.pravatar.cc/64?img=47',
+    avatarBg: '#6a1b9a', avatarInitial: 'C',
+    time: '4 jam yang lalu',
+    title: 'Batik printing vs batik tulis — ini beda produk atau beda budaya?',
+    img: '',
+    fullText: `Kemarin debat sama teman soal ini dan nggak ada yang mau ngalah. Dia bilang batik printing tetap bisa disebut "batik" karena motifnya sama. Gw nggak setuju.
 
-Kemarin gw sempat ngobrol sama nenek gw yang asli Minang, dan dia cerita kalau resep rendang yang dia punya itu udah turun-temurun dari buyut gw. Proses memasaknya bisa sampai 4-6 jam, dan itu bukan sekadar masak, tapi semacam ritual.
+Menurut gw, batik itu bukan cuma soal motif — tapi soal proses. Proses nglowong, nembok, nyelup, nglorod itu bagian dari jiwanya batik. Kalau itu dilewatin dan diganti mesin cetak, yang tersisa cuma gambarnya doang, bukan budayanya.
 
-Setiap tahap punya makna: dari cara motong daging, urutan bumbu yang dimasukkan, sampai api yang harus dijaga. Ada bumbu yang baru boleh dimasukkan setelah bumbu sebelumnya sudah "menyatu" dengan daging. Nenek bilang, sabar adalah kunci utamanya.
+Tapi di sisi lain, gw juga paham argumen sebaliknya: batik printing bikin motif tradisional lebih terjangkau dan accessible buat semua kalangan. Tanpa batik printing, mungkin generasi muda nggak bakal kenal motif Parang atau Kawung sama sekali.
 
-Rendang bukan cuma makanan — ini adalah wujud kesabaran dan kecintaan orang Minang terhadap budayanya. Filosofi hidup yang tertuang dalam satu piring masakan.`,
-    likes:89, replies:28,
-    comments:[
-      {id:'c1', avatarUrl:'https://i.pravatar.cc/40?img=31', initials:'S', bg:'#2e7d32', textColor:'#e8f5e9', name:'SitiNurhaliza', time:'4 jam lalu',
-       text:'Wah resep turun-temurun tuh beneran beda rasanya! Nenek saya juga punya versi sendiri yang agak beda dari yang biasa dijual.',
-       likes:12, nested:[]
+Jadi pertanyaannya: apakah kita harus strict soal definisi "batik"? Atau fleksibilitas itu justru yang bikin budaya bisa bertahan?`,
+    likes: 278, replies: 3,
+    comments: [
+      {
+        id: 'c3', avatarUrl: 'https://i.pravatar.cc/40?img=14', initials: 'H', bg: '#33489a', textColor: '#e8eaf6', name: 'HafidzNurul', time: '3 jam lalu',
+        text: 'Ini pertanyaan yang beneran susah. Tapi gw condong ke camp kamu — kalau proses tradisionalnya hilang, yang kita jual cuma estetika, bukan budaya.',
+        likes: 45, nested: []
       },
-      {id:'c2', avatarUrl:'https://i.pravatar.cc/40?img=35', initials:'F', bg:'#33489a', textColor:'#e8eaf6', name:'FajarNugroho', time:'3 jam lalu',
-       text:'Betul! Proses slow-cook itulah yang bikin rendang beda dari olahan daging lainnya. Filosofi kesabaran yang tersirat di situ.',
-       likes:8, nested:[]
+      {
+        id: 'c4', avatarUrl: 'https://i.pravatar.cc/40?img=28', initials: 'M', bg: '#2e7d32', textColor: '#e8f5e9', name: 'MirandaKusuma', time: '2 jam lalu',
+        text: 'Eh tapi UNESCO sendiri mendefinisikan batik Indonesia berdasarkan motif dan filosofinya, bukan hanya prosesnya. Jadi secara formal, batik printing masih bisa masuk kategori batik.',
+        likes: 32,
+        nested: [
+          {
+            id: 'r2', initials: 'H', bg: '#33489a', textColor: '#e8eaf6', name: 'HafidzNurul', time: '1 jam lalu',
+            text: 'Kalau gitu bedainnya gimana dong waktu beli? Harga doang? Kasian pengrajin batik tulis yang bisa butuh berminggu-minggu buat satu kain.',
+            likes: 12
+          }
+        ]
       }
     ]
   },
   {
-    id:3, slug:'tas-tenun-sumba',
-    cat:'lainnya', catLabel:'Lainnya', catColor:'#555',
-    username:'Putri Asmita', avatarUrl:'https://i.pravatar.cc/64?img=25',
-    avatarBg:'#33489a', avatarInitial:'P',
-    time:'31 Mei 2026',
-    title:'Tas Tenun Sumba',
-    img:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMzOW4kg1KiRTJVdP1v0g7ftJx1aCQJoAHSA&s',
-    fullText:`Kemaren liat tas tenun sumba yg gua cari selama ini, karena selain size nya lumayan besar buat sehari hari, dalamnya warnanya cerah dan motifnya keren banget.
+    id: 3, 
+    cat: 'musik', catLabel: 'Musik', catColor: '#444',
+    username: 'Fadhil Ramadhan', avatarUrl: 'https://i.pravatar.cc/64?img=59',
+    avatarBg: '#444', avatarInitial: 'F',
+    time: '1 hari yang lalu',
+    title: 'Kenapa musisi muda Indonesia jarang eksplorasi alat musik tradisional?',
+    img: '',
+    fullText: `Gw nonton konser indie kemarin dan mikir — dari 8 band yang tampil, nggak ada satupun yang pakai alat musik tradisional. Padahal kita punya gamelan, sasando, kolintang, tifa, dan banyak lagi.
 
-Tenun Sumba atau yang dikenal sebagai 'Hinggi' ini dibuat dengan teknik ikat yang prosesnya bisa memakan waktu berbulan-bulan. Setiap helai benang diikat dan dicelup dengan pewarna alami sebelum ditenun.
+Gw bukan yang tipe puritan "harus pakai alat tradisional". Tapi gw penasaran kenapa eksplorasi itu jarang banget terjadi di scene musik indie lokal, padahal potensinya luar biasa.
 
-Setiap motif punya cerita dan makna spiritual yang berbeda-beda, mencerminkan status sosial, kepercayaan, dan identitas pemakainya. Motif kuda misalnya, melambangkan kebangsawanan dan kekuatan.
+Apa karena susah belajarnya? Mahal alatnya? Atau emang nggak ada yang ngajarin dengan cara yang relevan buat anak muda?
 
-Kalau kalian mau support pengrajin lokal, membeli tenun langsung dari pengrajin adalah salah satu cara terbaik untuk memastikan warisan ini terus hidup!`,
-    likes:312, replies:56,
-    comments:[
-      {id:'c1', avatarUrl:'https://i.pravatar.cc/40?img=41', initials:'A', bg:'#33489a', textColor:'#e8eaf6', name:'AnggaKusuma', time:'30 Mei lalu',
-       text:'Tenun Sumba emang luar biasa. Ada yang tau toko online terpercaya yang jual langsung dari pengrajinnya?',
-       likes:18, nested:[
-         {id:'r1', initials:'D', bg:'#2e7d32', textColor:'#e8f5e9', name:'DewiSartika', time:'30 Mei lalu',
-          text:'Coba cek di marketplace official Dekranas atau langsung ke koperasi pengrajin di NTB!', likes:7}
-       ]
+Sementara itu di luar negeri, banyak banget musisi yang fuse traditional instruments dengan modern sound dan hasilnya keren parah. Kita seharusnya bisa lebih dari itu dengan kekayaan instrumen yang kita punya.
+
+Ada yang punya pengalaman belajar alat musik tradisional? Susah nggak aksesnya?`,
+    likes: 203, replies: 3,
+    comments: [
+      {
+        id: 'c5', avatarUrl: 'https://i.pravatar.cc/40?img=62', initials: 'A', bg: '#9e2016', textColor: '#ffe5e1', name: 'AldoSantoso', time: '20 jam lalu',
+        text: 'Gw belajar gamelan waktu SMA tapi berhenti karena literally nggak ada komunitas yang aktif di kota gw. Itu masalah utamanya — ekosistemnya belum ada.',
+        likes: 67, nested: []
       },
-      {id:'c2', avatarUrl:'https://i.pravatar.cc/40?img=48', initials:'H', bg:'#795900', textColor:'#fff8e1', name:'HendraLim', time:'1 hari lalu',
-       text:'Motif kuda yang ada di Hinggi itu punya makna kebangsawanan. Saya pernah riset tentang ini untuk tesis saya.',
-       likes:24, nested:[]
+      {
+        id: 'c6', avatarUrl: 'https://i.pravatar.cc/40?img=17', initials: 'R', bg: '#795900', textColor: '#fff8e1', name: 'RizkiAmelia', time: '18 jam lalu',
+        text: 'Coba dengerin Kua Etnika atau Krakatau — mereka udah lama fuse tradisional sama kontemporer. Tapi emang kurang exposure ke anak muda sekarang.',
+        likes: 41,
+        nested: [
+          {
+            id: 'r3', initials: 'T', bg: '#2a5b3b', textColor: '#c1f8cd', name: 'TommyWijaya', time: '15 jam lalu',
+            text: 'Masalahnya juga di persepsi. Alat musik tradisional masih dianggap "kuno" dan nggak cool. Butuh tokoh atau influencer yang bisa reframe itu.',
+            likes: 29
+          }
+        ]
       }
     ]
   },
   {
-    id:4, slug:'baju-bodo',
-    cat:'pakaian', catLabel:'Pakaian Adat', catColor:'#9e2016',
-    username:'Michelle Putri', avatarUrl:'https://i.pravatar.cc/64?img=32',
-    avatarBg:'#9e2016', avatarInitial:'M',
-    time:'14 Mei 2026',
-    title:'Baju Bodo se-underrated itu?',
-    img:'https://i.pinimg.com/1200x/ea/08/21/ea0821d956937290454ff4c554e336d2.jpg',
-    fullText:`Gila ya, gw baru sadar kalau selama ini Baju Bodo tuh se-underrated itu. Padahal aslinya keren banget!
+    id: 4, 
+    cat: 'kuliner', catLabel: 'Kuliner', catColor: '#cc8800',
+    username: 'Nadhira Putri', avatarUrl: 'https://i.pravatar.cc/64?img=25',
+    avatarBg: '#cc8800', avatarInitial: 'N',
+    time: '2 hari yang lalu',
+    title: 'Makanan fusion Indonesia — inovasi yang perlu didukung atau ancaman buat kuliner asli?',
+    img: '',
+    fullText: `Akhir-akhir ini makin banyak restoran yang jual "rendang pasta", "soto ramen", atau "nasi goreng sushi". Gw nggak tau harus excited atau khawatir.
 
-Jadi ceritanya kemaren gw sempet ada acara dan mutusin buat nyoba pakai Baju Bodo yang udah lama nangkring di lemari. Dan jujur, banyak yang nanya 'itu baju apa?' dengan nada takjub.
+Di satu sisi, ini bukti bahwa kuliner Indonesia makin percaya diri dan mau bereksperimen. Fusion bisa jadi pintu masuk orang asing buat kenal rasa-rasa Indonesia.
 
-Baju Bodo adalah salah satu pakaian adat tertua di dunia yang berasal dari Sulawesi Selatan, khususnya suku Bugis-Makassar. Kainnya yang tipis transparan terbuat dari sutera atau kain muslin yang ditenun dengan teknik tradisional.
+Tapi di sisi lain, gw takut identitas kuliner kita jadi blur. Kalau generasi berikutnya lebih kenal "rendang pasta" daripada rendang asli, itu worth it nggak?
 
-Warnanya yang mencolok punya makna mendalam — setiap warna melambangkan status sosial pemakainya. Merah untuk gadis remaja, jingga untuk wanita muda yang belum menikah, hijau untuk bangsawan, ungu untuk janda, dan putih untuk orang yang sudah tua.
+Gw juga mau tanya soal sudut pandang pengrajin dan pedagang makanan tradisional — mereka diuntungkan atau dirugikan sama tren ini?
 
-Udah saatnya kita bangga pakai ini sehari-hari!`,
-    likes:145, replies:58,
-    comments:[
-      {id:'c1', avatarUrl:'https://i.pravatar.cc/40?img=53', initials:'N', bg:'#9e2016', textColor:'#ffe5e1', name:'NurulHidayah', time:'13 Mei lalu',
-       text:'Iya baju Bodo emang cantik banget! Warna merah untuk gadis remaja, putih untuk yang sudah tua. Filosofinya dalam banget.',
-       likes:31, nested:[]
+Menurut kalian, ada batasnya nggak antara inovasi yang sehat dan komodifikasi yang kebablasan?`,
+    likes: 187, replies: 3,
+    comments: [
+      {
+        id: 'c7', avatarUrl: 'https://i.pravatar.cc/40?img=31', initials: 'G', bg: '#1565c0', textColor: '#e8eaf6', name: 'GalihPrasetyo', time: '1 hari lalu',
+        text: 'Selama yang aslinya juga tetap ada dan dirawat, fusion itu sah-sah aja. Yang bahaya kalau fusion menggantikan, bukan melengkapi.',
+        likes: 52, nested: []
+      },
+      {
+        id: 'c8', avatarUrl: 'https://i.pravatar.cc/40?img=44', initials: 'F', bg: '#c0392b', textColor: '#ffe5e1', name: 'FeliksiaAnanda', time: '1 hari lalu',
+        text: 'Gw malah optimis. Fusion bisa jadi gateway. Orang yang pertama kali makan rendang pasta bisa jadi penasaran sama rendang aslinya.',
+        likes: 38,
+        nested: [
+          {
+            id: 'r4', initials: 'D', bg: '#2e7d32', textColor: '#e8f5e9', name: 'DindaMaharani', time: '20 jam lalu',
+            text: 'Masalahnya sering nggak ada edukasi. Orang beli fusion tanpa tau konteks originalnya. Jadi ya otomatis identitasnya hilang perlahan.',
+            likes: 21
+          }
+        ]
       }
     ]
   },
   {
-    id:5, slug:'belajar-sasando',
-    cat:'musik', catLabel:'Musik Tradisional', catColor:'#444',
-    username:'Muhammad Haikal', avatarUrl:'https://i.pravatar.cc/64?img=59',
-    avatarBg:'#333', avatarInitial:'M',
-    time:'5 Mei 2026',
-    title:'Belajar Main Sasando',
-    img:'https://i.pinimg.com/736x/ea/fc/4c/eafc4c00a78e6edbc06f371e35bf69ec.jpg',
-    fullText:`Gila ya, hari ini gw abis ikut workshop yang bener-bener eye-opening banget.
+    id: 5, 
+    cat: 'tari', catLabel: 'Tari', catColor: '#2e7d32',
+    username: 'Salsa Bening', avatarUrl: 'https://i.pravatar.cc/64?img=32',
+    avatarBg: '#2e7d32', avatarInitial: 'S',
+    time: '3 hari yang lalu',
+    title: 'Tari tradisional wajib masuk kurikulum sekolah — perlu atau nggak?',
+    img: '',
+    fullText: `Gw guru SD dan lagi debat sama rekan kerja soal ini. Ada yang bilang anak-anak sekarang udah overloaded sama pelajaran, tambah tari malah jadi beban. Tapi ada yang bilang justru ini yang bikin anak kenal budayanya.
 
-Gw sempetin ikut kelas belajar Sasando, soalnya dipikir-pikir kapan lagi kan bisa belajar alat musik tradisional NTT yang langka ini.
+Sekarang di sekolah gw, tari tradisional cuma masuk di ekstrakulikuler — yang artinya opsional dan sering nggak diambil. Hasilnya? Mayoritas murid kelas 6 nggak bisa ngebedain tari Saman sama tari Jaipong.
 
-Sasando adalah alat musik petik yang terbuat dari daun lontar yang dibentuk seperti kipas dan diberi senar. Cara membuatnya pun unik — daun lontar harus dipilih yang sempurna, lalu dirangkai membentuk resonator alami yang memberikan suara khas.
+Tapi gw juga paham bahwa memaksakan tari ke semua anak bisa jadi kontraproduktif. Kalau nggak ada passion-nya, jadinya malah hafalan yang dilupain begitu ujian selesai.
 
-Bunyi yang dihasilkan tuh unik banget, seperti harpa tapi punya nuansa yang lebih etnik dan organik. Ada sentuhan mistis yang sulit dijelaskan tapi langsung terasa saat pertama kali mendengarnya.
-
-Pengrajinnya pun makin sedikit karena butuh keahlian khusus yang membutuhkan waktu bertahun-tahun untuk dikuasai. Gw harap makin banyak yang mau belajar dan melestarikan alat musik ini.`,
-    likes:415, replies:67,
-    comments:[
-      {id:'c1', avatarUrl:'https://i.pravatar.cc/40?img=62', initials:'Y', bg:'#33489a', textColor:'#e8eaf6', name:'YusufTambelo', time:'4 Mei lalu',
-       text:'Sasando itu keajaiban dari NTT! Saya orang Rote dan bangga banget alat ini mulai dikenal luas.',
-       likes:42, nested:[]
+Jadi pertanyaan gw buat komunitas ini: gimana cara yang paling efektif buat mengenalkan tari tradisional ke generasi muda? Lewat sekolah formal, atau ada pendekatan lain yang lebih berhasil?`,
+    likes: 156, replies: 3,
+    comments: [
+      {
+        id: 'c9', avatarUrl: 'https://i.pravatar.cc/40?img=8', initials: 'R', bg: '#795900', textColor: '#fff8e1', name: 'RanggaWibawa', time: '2 hari lalu',
+        text: 'Wajib masuk kurikulum tapi jangan dijadikan mata pelajaran yang dinilai dengan angka. Jadikan pengalaman budaya yang menyenangkan.',
+        likes: 88,
+        nested: [
+          {
+            id: 'r5', initials: 'L', bg: '#33489a', textColor: '#e8eaf6', name: 'LestariHandayani', time: '2 hari lalu',
+            text: 'Setuju! Di sekolah tempat gw dulu, ada "Festival Budaya" tahunan yang bikin anak-anak mau belajar tari karena ada panggung-nya, bukan karena takut nilai jelek.',
+            likes: 45
+          }
+        ]
       },
-      {id:'c2', avatarUrl:'https://i.pravatar.cc/40?img=65', initials:'C', bg:'#c0392b', textColor:'#ffe5e1', name:'CintaLarasati', time:'4 Mei lalu',
-       text:'Ada info workshopnya lagi ga? Pengen banget ikut belajar!',
-       likes:19, nested:[]
+      {
+        id: 'c10', avatarUrl: 'https://i.pravatar.cc/40?img=49', initials: 'A', bg: '#444', textColor: '#f4f4f4', name: 'AhmadRifai', time: '1 hari lalu',
+        text: 'Yang lebih penting mungkin pelatihnya. Kalau gurunya sendiri nggak antusias, anaknya juga bakal ngerasa itu bukan hal yang penting.',
+        likes: 31, nested: []
       }
     ]
   }
