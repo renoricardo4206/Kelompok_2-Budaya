@@ -1,204 +1,21 @@
 <!DOCTYPE html>
-<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<html lang="id">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-<title id="pageTitle">Forum – Warisan</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<title id="pageTitle">Dokumentasi – Warisan</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400;0,600&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link rel="stylesheet" th:href="@{/css/Global.css}">
 <link rel="stylesheet" th:href="@{/css/Shared.css}">
 <link rel="stylesheet" th:href="@{/css/ForumDetail.css}">
-<style>
-:root{
-  --primary:#9e2016;--primary-dark:#7a1810;--primary-light:#fff1ec;--primary-bg:#fff8f6;
-  --text-dark:#2a170f;--text-mid:#59413d;--border-soft:rgba(225,191,185,0.2);
-  --border-card:rgba(44,24,16,0.06);--card-shadow:0 1px 3px rgba(44,24,16,0.06);
-  --ease:cubic-bezier(0.23,1,0.32,1);
-  --safe-bottom:env(safe-area-inset-bottom,0px);
-}
-*,*::before,*::after{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{scroll-behavior:smooth}
-body{font-family:'DM Sans',sans-serif;background:var(--primary-bg);color:var(--text-dark);margin:0;min-height:100vh;overflow-x:hidden}
-body.locked{overflow:hidden;position:fixed;width:100%}
-
-/* ── NAVBAR ── */
-.wastra-nav{position:sticky;top:0;z-index:200;background:rgba(255,248,246,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border-soft);transition:box-shadow .2s var(--ease)}
-.wastra-nav.scrolled{box-shadow:0 2px 20px rgba(44,24,16,0.09)}
-.nav-inner{max-width:100%;height:72px;padding:0 48px;display:flex;align-items:center;gap:14px;position:relative}
-.nav-brand{font-family:'Playfair Display',serif;font-weight:700;font-size:24px;color:var(--primary);text-decoration:none;flex-shrink:0}
-.nav-links{display:flex;align-items:center;gap:28px;list-style:none;margin:0;padding:0;position:absolute;left:50%;transform:translateX(-50%)}
-.nav-links a{font-size:15px;font-weight:600;color:var(--text-mid);text-decoration:none;padding-bottom:2px;transition:color .15s}
-.nav-links a:hover{color:var(--primary)}
-.nav-links a.active{color:var(--primary);border-bottom:2px solid var(--primary)}
-.nav-auth{display:flex;align-items:center;gap:6px;flex-shrink:0;margin-left:auto}
-.btn-masuk{font-family:inherit;font-size:15px;font-weight:600;color:var(--primary);background:none;border:none;padding:9px 16px;border-radius:9999px;cursor:pointer;transition:background .15s}
-.btn-masuk:hover{background:var(--primary-light)}
-.btn-daftar{font-family:inherit;font-size:15px;font-weight:600;color:#fff;background:var(--primary);border:none;padding:9px 22px;border-radius:9999px;cursor:pointer;transition:background .15s}
-.btn-daftar:hover{background:var(--primary-dark)}
-.btn-hamburger{display:none;width:40px;height:40px;align-items:center;justify-content:center;border:none;background:none;cursor:pointer;border-radius:9999px;color:var(--text-dark);font-size:20px;margin-left:auto;flex-shrink:0}
-.btn-hamburger:hover{background:var(--primary-light)}
-
-/* ── DRAWER ── */
-.drawer-overlay{position:fixed;inset:0;z-index:300;background:rgba(42,23,15,.4);opacity:0;pointer-events:none;transition:opacity .25s var(--ease);backdrop-filter:blur(2px)}
-.drawer-overlay.open{opacity:1;pointer-events:all}
-.drawer{position:fixed;top:0;right:0;bottom:0;z-index:301;width:min(300px,85vw);background:var(--primary-bg);padding:24px 24px calc(24px + var(--safe-bottom));transform:translateX(105%);transition:transform .28s var(--ease);display:flex;flex-direction:column;overflow-y:auto}
-.drawer.open{transform:translateX(0)}
-.drawer-header{display:flex;align-items:center;justify-content:space-between;padding-bottom:20px;border-bottom:1px solid var(--border-soft);margin-bottom:8px}
-.drawer-brand{font-family:'Playfair Display',serif;font-weight:700;font-size:20px;color:var(--primary)}
-.drawer-close{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border:none;background:none;cursor:pointer;border-radius:9999px;color:var(--text-mid);font-size:20px}
-.drawer-close:hover{background:var(--primary-light)}
-.drawer-nav{list-style:none;padding:0;margin:16px 0 20px;display:flex;flex-direction:column;gap:2px}
-.drawer-nav a{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600;color:var(--text-mid);text-decoration:none;padding:12px 10px;border-radius:10px;transition:background .15s,color .15s}
-.drawer-nav a:hover,.drawer-nav a.active{background:var(--primary-light);color:var(--primary)}
-.drawer-nav a i{font-size:18px}
-.drawer-divider{height:1px;background:var(--border-soft);margin:8px 0}
-.drawer-auth{display:flex;flex-direction:column;gap:8px;margin-top:8px}
-.drawer-btn-masuk{width:100%;font-family:inherit;font-size:14px;font-weight:600;color:var(--primary);background:var(--primary-light);border:none;padding:12px;border-radius:9999px;cursor:pointer}
-.drawer-btn-daftar{width:100%;font-family:inherit;font-size:14px;font-weight:600;color:#fff;background:var(--primary);border:none;padding:12px;border-radius:9999px;cursor:pointer}
-
-/* ── TOAST ── */
-.toast-container{position:fixed;bottom:calc(24px + var(--safe-bottom));right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;max-width:calc(100vw - 48px)}
-.toast-item{background:var(--text-dark);color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:500;max-width:300px;word-break:break-word;box-shadow:0 4px 20px rgba(0,0,0,.2);opacity:0;transform:translateX(20px);transition:opacity .25s var(--ease),transform .25s var(--ease);pointer-events:auto}
-.toast-item.show{opacity:1;transform:translateX(0)}
-.toast-item.success{background:#2e7d32}
-.toast-item.error{background:#c0392b}
-
-/* ── PAGE ── */
-.page-wrapper{width:100%;padding:36px 56px calc(56px + var(--safe-bottom))}
-
-/* ── LAYOUT ── */
-.detail-layout{display:grid;grid-template-columns:260px 1fr;gap:28px;align-items:start}
-
-/* ── SIDEBAR LEFT ── */
-.sidebar-left{background:white;border:1px solid var(--border-soft);border-radius:14px;box-shadow:var(--card-shadow);padding:24px;position:sticky;top:88px}
-.sidebar-title{font-family:'Playfair Display',serif;font-weight:700;font-size:24px;color:var(--primary);margin:0 0 2px;padding:0 8px}
-.sidebar-subtitle{font-size:14px;font-weight:500;color:var(--text-mid);letter-spacing:.2px;padding:0 8px;margin-bottom:20px}
-.cat-nav{display:flex;flex-direction:column;gap:3px;margin-bottom:20px}
-.cat-link{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;font-size:15px;font-weight:500;color:var(--text-mid);text-decoration:none;cursor:pointer;border:none;background:none;width:100%;text-align:left;transition:background .15s,color .15s}
-.cat-link:hover{background:rgba(158,32,22,.06);color:var(--text-dark)}
-.cat-link.active{background:#ffc641;color:#59413d;font-weight:600}
-.cat-link.active i{color:#59413d}
-.cat-link i{font-size:19px;width:24px;text-align:center;flex-shrink:0}
-.btn-new-thread{width:100%;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;color:#fff;background:var(--primary);border:none;padding:12px 18px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,transform .1s}
-.btn-new-thread:hover{background:var(--primary-dark)}
-.btn-new-thread:active{transform:scale(.97)}
-
-/* ── MAIN CONTENT ── */
-.breadcrumbs{display:flex;align-items:center;gap:6px;margin-bottom:20px;flex-wrap:wrap}
-.breadcrumbs a{font-size:13px;font-weight:500;color:var(--text-mid);text-decoration:none;transition:color .15s}
-.breadcrumbs a:hover{color:var(--primary)}
-.breadcrumbs .sep{font-size:13px;color:var(--text-mid);opacity:.4}
-.breadcrumbs .current{font-size:13px;font-weight:600;color:var(--text-dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px}
-
-/* ── OP CARD ── */
-.op-card{background:#fff;border:1px solid var(--border-card);border-radius:16px;box-shadow:var(--card-shadow);overflow:hidden;margin-bottom:16px;animation:fadeUp .28s var(--ease) both}
-.op-header{padding:24px 28px 20px;border-bottom:1px solid var(--border-soft)}
-.op-author-row{display:flex;align-items:center;gap:12px;margin-bottom:16px}
-.op-avatar{width:48px;height:48px;border-radius:9999px;object-fit:cover;border:2px solid rgba(225,191,185,.4);flex-shrink:0}
-.op-author-info{}
-.op-author-name{font-size:15px;font-weight:700;color:var(--text-dark)}
-.op-author-time{font-size:13px;color:var(--text-mid)}
-.op-tag-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}
-.op-tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:3px 12px;border-radius:9999px}
-.op-title{font-family:'Playfair Display',serif;font-size:clamp(22px,3vw,30px);font-weight:700;color:var(--text-dark);line-height:1.3;margin:0}
-
-.op-body{padding:24px 28px}
-.op-text{font-size:16px;line-height:1.75;color:var(--text-mid);margin:0 0 24px;white-space:pre-line}
-
-.op-actions{display:flex;align-items:center;gap:10px;padding-top:16px;border-top:1px solid var(--border-soft);flex-wrap:wrap}
-.action-pill{display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:13px;font-weight:600;color:var(--text-mid);background:var(--primary-light);border:1.5px solid rgba(225,191,185,.4);border-radius:9999px;padding:7px 16px;cursor:pointer;transition:background .15s,color .15s,border-color .15s;user-select:none}
-.action-pill:hover{background:rgba(158,32,22,.08);border-color:rgba(158,32,22,.2);color:var(--text-dark)}
-.action-pill:active{transform:scale(.96)}
-.action-pill.liked{color:var(--primary);border-color:rgba(158,32,22,.3);background:rgba(158,32,22,.06)}
-.action-pill.liked i{color:var(--primary)}
-.action-pill i{font-size:14px}
-.action-share{display:inline-flex;align-items:center;gap:5px;font-family:inherit;font-size:13px;font-weight:500;color:var(--text-mid);background:none;border:none;cursor:pointer;padding:7px 8px;border-radius:8px;transition:color .15s,background .15s}
-.action-share:hover{color:var(--text-dark);background:var(--primary-light)}
-.back-btn{display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:13px;font-weight:600;color:var(--text-mid);background:none;border:none;cursor:pointer;padding:7px 4px;margin-left:auto;transition:color .15s}
-.back-btn:hover{color:var(--primary)}
-
-/* ── REPLIES SECTION ── */
-.replies-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.replies-label{font-size:14px;font-weight:700;color:var(--text-dark)}
-.replies-count{font-size:13px;font-weight:600;color:var(--primary);background:var(--primary-light);padding:2px 10px;border-radius:9999px}
-.replies-line{flex:1;height:1px;background:var(--border-soft)}
-
-/* ── REPLY CARD ── */
-.reply-card{background:#fff;border:1px solid var(--border-card);border-radius:12px;padding:18px 20px;margin-bottom:8px;box-shadow:var(--card-shadow);animation:fadeUp .22s var(--ease) both}
-.reply-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.reply-avatar{width:36px;height:36px;border-radius:9999px;object-fit:cover;border:1.5px solid rgba(225,191,185,.3);flex-shrink:0}
-.reply-author-name{font-size:14px;font-weight:700;color:var(--text-dark)}
-.reply-author-time{font-size:12px;color:var(--text-mid)}
-.reply-quote{background:var(--primary-light);border-left:3px solid rgba(158,32,22,.3);border-radius:0 8px 8px 0;padding:8px 14px;margin-bottom:10px;font-size:13px;color:var(--text-mid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.reply-quote strong{color:var(--text-dark)}
-.reply-text{font-size:14px;line-height:1.65;color:var(--text-mid);margin:0}
-
-/* ── REPLY INPUT BOX ── */
-.reply-input-section{background:#fff;border:1px solid var(--border-card);border-radius:14px;padding:20px 24px;box-shadow:var(--card-shadow);margin-top:8px;animation:fadeUp .3s var(--ease) .1s both}
-.reply-input-title{font-size:14px;font-weight:700;color:var(--text-dark);margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.reply-input-title i{color:var(--primary);font-size:15px}
-.reply-textarea{width:100%;background:var(--primary-light);border:1.5px solid rgba(225,191,185,.5);border-radius:12px;font-family:inherit;font-size:14px;color:var(--text-dark);padding:14px 16px;outline:none;resize:none;min-height:80px;transition:border-color .15s,box-shadow .15s;line-height:1.6}
-.reply-textarea::placeholder{color:#9b8780}
-.reply-textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(158,32,22,.08)}
-.reply-input-foot{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-top:10px}
-.btn-cancel-reply{font-family:inherit;font-size:13px;font-weight:600;color:var(--text-mid);background:none;border:none;padding:9px 16px;border-radius:9999px;cursor:pointer;transition:background .15s}
-.btn-cancel-reply:hover{background:var(--primary-light)}
-.btn-submit-reply{font-family:inherit;font-size:13px;font-weight:600;color:#fff;background:var(--primary);border:none;padding:9px 22px;border-radius:9999px;cursor:pointer;display:flex;align-items:center;gap:7px;transition:background .15s,transform .1s;box-shadow:0 2px 8px rgba(158,32,22,.25)}
-.btn-submit-reply:hover{background:var(--primary-dark)}
-.btn-submit-reply:active{transform:scale(.96)}
-
-
-
-
-/* ── BOTTOM NAV ── */
-.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(255,248,246,.95);backdrop-filter:blur(12px);border-top:1px solid var(--border-soft);padding:8px 0 calc(8px + var(--safe-bottom))}
-.bottom-nav-inner{display:flex;align-items:center;justify-content:space-around;max-width:480px;margin:0 auto}
-.bnav-btn{display:flex;flex-direction:column;align-items:center;gap:3px;font-family:inherit;font-size:10px;font-weight:600;color:var(--text-mid);background:none;border:none;cursor:pointer;padding:4px 16px;border-radius:12px;transition:color .15s,transform .1s;min-width:52px}
-.bnav-btn i{font-size:20px}
-.bnav-btn.active{color:var(--primary)}
-.bnav-btn:active{transform:scale(.9)}
-
-/* ── FOOTER ── */
-.wastra-footer{background:#ffdbce;border-top:1px solid var(--border-soft);padding:40px 0 calc(40px + var(--safe-bottom))}
-.footer-inner{width:100%;padding:0 56px;display:flex;align-items:flex-start;justify-content:space-between;gap:24px;flex-wrap:wrap}
-.footer-brand{font-family:'Playfair Display',serif;font-weight:700;font-size:24px;color:var(--primary);margin-bottom:4px}
-.footer-tagline{font-size:16px;color:var(--text-mid);margin-bottom:12px}
-.footer-copy{font-size:13px;font-weight:500;color:var(--text-mid);opacity:.65}
-.footer-links{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
-.footer-links a{font-size:13px;font-weight:500;color:var(--text-mid);text-decoration:none;transition:color .15s}
-.footer-links a:hover{color:var(--primary)}
-
-/* ── NOT FOUND ── */
-.not-found{text-align:center;padding:80px 20px;display:flex;flex-direction:column;align-items:center;gap:16px}
-.not-found i{font-size:56px;color:rgba(158,32,22,.2)}
-.not-found h2{font-family:'Playfair Display',serif;font-size:24px;color:var(--text-dark);margin:0}
-.not-found p{font-size:15px;color:var(--text-mid);margin:0}
-
-@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important}}
-
-@media(max-width:1023px){
-  .nav-links{display:none}
-  .detail-layout{grid-template-columns:220px 1fr;gap:20px}
-}
-@media(max-width:767px){
-  .nav-auth{display:none}.btn-hamburger{display:flex}
-  .detail-layout{grid-template-columns:1fr}.sidebar-left{display:none}
-  .bottom-nav{display:block}
-  .page-wrapper{padding:20px 16px calc(80px + var(--safe-bottom))}
-  .wastra-footer{padding-bottom:calc(80px + var(--safe-bottom))}
-  .op-header{padding:20px 20px 16px}
-  .op-body{padding:20px}
-}
-@media(max-width:480px){
-  .page-wrapper{padding:14px 12px calc(80px + var(--safe-bottom))}
-  .op-title{font-size:20px}
-}
-</style>
 </head>
 <body>
 
+<!-- TOAST -->
 <div class="toast-container" id="toastContainer"></div>
+
+<!-- DRAWER -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
 <div class="drawer" id="mobileDrawer">
   <div class="drawer-header">
@@ -207,36 +24,82 @@ body.locked{overflow:hidden;position:fixed;width:100%}
   </div>
   <ul class="drawer-nav">
     <li><a href="/"><i class="bi bi-house"></i>Beranda</a></li>
-    <li><a href="/forum" class="active"><i class="bi bi-chat-dots"></i>Forum</a></li>
-    <li><a href="/dokumentasi"><i class="bi bi-journal-richtext"></i>Dokumentasi</a></li>
+    <li><a href="/forum"><i class="bi bi-chat-dots"></i>Forum</a></li>
+    <li><a href="/dokumentasi" class="active" onclick="closeDrawer()"><i class="bi bi-journal-richtext"></i>Dokumentasi</a></li>
   </ul>
   <div class="drawer-divider"></div>
   <div class="drawer-auth">
-  <button class="drawer-btn-masuk" onclick="openAuthModal('masuk')">Masuk</button>
-<button class="drawer-btn-daftar" onclick="openAuthModal('daftar')">Daftar Sekarang</button>
-</div>
+    <button class="drawer-btn-masuk" onclick="openAuthModal('masuk')">Masuk</button>
+    <button class="drawer-btn-daftar" onclick="openAuthModal('daftar')">Daftar Sekarang</button>
+  </div>
 </div>
 
+<!-- NAVBAR -->
 <nav class="wastra-nav" id="mainNav">
   <div class="nav-inner">
     <a href="/" class="nav-brand">Warisan</a>
     <ul class="nav-links">
       <li><a href="/">Beranda</a></li>
-      <li><a href="/forum" class="active">Forum</a></li>
-      <li><a href="/dokumentasi">Dokumentasi</a></li>
+      <li><a href="/forum">Forum</a></li>
+      <li><a href="/dokumentasi" class="active">Dokumentasi</a></li>
     </ul>
+    <div style="flex:1"></div>
     <div class="nav-auth">
-  <button class="btn-masuk" onclick="openAuthModal('masuk')">Masuk</button>
-<button class="btn-daftar" onclick="openAuthModal('daftar')">Daftar</button>
-</div>
+      <div class="nav-search" style="margin-right:6px">
+        <i class="bi bi-search si"></i>
+        <input type="search" placeholder="Cari budaya, tarian, atau kuliner...">
+      </div>
+      <button class="btn-masuk" onclick="openAuthModal('masuk')">Masuk</button>
+      <button class="btn-daftar" onclick="openAuthModal('daftar')">Daftar</button>
+    </div>
     <button class="btn-hamburger" onclick="openDrawer()"><i class="bi bi-list"></i></button>
   </div>
 </nav>
 
-<div class="page-wrapper" id="pageContent">
-  <!-- Rendered by JS -->
+<!-- MAIN -->
+<div class="page-wrapper">
+  <div class="detail-layout">
+
+    <!-- SIDEBAR LEFT -->
+    <aside class="sidebar-left">
+      <div class="sidebar-title">Kategori Budaya</div>
+      <div class="sidebar-subtitle">Filter dokumentasi</div>
+      <nav class="cat-nav" id="sidebarCatNav">
+        <a href="/dokumentasi" class="cat-link"><i class="bi bi-compass"></i>Semua Dokumentasi</a>
+        <a href="/dokumentasi?cat=tari" class="cat-link" id="sideCatTari"><i class="bi bi-person-arms-up"></i>Tari</a>
+        <a href="/dokumentasi?cat=bahasa" class="cat-link"><i class="bi bi-translate"></i>Bahasa</a>
+        <a href="/dokumentasi?cat=seni" class="cat-link"><i class="bi bi-palette"></i>Seni &amp; Kriya</a>
+        <a href="/dokumentasi?cat=musik" class="cat-link" id="sideCatMusik"><i class="bi bi-music-note"></i>Musik</a>
+        <a href="/dokumentasi?cat=pakaian" class="cat-link" id="sideCatPakaian"><i class="bi bi-stars"></i>Pakaian Adat</a>
+        <a href="/dokumentasi?cat=kuliner" class="cat-link" id="sideCatKuliner"><i class="bi bi-egg-fried"></i>Kuliner</a>
+        
+        <a href="/dokumentasi?cat=lainnya" class="cat-link"><i class="bi bi-three-dots"></i>Lainnya</a>
+      </nav>
+      <button class="btn-new-thread" onclick="location.href='/dokumentasi/upload'">
+        <i class="bi bi-cloud-arrow-up"></i> Upload Konten
+      </button>
+    </aside>
+
+    <!-- CENTER COLUMN -->
+    <main id="mainContent">
+      <!-- populated by JS -->
+    </main>
+
+    <!-- SIDEBAR RIGHT -->
+    <aside class="sidebar-right">
+      <div class="related-widget">
+        <div class="related-title">Dokumentasi Terkait</div>
+        <div class="related-items" id="relatedItems">
+          <!-- populated by JS -->
+        </div>
+        <button class="btn-lihat-lebih" onclick="showToast('Segera hadir!')">Lihat Lebih Banyak</button>
+      </div>
+    </aside>
+
+  </div>
 </div>
 
+<!-- FOOTER -->
 <footer class="wastra-footer">
   <div class="footer-inner">
     <div>
@@ -254,281 +117,17 @@ body.locked{overflow:hidden;position:fixed;width:100%}
   </div>
 </footer>
 
+<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <div class="bottom-nav-inner">
     <button class="bnav-btn" onclick="location.href='/'"><i class="bi bi-house"></i>Beranda</button>
-    <button class="bnav-btn active" onclick="location.href='/forum'"><i class="bi bi-chat-dots"></i>Forum</button>
-    <button class="bnav-btn" onclick="showToast('Segera hadir!')"><i class="bi bi-compass"></i>Jelajah</button>
+    <button class="bnav-btn" onclick="location.href='/forum'"><i class="bi bi-chat-dots"></i>Forum</button>
+    <button class="bnav-btn active" onclick="location.href='/dokumentasi'"><i class="bi bi-journal-richtext"></i>Dokumen</button>
     <button class="bnav-btn" onclick="showToast('Segera hadir!')"><i class="bi bi-person"></i>Profil</button>
   </div>
 </nav>
 
-<script>
-// ── DATA (sama persis dengan Forum.html) ──
-const THREADS = [
-  {id:1,cat:'bahasa',catLabel:'Bahasa',catColor:'#1565c0',catBg:'rgba(21,101,192,0.08)',
-   username:'Revan Athallah',avatar:'https://i.pravatar.cc/64?img=11',
-   time:'1 jam yang lalu',timeDate:'3 Jun 2026',timeRaw:'3 Jun 2026, 09:14',
-   title:'Bahasa daerah kita bakal punah dalam 50 tahun ke depan — setuju atau tidak?',
-   excerpt:'Baru baca laporan UNESCO yang bilang ratusan bahasa daerah di Indonesia masuk kategori terancam punah. Gw jadi mikir, emang kita udah nggak peduli lagi sama bahasa ibu kita sendiri?',
-   fullText:'Baru baca laporan UNESCO yang bilang ratusan bahasa daerah di Indonesia masuk kategori terancam punah. Gw jadi mikir, emang kita udah nggak peduli lagi sama bahasa ibu kita sendiri?\n\nGw orang Jawa tapi jujur aja bahasa Jawa gw payah banget. Ngomong sama nenek aja masih sering minta tolong kakak buat translasi. Dan kayaknya ini relate banget sama banyak orang generasi kita.\n\nPertanyaan gw: ini salah siapa? Salah sistem pendidikan yang terlalu fokus ke Bahasa Indonesia dan Inggris? Atau emang kita sendiri yang males? Atau ini udah takdir evolusi bahasa yang wajar?\n\nMenurut kalian, masih worth it nggak buat belajar dan lestarikan bahasa daerah di era sekarang? Atau energinya mending dialihkan ke bahasa yang lebih "berguna" secara ekonomi?',
-   likes:312,
-   replies:[
-    {avatar:'https://i.pravatar.cc/40?img=20',name:'SariIndrawati',time:'3 Jun 2026, 09:45',text:'Worth it banget! Bahasa daerah bukan cuma alat komunikasi, tapi wadah budaya. Banyak konsep dan filosofi lokal yang literally nggak bisa diterjemahkan ke bahasa lain.',replyTo:null},
-    {avatar:'https://i.pravatar.cc/40?img=33',name:'BramoPratama',time:'3 Jun 2026, 10:02',text:'Salah sistemnya menurut gw. Pelajaran bahasa daerah di sekolah itu cuma formalitas, nggak ada yang beneran serius ngajarinnya.',replyTo:null},
-    {avatar:'https://i.pravatar.cc/40?img=42',name:'NinditaRaras',time:'3 Jun 2026, 10:28',text:'Setuju sama Bramo. Ditambah lagi konten hiburan kita hampir semua pakai Bahasa Indonesia atau Inggris. Anak-anak sekarang lebih familiar sama slang TikTok daripada bahasa neneknya.',replyTo:{name:'BramoPratama',text:'Salah sistemnya menurut gw'}},
-    {avatar:'https://i.pravatar.cc/40?img=55',name:'YogiPangestu',time:'3 Jun 2026, 11:10',text:'Gw rasa ini bukan soal salah-salahan. Ini tanggung jawab kolektif. Mulai dari keluarga dulu — biasakan ngobrol pakai bahasa daerah di rumah.',replyTo:null}
-   ]},
-  {id:2,cat:'seni',catLabel:'Seni',catColor:'#6a1b9a',catBg:'rgba(106,27,154,0.08)',
-   username:'Clarissa Dewi',avatar:'https://i.pravatar.cc/64?img=47',
-   time:'4 jam yang lalu',timeDate:'3 Jun 2026',timeRaw:'3 Jun 2026, 06:30',
-   title:'Batik printing vs batik tulis — ini beda produk atau beda budaya?',
-   excerpt:'Kemarin debat sama teman soal ini dan nggak ada yang mau ngalah. Dia bilang batik printing tetap bisa disebut batik karena motifnya sama. Gw nggak setuju. Menurut kalian gimana?',
-   fullText:'Kemarin debat sama teman soal ini dan nggak ada yang mau ngalah. Dia bilang batik printing tetap bisa disebut "batik" karena motifnya sama. Gw nggak setuju.\n\nMenurut gw, batik itu bukan cuma soal motif — tapi soal proses. Proses nglowong, nembok, nyelup, nglorod itu bagian dari jiwanya batik. Kalau itu dilewatin dan diganti mesin cetak, yang tersisa cuma gambarnya doang, bukan budayanya.\n\nTapi di sisi lain, gw juga paham argumen sebaliknya: batik printing bikin motif tradisional lebih terjangkau dan accessible buat semua kalangan. Tanpa batik printing, mungkin generasi muda nggak bakal kenal motif Parang atau Kawung sama sekali.\n\nJadi pertanyaannya: apakah kita harus strict soal definisi "batik"? Atau fleksibilitas itu justru yang bikin budaya bisa bertahan?',
-   likes:278,
-   replies:[
-    {avatar:'https://i.pravatar.cc/40?img=14',name:'HafidzNurul',time:'3 Jun 2026, 07:15',text:'Ini pertanyaan yang beneran susah. Tapi gw condong ke camp kamu — kalau proses tradisionalnya hilang, yang kita jual cuma estetika, bukan budaya.',replyTo:null},
-    {avatar:'https://i.pravatar.cc/40?img=28',name:'MirandaKusuma',time:'3 Jun 2026, 08:00',text:'Eh tapi UNESCO sendiri mendefinisikan batik Indonesia berdasarkan motif dan filosofinya, bukan hanya prosesnya. Jadi secara formal, batik printing masih bisa masuk kategori batik.',replyTo:null},
-    {avatar:'https://i.pravatar.cc/40?img=36',name:'HafidzNurul',time:'3 Jun 2026, 08:44',text:'Kalau gitu bedainnya gimana dong waktu beli? Harga doang? Kasian pengrajin batik tulis yang bisa butuh berminggu-minggu buat satu kain.',replyTo:{name:'MirandaKusuma',text:'UNESCO mendefinisikan batik berdasarkan motif'}}
-   ]},
-  {id:3,cat:'musik',catLabel:'Musik',catColor:'#555',catBg:'rgba(85,85,85,0.08)',
-   username:'Fadhil Ramadhan',avatar:'https://i.pravatar.cc/64?img=59',
-   time:'1 hari yang lalu',timeDate:'2 Jun 2026',timeRaw:'2 Jun 2026, 19:22',
-   title:'Kenapa musisi muda Indonesia jarang eksplorasi alat musik tradisional?',
-   excerpt:'Gw nonton konser indie kemarin dan mikir — dari 8 band yang tampil, nggak ada satupun yang pakai alat musik tradisional. Padahal kita punya gamelan, sasando, kolintang, angklung. Ada yang tau kenapa?',
-   fullText:'Gw nonton konser indie kemarin dan mikir — dari 8 band yang tampil, nggak ada satupun yang pakai alat musik tradisional. Padahal kita punya gamelan, sasando, kolintang, tifa, dan banyak lagi.\n\nGw bukan yang tipe puritan "harus pakai alat tradisional". Tapi gw penasaran kenapa eksplorasi itu jarang banget terjadi di scene musik indie lokal, padahal potensinya luar biasa.\n\nApa karena susah belajarnya? Mahal alatnya? Atau emang nggak ada yang ngajarin dengan cara yang relevan buat anak muda?\n\nSementara itu di luar negeri, banyak banget musisi yang fuse traditional instruments dengan modern sound dan hasilnya keren parah. Kita seharusnya bisa lebih dari itu dengan kekayaan instrumen yang kita punya.\n\nAda yang punya pengalaman belajar alat musik tradisional? Susah nggak aksesnya?',
-   likes:203,
-   replies:[
-    {avatar:'https://i.pravatar.cc/40?img=62',name:'AldoSantoso',time:'2 Jun 2026, 20:05',text:'Gw belajar gamelan waktu SMA tapi berhenti karena literally nggak ada komunitas yang aktif di kota gw. Itu masalah utamanya — ekosistemnya belum ada.',replyTo:null},
-    {avatar:'https://i.pravatar.cc/40?img=17',name:'RizkiAmelia',time:'2 Jun 2026, 21:30',text:'Coba dengerin Kua Etnika atau Krakatau — mereka udah lama fuse tradisional sama kontemporer. Tapi emang kurang exposure ke anak muda sekarang.',replyTo:null},
-    {avatar:'https://i.pravatar.cc/40?img=38',name:'TommyWijaya',time:'3 Jun 2026, 00:15',text:'Masalahnya juga di persepsi. Alat musik tradisional masih dianggap "kuno" dan nggak cool. Butuh tokoh atau influencer yang bisa reframe itu.',replyTo:{name:'RizkiAmelia',text:'Coba dengerin Kua Etnika atau Krakatau'}}
-   ]},
-  {id:4,cat:'kuliner',catLabel:'Kuliner',catColor:'#cc8800',catBg:'rgba(204,136,0,0.08)',
-   username:'Nadhira Putri',avatar:'https://i.pravatar.cc/64?img=25',
-   time:'2 hari yang lalu',timeDate:'1 Jun 2026',timeRaw:'1 Jun 2026, 13:45',
-   title:'Makanan fusion Indonesia — inovasi yang perlu didukung atau ancaman buat kuliner asli?',
-   excerpt:'Akhir-akhir ini makin banyak restoran yang jual "rendang pasta", "soto ramen", atau "nasi goreng sushi". Gw nggak tau harus excited atau khawatir. Ada yang punya take soal ini?',
-   fullText:'Akhir-akhir ini makin banyak restoran yang jual "rendang pasta", "soto ramen", atau "nasi goreng sushi". Gw nggak tau harus excited atau khawatir.\n\nDi satu sisi, ini bukti bahwa kuliner Indonesia makin percaya diri dan mau bereksperimen. Fusion bisa jadi pintu masuk orang asing buat kenal rasa-rasa Indonesia.\n\nTapi di sisi lain, gw takut identitas kuliner kita jadi blur. Kalau generasi berikutnya lebih kenal "rendang pasta" daripada rendang asli, itu worth it nggak?\n\nGw juga mau tanya soal sudut pandang pedagang makanan tradisional — mereka diuntungkan atau dirugikan sama tren ini?\n\nMenurut kalian, ada batasnya nggak antara inovasi yang sehat dan komodifikasi yang kebablasan?',
-   likes:187,
-   replies:[
-    {avatar:'https://i.pravatar.cc/40?img=31',name:'GalihPrasetyo',time:'1 Jun 2026, 14:20',text:'Selama yang aslinya juga tetap ada dan dirawat, fusion itu sah-sah aja. Yang bahaya kalau fusion menggantikan, bukan melengkapi.',replyTo:null},
-    {avatar:'https://i.pravatar.cc/40?img=44',name:'FeliksiaAnanda',time:'1 Jun 2026, 15:10',text:'Gw malah optimis. Fusion bisa jadi gateway. Orang yang pertama kali makan rendang pasta bisa jadi penasaran sama rendang aslinya.',replyTo:null},
-    {avatar:'https://i.pravatar.cc/40?img=52',name:'DindaMaharani',time:'1 Jun 2026, 17:55',text:'Masalahnya sering nggak ada edukasi. Orang beli fusion tanpa tau konteks originalnya. Jadi ya otomatis identitasnya hilang perlahan.',replyTo:{name:'FeliksiaAnanda',text:'Fusion bisa jadi gateway'}}
-   ]},
-  {id:5,cat:'tari',catLabel:'Tari',catColor:'#2e7d32',catBg:'rgba(46,125,50,0.08)',
-   username:'Salsa Bening',avatar:'https://i.pravatar.cc/64?img=32',
-   time:'3 hari yang lalu',timeDate:'31 Mei 2026',timeRaw:'31 Mei 2026, 10:08',
-   title:'Tari tradisional wajib masuk kurikulum sekolah — perlu atau nggak?',
-   excerpt:'Gw guru SD dan lagi debat sama rekan kerja soal ini. Ada yang bilang anak-anak sekarang udah overloaded sama pelajaran. Tapi ada yang bilang justru ini yang bikin anak kenal budayanya.',
-   fullText:'Gw guru SD dan lagi debat sama rekan kerja soal ini. Ada yang bilang anak-anak sekarang udah overloaded sama pelajaran, tambah tari malah jadi beban. Tapi ada yang bilang justru ini yang bikin anak kenal budayanya.\n\nSekarang di sekolah gw, tari tradisional cuma masuk di ekstrakulikuler — yang artinya opsional dan sering nggak diambil. Hasilnya? Mayoritas murid kelas 6 nggak bisa ngebedain tari Saman sama tari Jaipong.\n\nTapi gw juga paham bahwa memaksakan tari ke semua anak bisa jadi kontraproduktif. Kalau nggak ada passion-nya, jadinya malah hafalan yang dilupain begitu ujian selesai.\n\nJadi pertanyaan gw buat komunitas ini: gimana cara yang paling efektif buat mengenalkan tari tradisional ke generasi muda? Lewat sekolah formal, atau ada pendekatan lain yang lebih berhasil?',
-   likes:156,
-   replies:[
-    {avatar:'https://i.pravatar.cc/40?img=8',name:'RanggaWibawa',time:'31 Mei 2026, 11:00',text:'Wajib masuk kurikulum tapi jangan dijadikan mata pelajaran yang dinilai dengan angka. Jadikan pengalaman budaya yang menyenangkan.',replyTo:null},
-    {avatar:'https://i.pravatar.cc/40?img=21',name:'LestariHandayani',time:'31 Mei 2026, 12:30',text:'Setuju! Di sekolah tempat gw dulu, ada "Festival Budaya" tahunan yang bikin anak-anak mau belajar tari karena ada panggung-nya, bukan karena takut nilai jelek.',replyTo:{name:'RanggaWibawa',text:'jangan dijadikan mata pelajaran yang dinilai'}},
-    {avatar:'https://i.pravatar.cc/40?img=49',name:'AhmadRifai',time:'31 Mei 2026, 14:15',text:'Yang lebih penting mungkin pelatihnya. Kalau gurunya sendiri nggak antusias, anaknya juga bakal ngerasa itu bukan hal yang penting.',replyTo:null}
-   ]}
-];
-
-// ── STATE ──
-let thread = null;
-let isLiked = false;
-let localReplies = [];
-
-// ── INIT ──
-function init(){
-  const pathParts = window.location.pathname.split('/');
-  const id = parseInt(pathParts[pathParts.length - 1]);
-  thread = THREADS.find(t => t.id === id);
-  localReplies = thread ? [...(thread.replies || [])] : [];
-
-  if(!thread){
-    document.getElementById('pageContent').innerHTML = `
-      <div class="not-found">
-        <i class="bi bi-chat-square-x"></i>
-        <h2>Thread tidak ditemukan</h2>
-        <p>Thread yang kamu cari sudah dihapus atau tidak tersedia.</p>
-        <a href="/forum" style="display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:14px;font-weight:600;color:var(--primary);text-decoration:none">
-          <i class="bi bi-arrow-left"></i> Kembali ke Forum
-        </a>
-      </div>`;
-    return;
-  }
-
-  document.title = thread.title + ' – Warisan';
-  render();
-}
-
-function render(){
-  const catActiveMap = {tari:'cat-tari',kuliner:'cat-kuliner',musik:'cat-musik',pakaian:'cat-pakaian',lainnya:'cat-lainnya',bahasa:'cat-bahasa',seni:'cat-seni'};
-
-  document.getElementById('pageContent').innerHTML = `
-    <div class="detail-layout">
-      <!-- SIDEBAR LEFT -->
-      <aside class="sidebar-left">
-        <div class="sidebar-title">Kategori</div>
-        <div class="sidebar-subtitle">Filter diskusi</div>
-        <nav class="cat-nav">
-          <a class="cat-link" href="/forum"><i class="bi bi-compass"></i> Semua</a>
-          <a class="cat-link${thread.cat==='tari'?' active':''}" href="/forum?cat=tari"><i class="bi bi-person-arms-up"></i> Tari</a>
-          <a class="cat-link${thread.cat==='bahasa'?' active':''}" href="/forum?cat=bahasa"><i class="bi bi-translate"></i> Bahasa</a>
-          <a class="cat-link${thread.cat==='seni'?' active':''}" href="/forum?cat=seni"><i class="bi bi-palette"></i> Seni</a>
-          <a class="cat-link${thread.cat==='musik'?' active':''}" href="/forum?cat=musik"><i class="bi bi-music-note"></i> Musik</a>
-          <a class="cat-link${thread.cat==='pakaian'?' active':''}" href="/forum?cat=pakaian"><i class="bi bi-stars"></i> Pakaian Adat</a>
-          <a class="cat-link${thread.cat==='kuliner'?' active':''}" href="/forum?cat=kuliner"><i class="bi bi-egg-fried"></i> Kuliner</a>
-          <a class="cat-link${thread.cat==='lainnya'?' active':''}" href="/forum?cat=lainnya"><i class="bi bi-three-dots"></i> Lainnya</a>
-        </nav>
-        <button class="btn-new-thread" onclick="location.href='/forum/buat-thread'"><i class="bi bi-plus-lg"></i> Buat Thread Baru</button>
-      </aside>
-
-      <!-- MAIN -->
-      <main>
-        <!-- Breadcrumb -->
-        <div class="breadcrumbs">
-          <a href="/forum">Forum</a>
-          <span class="sep">/</span>
-          <a href="/forum?cat=${thread.cat}">${thread.catLabel}</a>
-          <span class="sep">/</span>
-          <span class="current">${thread.title}</span>
-        </div>
-
-        <!-- OP Card -->
-        <div class="op-card">
-          <div class="op-header">
-            <div class="op-author-row">
-              <img class="op-avatar" src="${thread.avatar}" alt="${thread.username}" onerror="this.src='https://placehold.co/48/ffdbce/9e2016?text=${thread.username[0]}'">
-              <div class="op-author-info">
-                <div class="op-author-name">${thread.username}</div>
-                <div class="op-author-time">${thread.timeRaw}</div>
-              </div>
-            </div>
-            <div class="op-tag-row">
-              <span class="op-tag" style="background:${thread.catBg};color:${thread.catColor}">${thread.catLabel}</span>
-            </div>
-            <h1 class="op-title">${thread.title}</h1>
-          </div>
-          <div class="op-body">
-            <p class="op-text">${thread.fullText}</p>
-            <div class="op-actions">
-              <button class="action-pill${isLiked?' liked':''}" id="likeBtn" onclick="toggleLike()">
-                <i class="bi ${isLiked?'bi-heart-fill':'bi-heart'}"></i>
-                <span id="likeCount">${thread.likes + (isLiked?1:0)}</span> Suka
-              </button>
-              <button class="action-share" onclick="shareThread()">
-                <i class="bi bi-link-45deg"></i> Bagikan
-              </button>
-              <a href="/forum" class="back-btn"><i class="bi bi-arrow-left"></i> Kembali</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Replies -->
-        <div class="replies-header">
-          <span class="replies-label">Balasan</span>
-          <span class="replies-count" id="repliesCount">${localReplies.length} balasan</span>
-          <div class="replies-line"></div>
-        </div>
-
-        <div id="repliesContainer">
-          ${renderReplies()}
-        </div>
-
-        <!-- Reply Input -->
-        <div class="reply-input-section">
-          <div class="reply-input-title"><i class="bi bi-chat-square-text"></i> Tulis Balasan</div>
-          <textarea class="reply-textarea" id="replyInput" placeholder="Bagikan pendapat atau pengalamanmu..." rows="3" oninput="autoResize(this)" onkeydown="handleReplyKey(event)"></textarea>
-          <div class="reply-input-foot">
-            <button class="btn-cancel-reply" onclick="document.getElementById('replyInput').value=''">Batal</button>
-            <button class="btn-submit-reply" onclick="submitReply()"><i class="bi bi-send"></i> Kirim Balasan</button>
-          </div>
-        </div>
-      </main>
-
-    </div>`;
-}
-
-function renderReplies(){
-  if(localReplies.length === 0){
-    return `<div style="text-align:center;padding:32px 20px;color:var(--text-mid);font-size:14px">
-      <i class="bi bi-chat" style="font-size:32px;opacity:.25;display:block;margin-bottom:8px"></i>
-      Belum ada balasan. Jadilah yang pertama!</div>`;
-  }
-  return localReplies.map((r, i) => {
-    const quoteHtml = r.replyTo
-      ? `<div class="reply-quote"><strong>@${r.replyTo.name}</strong> — ${r.replyTo.text}</div>` : '';
-    return `<div class="reply-card" style="animation-delay:${i*40}ms">
-      <div class="reply-top">
-        <img class="reply-avatar" src="${r.avatar}" alt="${r.name}" onerror="this.src='https://placehold.co/36/ffdbce/9e2016?text=${r.name[0]}'">
-        <div>
-          <div class="reply-author-name">${r.name}</div>
-          <div class="reply-author-time">${r.time}</div>
-        </div>
-      </div>
-      ${quoteHtml}
-      <p class="reply-text">${r.text}</p>
-    </div>`;
-  }).join('');
-}
-
-function toggleLike(){
-  isLiked = !isLiked;
-  const count = thread.likes + (isLiked ? 1 : 0);
-  document.getElementById('likeBtn').className = 'action-pill' + (isLiked ? ' liked' : '');
-  document.getElementById('likeBtn').querySelector('i').className = 'bi ' + (isLiked ? 'bi-heart-fill' : 'bi-heart');
-  document.getElementById('likeCount').textContent = count;
-  if(document.getElementById('sidebarLikes')) document.getElementById('sidebarLikes').textContent = count;
-  if(isLiked) showToast('Kamu menyukai thread ini ❤️', 'success');
-}
-
-function submitReply(){
-  const input = document.getElementById('replyInput');
-  const text = input.value.trim();
-  if(!text){ showToast('Tulis balasan dulu ya!'); return; }
-  localReplies.push({
-    avatar: 'https://i.pravatar.cc/40?img=70',
-    name: 'Kamu',
-    time: 'Baru saja',
-    text,
-    replyTo: null
-  });
-  input.value = '';
-  input.style.height = 'auto';
-  document.getElementById('repliesContainer').innerHTML = renderReplies();
-  if(document.getElementById('repliesCount')) document.getElementById('repliesCount').textContent = localReplies.length + ' balasan';
-  if(document.getElementById('sidebarReplies')) document.getElementById('sidebarReplies').textContent = localReplies.length;
-  showToast('Balasan terkirim!', 'success');
-  setTimeout(() => {
-    const last = document.querySelector('#repliesContainer .reply-card:last-child');
-    if(last) last.scrollIntoView({behavior:'smooth', block:'center'});
-  }, 100);
-}
-
-function autoResize(ta){ ta.style.height='auto'; ta.style.height = Math.min(ta.scrollHeight, 200)+'px'; }
-function handleReplyKey(e){ if(e.key==='Enter' && e.ctrlKey){ e.preventDefault(); submitReply(); } }
-
-function shareThread(){
-  const url = window.location.href;
-  if(navigator.clipboard) navigator.clipboard.writeText(url).then(() => showToast('Link disalin!','success'));
-  else showToast('Link disalin!','success');
-}
-
-function openDrawer(){ document.getElementById('drawerOverlay').classList.add('open'); document.getElementById('mobileDrawer').classList.add('open'); document.body.classList.add('locked'); }
-function closeDrawer(){ document.getElementById('drawerOverlay').classList.remove('open'); document.getElementById('mobileDrawer').classList.remove('open'); document.body.classList.remove('locked'); }
-
-function showToast(msg, type=''){
-  const c = document.getElementById('toastContainer');
-  const t = document.createElement('div');
-  t.className = 'toast-item' + (type ? ' '+type : '');
-  t.textContent = msg; c.appendChild(t);
-  requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add('show')));
-  const timer = setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 320); }, 3500);
-  t.addEventListener('click', () => { clearTimeout(timer); t.classList.remove('show'); setTimeout(() => t.remove(), 320); });
-}
-
-const nav = document.getElementById('mainNav');
-window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 8), {passive:true});
-
-init();
-</script>
+<!-- AUTH MODAL -->
 <div class="auth-overlay" id="authOverlay" onclick="if(event.target===this) closeAuthModal()">
   <div class="auth-modal-card">
     <button class="auth-close" onclick="closeAuthModal()"><i class="bi bi-x-lg"></i></button>
@@ -577,8 +176,11 @@ init();
         </div>
         <button class="auth-btn-primary" onclick="showToast('Akun berhasil dibuat! 🎉','success'); closeAuthModal();">Daftar Sekarang</button>
       </div>
-    </div></div>
+    </div>
+  </div>
 </div>
+
+<script th:src="@{/js/Global.js}"></script>
 <script th:src="@{/js/Shared.js}"></script>
 <script th:src="@{/js/ForumDetail.js}"></script>
 </body>

@@ -180,92 +180,29 @@ const RELATED = {
   ]
 };
 
-/* ── STATE ── */
 let currentThread = null;
 let likedPost = false;
 let likedComments = new Set();
 
-/* ── HELPERS ── */
-function escapeHtml(str) {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-}
-
-function getThreadFromURL() {
+function getThreadFromURL(){
   const pathparts = window.location.pathname.split('/')
-  const id     = parseInt(pathparts[pathparts.length-1]);
+  const id = parseInt(pathparts[pathparts.length-1])
   return THREADS.find(t => t.id === id) || THREADS[0];
 }
 
-/* ── RENDER COMMENTS ── */
-function renderComments(comments) {
-  return comments.map(c => `
-    <div class="comment-item">
-      ${c.avatarUrl
-        ? `<img class="comment-avatar" src="${c.avatarUrl}" alt="${c.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-           <div class="comment-avatar-initials" style="background:${c.bg};color:${c.textColor};display:none">${c.initials}</div>`
-        : `<div class="comment-avatar-initials" style="background:${c.bg};color:${c.textColor}">${c.initials}</div>`
-      }
-      <div class="comment-right">
-        <div class="comment-bubble">
-          <div class="comment-header">
-            <span class="comment-name">${c.name}</span>
-            <span class="comment-time">${c.time}</span>
-          </div>
-          <p class="comment-text">${escapeHtml(c.text)}</p>
-        </div>
-        <div class="comment-actions">
-          <button class="ca-btn" onclick="toggleCommentLike('${c.id}',this)">
-            <i class="bi ${likedComments.has(c.id) ? 'bi-heart-fill' : 'bi-heart'}" style="color:${likedComments.has(c.id) ? '#9e2016' : ''}"></i>
-            <span id="clikes-${c.id}">${c.likes}</span>
-          </button>
-          <button class="ca-btn" onclick="showToast('Fitur balas segera hadir!')">
-            <i class="bi bi-reply"></i> Balas
-          </button>
-        </div>
-        ${c.nested && c.nested.length ? `
-        <div class="nested-replies">
-          ${c.nested.map(r => `
-            <div class="reply-item">
-              <div class="reply-avatar-initials" style="background:${r.bg};color:${r.textColor}">${r.initials}</div>
-              <div>
-                <div class="reply-bubble">
-                  <div class="reply-header">
-                    <span class="reply-name">${r.name}</span>
-                    <span class="reply-time">${r.time}</span>
-                  </div>
-                  <p class="reply-text">${escapeHtml(r.text)}</p>
-                </div>
-                <div class="reply-actions">
-                  <button class="ra-btn" onclick="toggleCommentLike('${r.id}',this)">
-                    <i class="bi ${likedComments.has(r.id) ? 'bi-heart-fill' : 'bi-heart'}" style="color:${likedComments.has(r.id) ? '#9e2016' : ''}"></i>
-                    <span id="clikes-${r.id}">${r.likes}</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          `).join('')}
-        </div>` : ''}
-      </div>
-    </div>
-  `).join('');
-}
-
-/* ── RENDER HALAMAN ── */
-function renderPage() {
+function renderPage(){
   const t = getThreadFromURL();
   currentThread = t;
 
+  // Page title
   document.getElementById('pageTitle').textContent = t.title + ' – Warisan';
 
-  // Highlight sidebar kategori
+  // Highlight active category in sidebar
   document.querySelectorAll('.cat-link').forEach(l => l.classList.remove('active'));
   const activeLink = document.querySelector(`.cat-link[href*="cat=${t.cat}"]`);
-  if (activeLink) activeLink.classList.add('active');
+  if(activeLink) activeLink.classList.add('active');
 
-  // Render related (sidebar kanan)
+  // Render related threads for right sidebar
   const related = RELATED[t.cat] || RELATED.tari;
   document.getElementById('relatedItems').innerHTML = related.map(r => `
     <div class="related-item" onclick="showToast('Segera hadir!')">
@@ -275,8 +212,9 @@ function renderPage() {
     </div>
   `).join('');
 
-  // Render konten utama
+  // Render main content
   document.getElementById('mainContent').innerHTML = `
+    <!-- BREADCRUMBS -->
     <nav class="breadcrumbs">
       <a href="/dokumentasi">Dokumentasi</a>
       <span><i class="bi bi-chevron-right" style="font-size:9px"></i></span>
@@ -285,6 +223,7 @@ function renderPage() {
       <span class="current">${t.title}</span>
     </nav>
 
+    <!-- OP CARD -->
     <div class="op-card">
       <div class="op-body">
         <div class="op-meta">
@@ -292,7 +231,7 @@ function renderPage() {
             ${t.avatarUrl
               ? `<img class="op-avatar" src="${t.avatarUrl}" alt="${t.username}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
               : ''}
-            <div class="op-avatar-placeholder" style="background:${t.avatarBg};color:#fff;display:${t.avatarUrl ? 'none' : 'flex'}">${t.avatarInitial}</div>
+            <div class="op-avatar-placeholder" style="background:${t.avatarBg};color:#fff;display:${t.avatarUrl?'none':'flex'}">${t.avatarInitial}</div>
             <div>
               <div class="op-name">${t.username}</div>
               <div class="op-time">${t.time}</div>
@@ -322,8 +261,11 @@ function renderPage() {
       </div>
     </div>
 
+    <!-- DISCUSSION SECTION -->
     <div class="discussion-section">
       <h2 class="discussion-title">Diskusi</h2>
+
+      <!-- Comment Form -->
       <div class="comment-form">
         <div class="cf-avatar">A</div>
         <div class="cf-right">
@@ -333,6 +275,8 @@ function renderPage() {
           </div>
         </div>
       </div>
+
+      <!-- Comment Thread -->
       <div class="comment-thread" id="commentThread">
         ${renderComments(t.comments)}
       </div>
@@ -340,20 +284,76 @@ function renderPage() {
   `;
 }
 
+function renderComments(comments){
+  return comments.map(c => `
+    <div class="comment-item">
+      ${c.avatarUrl
+        ? `<img class="comment-avatar" src="${c.avatarUrl}" alt="${c.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="comment-avatar-initials" style="background:${c.bg};color:${c.textColor};display:none">${c.initials}</div>`
+        : `<div class="comment-avatar-initials" style="background:${c.bg};color:${c.textColor}">${c.initials}</div>`
+      }
+      <div class="comment-right">
+        <div class="comment-bubble">
+          <div class="comment-header">
+            <span class="comment-name">${c.name}</span>
+            <span class="comment-time">${c.time}</span>
+          </div>
+          <p class="comment-text">${escapeHtml(c.text)}</p>
+        </div>
+        <div class="comment-actions">
+          <button class="ca-btn" onclick="toggleCommentLike('${c.id}',this)">
+            <i class="bi ${likedComments.has(c.id)?'bi-heart-fill':'bi-heart'}" style="color:${likedComments.has(c.id)?'#9e2016':''}"></i>
+            <span id="clikes-${c.id}">${c.likes}</span>
+          </button>
+          <button class="ca-btn" onclick="showToast('Fitur balas segera hadir!')">
+            <i class="bi bi-reply"></i> Balas
+          </button>
+        </div>
+        ${c.nested && c.nested.length ? `
+        <div class="nested-replies">
+          ${c.nested.map(r => `
+            <div class="reply-item">
+              <div class="reply-avatar-initials" style="background:${r.bg};color:${r.textColor}">${r.initials}</div>
+              <div>
+                <div class="reply-bubble">
+                  <div class="reply-header">
+                    <span class="reply-name">${r.name}</span>
+                    <span class="reply-time">${r.time}</span>
+                  </div>
+                  <p class="reply-text">${escapeHtml(r.text)}</p>
+                </div>
+                <div class="reply-actions">
+                  <button class="ra-btn" onclick="toggleCommentLike('${r.id}',this)">
+                    <i class="bi ${likedComments.has(r.id)?'bi-heart-fill':'bi-heart'}" style="color:${likedComments.has(r.id)?'#9e2016':''}"></i>
+                    <span id="clikes-${r.id}">${r.likes}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function escapeHtml(str){
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
 /* ── LIKE POST ── */
-function toggleLikePost() {
-  const btn     = document.getElementById('likePostBtn');
-  const icon    = document.getElementById('likePostIcon');
+function toggleLikePost(){
+  const btn = document.getElementById('likePostBtn');
+  const icon = document.getElementById('likePostIcon');
   const countEl = document.getElementById('likePostCount');
   likedPost = !likedPost;
-  if (likedPost) {
+  if(likedPost){
     icon.className = 'bi bi-heart-fill';
     icon.style.color = '#9e2016';
     currentThread.likes++;
     btn.classList.add('liked');
     icon.style.transform = 'scale(1.4)';
-    setTimeout(() => icon.style.transform = '', 180);
-    showToast('Kamu mendukung thread ini ❤️', 'success');
+    setTimeout(()=>icon.style.transform='',180);
+    showToast('Kamu mendukung thread ini ❤️','success');
   } else {
     icon.className = 'bi bi-heart';
     icon.style.color = '';
@@ -363,66 +363,50 @@ function toggleLikePost() {
   countEl.textContent = currentThread.likes + ' Dukungan';
 }
 
-/* ── LIKE KOMENTAR ── */
-function toggleCommentLike(cid, btn) {
-  const icon    = btn.querySelector('i');
-  const countEl = document.getElementById('clikes-' + cid);
-  const liked   = likedComments.has(cid);
-  if (liked) {
+/* ── LIKE COMMENT ── */
+function toggleCommentLike(cid, btn){
+  const icon = btn.querySelector('i');
+  const countEl = document.getElementById('clikes-'+cid);
+  const liked = likedComments.has(cid);
+  if(liked){
     likedComments.delete(cid);
-    icon.className = 'bi bi-heart'; icon.style.color = '';
-    if (countEl) countEl.textContent = parseInt(countEl.textContent) - 1;
+    icon.className='bi bi-heart';icon.style.color='';
+    if(countEl) countEl.textContent=parseInt(countEl.textContent)-1;
   } else {
     likedComments.add(cid);
-    icon.className = 'bi bi-heart-fill'; icon.style.color = '#9e2016';
-    if (countEl) countEl.textContent = parseInt(countEl.textContent) + 1;
-    icon.style.transform = 'scale(1.4)';
-    setTimeout(() => icon.style.transform = '', 160);
+    icon.className='bi bi-heart-fill';icon.style.color='#9e2016';
+    if(countEl) countEl.textContent=parseInt(countEl.textContent)+1;
+    icon.style.transform='scale(1.4)';setTimeout(()=>icon.style.transform='',160);
   }
 }
 
-/* ── SUBMIT KOMENTAR ── */
-function submitComment() {
-  const ta   = document.getElementById('commentTextarea');
+/* ── SUBMIT COMMENT ── */
+function submitComment(){
+  const ta = document.getElementById('commentTextarea');
   const text = ta.value.trim();
-  if (!text) { showToast('Tulis komentar dulu ya!'); return; }
-
-  const newId      = 'new-' + Date.now();
-  const newComment = {
-    id: newId, avatarUrl: '', initials: 'K',
-    bg: '#c0392b', textColor: '#ffe5e1',
-    name: 'Kamu', time: 'Baru saja', text, likes: 0, nested: []
-  };
+  if(!text){ showToast('Tulis komentar dulu ya!'); return; }
+  const newId = 'new-'+Date.now();
+  const newComment = {id:newId, avatarUrl:'', initials:'K', bg:'#c0392b', textColor:'#ffe5e1', name:'Kamu', time:'Baru saja', text, likes:0, nested:[]};
   currentThread.comments.push(newComment);
-  ta.value = '';
-
+  ta.value='';
   const thread = document.getElementById('commentThread');
-  const div    = document.createElement('div');
+  const div = document.createElement('div');
   div.innerHTML = renderComments([newComment]);
   thread.appendChild(div.firstElementChild);
-  showToast('Balasan terkirim!', 'success');
-  div.firstElementChild.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  showToast('Balasan terkirim!','success');
+  div.firstElementChild.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
 /* ── SHARE ── */
-function shareThread() {
-  if (navigator.share) {
-    navigator.share({
-      title: currentThread.title,
-      text:  currentThread.fullText.slice(0, 120) + '...',
-      url:   window.location.href
-    }).catch(() => {});
+function shareThread(){
+  if(navigator.share){
+    navigator.share({title:currentThread.title,text:currentThread.fullText.slice(0,120)+'...',url:window.location.href}).catch(()=>{});
   } else {
     navigator.clipboard?.writeText(window.location.href)
-      .then(() => showToast('Link disalin!', 'success'))
-      .catch(() => showToast('Link: ' + window.location.href));
+      .then(()=>showToast('Link disalin!','success'))
+      .catch(()=>showToast('Link: '+window.location.href));
   }
 }
-
-/* ── NAV SCROLL ── */
-window.addEventListener('scroll', () => {
-  document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 8);
-}, { passive: true });
 
 /* ── INIT ── */
 renderPage();

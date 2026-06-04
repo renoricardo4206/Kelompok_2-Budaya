@@ -51,95 +51,55 @@ let DOCS = [
 let currentCat = 'semua';
 let currentView = 'grid';
 
-const CAT_LABELS = {
-  semua:'Semua Dokumentasi', tari:'Tari', kuliner:'Kuliner',
-  seni:'Seni & Kriya', pakaian:'Pakaian Adat', musik:'Musik',
-  bahasa:'Bahasa', lainnya:'Lainnya'
-};
+const CAT_LABELS = {semua:'Semua Dokumentasi',tari:'Tari',kuliner:'Kuliner',seni:'Seni & Kriya',pakaian:'Pakaian Adat',musik:'Musik',bahasa:'Bahasa',lainnya:'Lainnya'};
+const CAT_ICONS = {tari:'<i class="bi bi-person-arms-up" style="font-size:10px;margin-right:4px"></i>',kuliner:'<i class="bi bi-egg-fried" style="font-size:10px;margin-right:4px"></i>',seni:'<i class="bi bi-palette" style="font-size:10px;margin-right:4px"></i>',pakaian:'<i class="bi bi-stars" style="font-size:10px;margin-right:4px"></i>',musik:'<i class="bi bi-music-note" style="font-size:10px;margin-right:4px"></i>',bahasa:'<i class="bi bi-translate" style="font-size:10px;margin-right:4px"></i>',lainnya:'<i class="bi bi-three-dots" style="font-size:10px;margin-right:4px"></i>'};
+const CAT_COLORS = {tari:{c:'#2e7d32',bg:'rgba(46,125,50,0.12)',label:'Tari'},kuliner:{c:'#cc8800',bg:'rgba(245,159,0,0.12)',label:'Kuliner'},pakaian:{c:'#9e2016',bg:'rgba(158,32,22,0.1)',label:'Pakaian Adat'},musik:{c:'#444',bg:'rgba(14,14,14,0.08)',label:'Musik'},bahasa:{c:'#1a56a0',bg:'rgba(26,86,160,0.1)',label:'Bahasa'},seni:{c:'#555',bg:'rgba(85,85,85,0.10)',label:'Seni & Kriya'},lainnya:{c:'#555',bg:'rgba(85,85,85,0.10)',label:'Lainnya'}};
 
-const CAT_ICONS = {
-  tari:'<i class="bi bi-person-arms-up" style="font-size:10px;margin-right:4px"></i>',
-  kuliner:'<i class="bi bi-egg-fried" style="font-size:10px;margin-right:4px"></i>',
-  seni:'<i class="bi bi-palette" style="font-size:10px;margin-right:4px"></i>',
-  pakaian:'<i class="bi bi-stars" style="font-size:10px;margin-right:4px"></i>',
-  musik:'<i class="bi bi-music-note" style="font-size:10px;margin-right:4px"></i>',
-  bahasa:'<i class="bi bi-translate" style="font-size:10px;margin-right:4px"></i>',
-  lainnya:'<i class="bi bi-three-dots" style="font-size:10px;margin-right:4px"></i>'
-};
+function getCatIcon(cat){ return CAT_ICONS[cat]||'' }
 
-const CAT_COLORS = {
-  tari:    { c:'#2e7d32', bg:'rgba(46,125,50,0.12)',   label:'Tari' },
-  kuliner: { c:'#cc8800', bg:'rgba(245,159,0,0.12)',   label:'Kuliner' },
-  pakaian: { c:'#9e2016', bg:'rgba(158,32,22,0.1)',    label:'Pakaian Adat' },
-  musik:   { c:'#444',    bg:'rgba(14,14,14,0.08)',     label:'Musik' },
-  bahasa:  { c:'#1a56a0', bg:'rgba(26,86,160,0.1)',    label:'Bahasa' },
-  seni:    { c:'#555',    bg:'rgba(85,85,85,0.10)',     label:'Seni & Kriya' },
-  lainnya: { c:'#555',    bg:'rgba(85,85,85,0.10)',     label:'Lainnya' }
-};
-
-function getCatIcon(cat) { return CAT_ICONS[cat] || ''; }
-
-/* ── FILTER KATEGORI ── */
-function filterCat(cat, btn) {
+function filterCat(cat, btn){
   currentCat = cat;
-  document.querySelectorAll('.cat-link').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  document.getElementById('contentLabel').textContent = CAT_LABELS[cat] || 'Dokumentasi';
+  document.querySelectorAll('.cat-link').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  document.getElementById('contentLabel').textContent = CAT_LABELS[cat]||'Dokumentasi';
   renderDocs();
 }
 
-/* ── TOGGLE VIEW ── */
-function setView(v) {
+function setView(v){
   currentView = v;
-  document.getElementById('viewGrid').classList.toggle('active', v === 'grid');
-  document.getElementById('viewList').classList.toggle('active', v === 'list');
+  document.getElementById('viewGrid').classList.toggle('active', v==='grid');
+  document.getElementById('viewList').classList.toggle('active', v==='list');
   renderDocs();
 }
 
-/* ── SEARCH ── */
-function handleSearch(q) {
+function handleSearch(q){
   renderDocs(q.toLowerCase().trim());
 }
 
-/* ── UPDATE BADGE COUNT ── */
-function updateCounts() {
-  ['tari','kuliner','seni','pakaian','musik','bahasa','lainnya'].forEach(c => {
-    const el = document.getElementById('count-' + c);
-    if (el) el.textContent = DOCS.filter(d => d.cat === c).length;
-  });
-  const all = document.getElementById('count-semua');
-  if (all) all.textContent = DOCS.length;
+function updateCounts(){
+  document.getElementById('contentCount').textContent = DOCS.length + ' konten';
 }
 
-/* ── RENDER GRID ── */
-function renderDocs(q = '') {
+function renderDocs(q=''){
   const grid = document.getElementById('docGrid');
   let data = [...DOCS];
-  if (currentCat !== 'semua') data = data.filter(d => d.cat === currentCat);
-  if (q) data = data.filter(d =>
-    d.title.toLowerCase().includes(q) ||
-    d.excerpt.toLowerCase().includes(q) ||
-    d.author.toLowerCase().includes(q)
-  );
+  if(currentCat !== 'semua') data = data.filter(d=>d.cat===currentCat);
+  if(q) data = data.filter(d=>d.title.toLowerCase().includes(q)||d.excerpt.toLowerCase().includes(q)||d.author.toLowerCase().includes(q));
 
-  document.getElementById('contentCount').textContent = data.length + ' konten';
-  grid.className = 'doc-grid' + (currentView === 'list' ? ' list-view' : '');
+  document.getElementById('contentCount').textContent = data.length+' konten';
+  grid.className = 'doc-grid' + (currentView==='list'?' list-view':'');
 
-  if (!data.length) {
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;display:flex;flex-direction:column;align-items:center;gap:12px">
-      <i class="bi bi-search" style="font-size:48px;color:rgba(158,32,22,.2)"></i>
-      <h3 style="font-size:18px;color:var(--text-mid);margin:0">Konten tidak ditemukan</h3>
-      <p style="font-size:14px;color:var(--text-mid);opacity:.7;margin:0">Coba kata kunci lain atau upload konten baru.</p>
-    </div>`;
+  if(!data.length){
+    grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:60px 20px;display:flex;flex-direction:column;align-items:center;gap:12px"><i class="bi bi-search" style="font-size:48px;color:rgba(158,32,22,.2)"></i><h3 style="font-size:18px;color:var(--text-mid);margin:0">Konten tidak ditemukan</h3><p style="font-size:14px;color:var(--text-mid);opacity:.7;margin:0">Coba kata kunci lain atau upload konten baru.</p></div>`;
     return;
   }
 
-  grid.innerHTML = data.map((d, i) => `
-  <div class="doc-card${currentView === 'list' ? ' list-view' : ''}" onclick="openDoc(${d.id})" style="animation-delay:${i * 0.05}s">
+  grid.innerHTML = data.map((d,i)=>`
+  <div class="doc-card${currentView==='list'?' list-view':''}" onclick="openDoc(${d.id})" style="animation-delay:${i*0.05}s">
     <div class="doc-thumb">
       <img src="${d.img}" alt="${d.title}" onerror="this.src='https://placehold.co/600x300/fff1ec/9e2016?text=Warisan'">
       <span class="doc-cat-badge" style="background:#fff;color:${d.catColor}">${getCatIcon(d.cat)}${d.catLabel}</span>
-      ${d.userUploaded ? `<span class="doc-user-badge"><i class="bi bi-person-check"></i> Kontribusi</span>` : ''}
+      ${d.userUploaded?`<span class="doc-user-badge"><i class="bi bi-person-check"></i> Kontribusi</span>`:''}
     </div>
     <div class="doc-body">
       <h3 class="doc-title">${d.title}</h3>
@@ -160,92 +120,93 @@ function renderDocs(q = '') {
   </div>`).join('');
 }
 
-/* ── BUKA DETAIL ── */
-function openDoc(id) {
-  window.location.href = 'DokumentasiDetail.html?id=' + id;
+function openDoc(id){
+  window.location.href = `/dokumentasi/${id}`;
 }
 
-/* ── UPLOAD MODAL ── */
-function openModal() {
-  document.getElementById('uploadModal').classList.add('open');
-  document.body.classList.add('locked');
-}
-function closeModal() {
-  document.getElementById('uploadModal').classList.remove('open');
-  document.body.classList.remove('locked');
-}
-document.getElementById('uploadModal').addEventListener('click', function(e) {
-  if (e.target === this) closeModal();
+/* ── UPLOAD MODAL LOGIC ── */
+function openModal(){document.getElementById('uploadModal').classList.add('open');document.body.classList.add('locked')}
+function closeModal(){document.getElementById('uploadModal').classList.remove('open');document.body.classList.remove('locked')}
+
+// Prevent closing modal when clicking inside the content
+document.getElementById('uploadModal').addEventListener('click',function(e){
+  if(e.target === this) closeModal()
 });
 
-function handleDrag(e, on) {
+function handleDrag(e, on){
   e.preventDefault();
-  document.getElementById('uploadArea').classList.toggle('dragover', on);
+  document.getElementById('uploadArea').classList.toggle('dragover',on)
 }
-function handleDrop(e) {
+
+function handleDrop(e){
   e.preventDefault();
-  handleDrag(e, false);
+  handleDrag(e,false);
   const file = e.dataTransfer.files[0];
-  if (file && file.type.startsWith('image/')) loadPreview(file);
+  if(file && file.type.startsWith('image/')) loadPreview(file);
 }
-function handleFile(input) {
-  if (input.files[0]) loadPreview(input.files[0]);
+
+function handleFile(input){
+  if(input.files[0]) loadPreview(input.files[0])
 }
-function loadPreview(file) {
+
+function loadPreview(file){
   const r = new FileReader();
   r.onload = e => {
-    document.getElementById('uploadArea').style.display = 'none';
-    document.getElementById('uploadPreview').style.display = 'block';
-    document.getElementById('uploadPreviewImg').src = e.target.result;
+    document.getElementById('uploadArea').style.display='none';
+    document.getElementById('uploadPreview').style.display='block';
+    document.getElementById('uploadPreviewImg').src=e.target.result;
   };
   r.readAsDataURL(file);
 }
-function removePreview(e) {
-  if (e && e.stopPropagation) e.stopPropagation();
-  document.getElementById('uploadArea').style.display = 'block';
-  document.getElementById('uploadPreview').style.display = 'none';
-  document.getElementById('fileInput').value = '';
+
+function removePreview(e){
+  e.stopPropagation();
+  document.getElementById('uploadArea').style.display='block';
+  document.getElementById('uploadPreview').style.display='none';
+  document.getElementById('fileInput').value='';
 }
 
-function submitUpload() {
+function submitUpload(){
   const judul = document.getElementById('inputJudul').value.trim();
-  const kat   = document.getElementById('inputKategori').value;
-  const desk  = document.getElementById('inputDeskripsi').value.trim();
-  if (!judul) { showToast('Masukkan judul konten'); return; }
-  if (!kat)   { showToast('Pilih kategori'); return; }
-  if (!desk)  { showToast('Masukkan deskripsi'); return; }
+  const kat = document.getElementById('inputKategori').value;
+  const desk = document.getElementById('inputDeskripsi').value.trim();
+  if(!judul){showToast('Masukkan judul konten');return}
+  if(!kat){showToast('Pilih kategori');return}
+  if(!desk){showToast('Masukkan deskripsi');return}
 
   const previewSrc = document.getElementById('uploadPreviewImg').src || 'https://placehold.co/600x300/fff1ec/9e2016?text=Warisan';
   const cc = CAT_COLORS[kat] || CAT_COLORS.lainnya;
   const newDoc = {
-    id: Date.now(), cat: kat, catLabel: cc.label, catColor: cc.c, catBg: cc.bg,
-    title: judul, excerpt: desk, fullText: desk,
-    img: document.getElementById('uploadPreview').style.display !== 'none'
-      ? previewSrc
-      : 'https://placehold.co/600x300/fff1ec/9e2016?text=Warisan',
-    author: 'Kamu', authorAvatar: 'https://placehold.co/28/ffc641/59413d?text=K',
-    time: 'Baru saja', likes: 0, views: 0, userUploaded: true,
+    id: Date.now(), cat:kat, catLabel:cc.label, catColor:cc.c, catBg:cc.bg,
+    title:judul, excerpt:desk, fullText:desk,
+    img: document.getElementById('uploadPreview').style.display!=='none' ? previewSrc : 'https://placehold.co/600x300/fff1ec/9e2016?text=Warisan',
+    author:'Kamu', authorAvatar:'https://placehold.co/28/ffc641/59413d?text=K',
+    time:'Baru saja', likes:0, views:0, userUploaded:true,
   };
+  
   DOCS.unshift(newDoc);
   updateCounts();
   closeModal();
-  currentCat = 'semua';
-  document.querySelectorAll('.cat-link').forEach((b, i) => b.classList.toggle('active', i === 0));
-  document.getElementById('contentLabel').textContent = 'Semua Dokumentasi';
+  currentCat='semua';
+  document.querySelectorAll('.cat-link').forEach((b,i)=>{b.classList.toggle('active',i===0)});
+  document.getElementById('contentLabel').textContent='Semua Dokumentasi';
   renderDocs();
-  showToast('Konten berhasil diupload! 🎉');
-
+  
+  // Memakai fungsi global showToast
+  showToast('Konten berhasil diupload! 🎉', 'success');
+  
   // reset form
-  document.getElementById('inputJudul').value = '';
-  document.getElementById('inputKategori').value = '';
-  document.getElementById('inputDeskripsi').value = '';
-  removePreview({});
+  document.getElementById('inputJudul').value='';
+  document.getElementById('inputKategori').value='';
+  document.getElementById('inputDeskripsi').value='';
+  removePreview({stopPropagation:()=>{}});
 }
 
 /* ── INIT ── */
 updateCounts();
 const urlParams = new URLSearchParams(window.location.search);
-const catParam  = urlParams.get('cat');
+const catParam = urlParams.get('cat');
+
 if (catParam) {
   const catBtn = document.querySelector(`.cat-link[onclick*="'${catParam}'"]`);
   filterCat(catParam, catBtn);

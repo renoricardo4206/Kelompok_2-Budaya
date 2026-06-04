@@ -1,4 +1,4 @@
-/* forum.js */
+/* ── FORUM.JS — Warisan ── */
 
 const THREADS = [
   {id:1,cat:'bahasa',catLabel:'Bahasa',catColor:'#1565c0',catBg:'rgba(21,101,192,0.08)',
@@ -65,12 +65,12 @@ const THREADS = [
 ];
 
 window.THREADS_DATA = THREADS;
-
 let currentCat = 'semua', currentSort = 'terbaru';
 
 function renderFeed() {
   const feed = document.getElementById('threadFeed');
   let data = [...THREADS];
+  
   if (currentCat !== 'semua') data = data.filter(t => t.cat === currentCat);
   if (currentSort === 'populer') data.sort((a, b) => b.likes - a.likes);
 
@@ -88,7 +88,8 @@ function renderFeed() {
     const totalReplies = (t.replies || []).length;
     const participants = [t.avatar, ...(t.replies || []).slice(0, 2).map(r => r.avatar)];
     const avatarHtml = participants.map(a => `<img src="${a}" alt="" onerror="this.style.display='none'">`).join('');
-    return `<a class="thread-card" href="ForumDetail.html?id=${t.id}" data-cat="${t.cat}">
+    
+    return `<a class="thread-card" href="/forum/${t.id}" data-cat="${t.cat}">
       <div class="thread-top">
         <img class="thread-avatar" src="${t.avatar}" alt="${t.username}" onerror="this.src='https://placehold.co/36/ffdbce/9e2016?text=${t.username[0]}'">
         <div class="thread-meta">
@@ -136,12 +137,12 @@ function handleSearch(val) {
 }
 
 function shareThread(id) {
-  const url = window.location.origin + window.location.pathname.replace('Forum.html', '') + 'ForumDetail.html?id=' + id;
+  const url = window.location.origin + '/forum/' + id;
   if (navigator.clipboard) navigator.clipboard.writeText(url).then(() => showToast('Link disalin!', 'success'));
   else showToast('Link disalin!', 'success');
 }
 
-// Init
+// ── INIT ──
 const urlParams = new URLSearchParams(window.location.search);
 const catParam = urlParams.get('cat');
 if (catParam) {

@@ -6,9 +6,9 @@
 <title>Warisan – Jaga Budaya, Hidupkan Warisan</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link rel="stylesheet" th:href="@{/css/Global.css}">
 <link rel="stylesheet" th:href="@{/css/Shared.css}">
 <link rel="stylesheet" th:href="@{/css/Beranda.css}">
-<link rel="stylesheet" th:href="@{/css/Global.css}">
 </head>
 <body>
 
@@ -86,9 +86,7 @@
 
   <div class="feed-grid" id="feedGrid">
 
-    <article class="post-card" data-likes="245" data-comments="42"
-      data-cat="Tari"
-      onclick="window.location.href='/dokumentasi/1'">
+    <article class="post-card" data-likes="245" data-comments="42" data-cat="Tari" onclick="window.location.href='/dokumentasi/1'">
       <div class="card-thumb">
         <img class="thumb-img" src="https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=600&q=80" alt="Tari Kecak Bali" loading="lazy" onerror="this.src='https://placehold.co/600x360/ffdbce/9e2016?text=Tari+Kecak'">
         <div class="card-cat-badge" style="background:#fff;color:#2e7d32"><i class="bi bi-person-arms-up" style="font-size:10px;margin-right:4px"></i>Tari</div>
@@ -109,9 +107,7 @@
       </div>
     </article>
 
-    <article class="post-card" data-likes="189" data-comments="28"
-      data-cat="Kuliner"
-      onclick="window.location.href='/dokumentasi/2'">
+    <article class="post-card" data-likes="189" data-comments="28" data-cat="Kuliner" onclick="window.location.href='/dokumentasi/2'">
       <div class="card-thumb">
         <img class="thumb-img" src="https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=600&q=80" alt="Sepiring Rendang" loading="lazy" onerror="this.src='https://placehold.co/600x360/ffdbce/9e2016?text=Rendang'">
         <div class="card-cat-badge" style="background:#fff;color:#cc8800"><i class="bi bi-egg-fried" style="font-size:10px;margin-right:4px"></i>Kuliner</div>
@@ -132,9 +128,7 @@
       </div>
     </article>
 
-    <article class="post-card" data-likes="312" data-comments="56"
-      data-cat="Seni & Kriya"
-      onclick="window.location.href='/dokumentasi/3'">
+    <article class="post-card" data-likes="312" data-comments="56" data-cat="Seni & Kriya" onclick="window.location.href='/dokumentasi/3'">
       <div class="card-thumb">
         <img class="thumb-img" src="https://images.unsplash.com/photo-1590736704728-f4730bb30770?w=600&q=80" alt="Tas Tenun Sumba" loading="lazy" onerror="this.src='https://placehold.co/600x360/ffdbce/9e2016?text=Tenun+Sumba'">
         <div class="card-cat-badge" style="background:#fff;color:#555"><i class="bi bi-palette" style="font-size:10px;margin-right:4px"></i>Seni & Kriya</div>
@@ -155,9 +149,7 @@
       </div>
     </article>
 
-    <article class="post-card" data-likes="145" data-comments="58"
-      data-cat="Pakaian Adat"
-      onclick="window.location.href='/dokumentasi/4'">
+    <article class="post-card" data-likes="145" data-comments="58" data-cat="Pakaian Adat" onclick="window.location.href='/dokumentasi/4'">
       <div class="card-thumb">
         <img class="thumb-img" src="https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=600&q=80" alt="Baju Bodo" loading="lazy" onerror="this.src='https://placehold.co/600x360/ffdbce/9e2016?text=Baju+Bodo'">
         <div class="card-cat-badge" style="background:#fff;color:#9e2016"><i class="bi bi-stars" style="font-size:10px;margin-right:4px"></i>Pakaian Adat</div>
@@ -178,9 +170,7 @@
       </div>
     </article>
 
-    <article class="post-card" data-likes="415" data-comments="67"
-      data-cat="Musik"
-      onclick="window.location.href='/dokumentasi/5'">
+    <article class="post-card" data-likes="415" data-comments="67" data-cat="Musik" onclick="window.location.href='/dokumentasi/5'">
       <div class="card-thumb">
         <img class="thumb-img" src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=600&q=80" alt="Sasando" loading="lazy" onerror="this.src='https://placehold.co/600x360/ffdbce/9e2016?text=Sasando'">
         <div class="card-cat-badge" style="background:#fff;color:#444"><i class="bi bi-music-note" style="font-size:10px;margin-right:4px"></i>Musik Tradisional</div>
@@ -289,6 +279,7 @@
   </div>
 </div>
 
+<script th:src="@{/js/Global.js}"></script>
 <script th:src="@{/js/Shared.js}"></script>
 <script th:src="@{/js/Beranda.js}"></script>
 </body>
