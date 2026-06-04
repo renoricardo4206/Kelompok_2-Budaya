@@ -1,12 +1,7 @@
 package com.project.budaya.Entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "posts")
@@ -22,6 +17,10 @@ public class Posts {
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Categories category;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<PostLikes> postLikes;
+    
     private String title;
     private String content;
     private String media_url;
@@ -95,5 +94,13 @@ public class Posts {
 
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public List<PostLikes> getPostLikes() {
+        return postLikes;
+    }
+
+    public void setPostLikes(List<PostLikes> postLikes) {
+        this.postLikes = postLikes;
     }
 }

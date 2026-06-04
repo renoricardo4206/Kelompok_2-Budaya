@@ -25,6 +25,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Likes> likes;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<PostLikes> postLikes;
+
     public User() {
     }
 
@@ -106,5 +109,13 @@ public class User {
 
     public void setLikes(List<Likes> likes) {
         this.likes = likes;
-    }    
+    }
+    
+    public List<PostLikes> getPostLikes() {
+        return postLikes;
+    }
+
+    public void setPostLikes(List<PostLikes> postLikes) {
+        this.postLikes = postLikes;
+    }
 }
