@@ -7,7 +7,7 @@ const THREADS = [
    title:'Bahasa daerah kita bakal punah dalam 50 tahun ke depan — setuju atau tidak?',
    excerpt:'Baru baca laporan UNESCO yang bilang ratusan bahasa daerah di Indonesia masuk kategori terancam punah. Gw jadi mikir, emang kita udah nggak peduli lagi sama bahasa ibu kita sendiri?',
    fullText:'Baru baca laporan UNESCO yang bilang ratusan bahasa daerah di Indonesia masuk kategori terancam punah. Gw jadi mikir, emang kita udah nggak peduli lagi sama bahasa ibu kita sendiri?\n\nGw orang Jawa tapi jujur aja bahasa Jawa gw payah banget. Ngomong sama nenek aja masih sering minta tolong kakak buat translasi. Dan kayaknya ini relate banget sama banyak orang generasi kita.\n\nPertanyaan gw: ini salah siapa? Salah sistem pendidikan yang terlalu fokus ke Bahasa Indonesia dan Inggris? Atau emang kita sendiri yang males? Atau ini udah takdir evolusi bahasa yang wajar?\n\nMenurut kalian, masih worth it nggak buat belajar dan lestarikan bahasa daerah di era sekarang? Atau energinya mending dialihkan ke bahasa yang lebih "berguna" secara ekonomi?',
-   likes:312,comments:4,
+   likes:2,comments:4,
    replies:[
     {avatar:'https://i.pravatar.cc/40?img=20',name:'SariIndrawati',time:'3 Jun 2026, 09:45',text:'Worth it banget! Bahasa daerah bukan cuma alat komunikasi, tapi wadah budaya. Banyak konsep dan filosofi lokal yang literally nggak bisa diterjemahkan ke bahasa lain.',replyTo:null},
     {avatar:'https://i.pravatar.cc/40?img=33',name:'BramoPratama',time:'3 Jun 2026, 10:02',text:'Salah sistemnya menurut gw. Pelajaran bahasa daerah di sekolah itu cuma formalitas, nggak ada yang beneran serius ngajarinnya.',replyTo:null},
@@ -20,7 +20,7 @@ const THREADS = [
    title:'Batik printing vs batik tulis — ini beda produk atau beda budaya?',
    excerpt:'Kemarin debat sama teman soal ini dan nggak ada yang mau ngalah. Dia bilang batik printing tetap bisa disebut batik karena motifnya sama. Gw nggak setuju. Menurut kalian gimana?',
    fullText:'Kemarin debat sama teman soal ini dan nggak ada yang mau ngalah. Dia bilang batik printing tetap bisa disebut "batik" karena motifnya sama. Gw nggak setuju.\n\nMenurut gw, batik itu bukan cuma soal motif — tapi soal proses. Proses nglowong, nembok, nyelup, nglorod itu bagian dari jiwanya batik. Kalau itu dilewatin dan diganti mesin cetak, yang tersisa cuma gambarnya doang, bukan budayanya.\n\nTapi di sisi lain, gw juga paham argumen sebaliknya: batik printing bikin motif tradisional lebih terjangkau dan accessible buat semua kalangan. Tanpa batik printing, mungkin generasi muda nggak bakal kenal motif Parang atau Kawung sama sekali.\n\nJadi pertanyaannya: apakah kita harus strict soal definisi "batik"? Atau fleksibilitas itu justru yang bikin budaya bisa bertahan?',
-   likes:278,comments:3,
+   likes:1,comments:3,
    replies:[
     {avatar:'https://i.pravatar.cc/40?img=14',name:'HafidzNurul',time:'3 Jun 2026, 07:15',text:'Ini pertanyaan yang beneran susah. Tapi gw condong ke camp kamu — kalau proses tradisionalnya hilang, yang kita jual cuma estetika, bukan budaya.',replyTo:null},
     {avatar:'https://i.pravatar.cc/40?img=28',name:'MirandaKusuma',time:'3 Jun 2026, 08:00',text:'Eh tapi UNESCO sendiri mendefinisikan batik Indonesia berdasarkan motif dan filosofinya, bukan hanya prosesnya. Jadi secara formal, batik printing masih bisa masuk kategori batik.',replyTo:null},
@@ -32,7 +32,7 @@ const THREADS = [
    title:'Kenapa musisi muda Indonesia jarang eksplorasi alat musik tradisional?',
    excerpt:'Gw nonton konser indie kemarin dan mikir — dari 8 band yang tampil, nggak ada satupun yang pakai alat musik tradisional. Padahal kita punya gamelan, sasando, kolintang, angklung. Ada yang tau kenapa?',
    fullText:'Gw nonton konser indie kemarin dan mikir — dari 8 band yang tampil, nggak ada satupun yang pakai alat musik tradisional. Padahal kita punya gamelan, sasando, kolintang, tifa, dan banyak lagi.\n\nGw bukan yang tipe puritan "harus pakai alat tradisional". Tapi gw penasaran kenapa eksplorasi itu jarang banget terjadi di scene musik indie lokal, padahal potensinya luar biasa.\n\nApa karena susah belajarnya? Mahal alatnya? Atau emang nggak ada yang ngajarin dengan cara yang relevan buat anak muda?\n\nSementara itu di luar negeri, banyak banget musisi yang fuse traditional instruments dengan modern sound dan hasilnya keren parah. Kita seharusnya bisa lebih dari itu dengan kekayaan instrumen yang kita punya.\n\nAda yang punya pengalaman belajar alat musik tradisional? Susah nggak aksesnya?',
-   likes:203,comments:3,
+   likes:1,comments:3,
    replies:[
     {avatar:'https://i.pravatar.cc/40?img=62',name:'AldoSantoso',time:'2 Jun 2026, 20:05',text:'Gw belajar gamelan waktu SMA tapi berhenti karena literally nggak ada komunitas yang aktif di kota gw. Itu masalah utamanya — ekosistemnya belum ada.',replyTo:null},
     {avatar:'https://i.pravatar.cc/40?img=17',name:'RizkiAmelia',time:'2 Jun 2026, 21:30',text:'Coba dengerin Kua Etnika atau Krakatau — mereka udah lama fuse tradisional sama kontemporer. Tapi emang kurang exposure ke anak muda sekarang.',replyTo:null},
@@ -44,7 +44,7 @@ const THREADS = [
    title:'Makanan fusion Indonesia — inovasi yang perlu didukung atau ancaman buat kuliner asli?',
    excerpt:'Akhir-akhir ini makin banyak restoran yang jual "rendang pasta", "soto ramen", atau "nasi goreng sushi". Gw nggak tau harus excited atau khawatir. Ada yang punya take soal ini?',
    fullText:'Akhir-akhir ini makin banyak restoran yang jual "rendang pasta", "soto ramen", atau "nasi goreng sushi". Gw nggak tau harus excited atau khawatir.\n\nDi satu sisi, ini bukti bahwa kuliner Indonesia makin percaya diri dan mau bereksperimen. Fusion bisa jadi pintu masuk orang asing buat kenal rasa-rasa Indonesia.\n\nTapi di sisi lain, gw takut identitas kuliner kita jadi blur. Kalau generasi berikutnya lebih kenal "rendang pasta" daripada rendang asli, itu worth it nggak?\n\nGw juga mau tanya soal sudut pandang pengrajin dan pedagang makanan tradisional — mereka diuntungkan atau dirugikan sama tren ini?\n\nMenurut kalian, ada batasnya nggak antara inovasi yang sehat dan komodifikasi yang kebablasan?',
-   likes:187,comments:3,
+   likes:0,comments:3,
    replies:[
     {avatar:'https://i.pravatar.cc/40?img=31',name:'GalihPrasetyo',time:'1 Jun 2026, 14:20',text:'Selama yang aslinya juga tetap ada dan dirawat, fusion itu sah-sah aja. Yang bahaya kalau fusion menggantikan, bukan melengkapi.',replyTo:null},
     {avatar:'https://i.pravatar.cc/40?img=44',name:'FeliksiaAnanda',time:'1 Jun 2026, 15:10',text:'Gw malah optimis. Fusion bisa jadi gateway. Orang yang pertama kali makan rendang pasta bisa jadi penasaran sama rendang aslinya.',replyTo:null},
@@ -56,7 +56,7 @@ const THREADS = [
    title:'Tari tradisional wajib masuk kurikulum sekolah — perlu atau nggak?',
    excerpt:'Gw guru SD dan lagi debat sama rekan kerja soal ini. Ada yang bilang anak-anak sekarang udah overloaded sama pelajaran, tambah tari malah jadi beban. Tapi ada yang bilang justru ini yang bikin anak kenal budayanya.',
    fullText:'Gw guru SD dan lagi debat sama rekan kerja soal ini. Ada yang bilang anak-anak sekarang udah overloaded sama pelajaran, tambah tari malah jadi beban. Tapi ada yang bilang justru ini yang bikin anak kenal budayanya.\n\nSekarang di sekolah gw, tari tradisional cuma masuk di ekstrakulikuler — yang artinya opsional dan sering nggak diambil. Hasilnya? Mayoritas murid kelas 6 nggak bisa ngebedain tari Saman sama tari Jaipong.\n\nTapi gw juga paham bahwa memaksakan tari ke semua anak bisa jadi kontraproduktif. Kalau nggak ada passion-nya, jadinya malah hafalan yang dilupain begitu ujian selesai.\n\nJadi pertanyaan gw buat komunitas ini: gimana cara yang paling efektif buat mengenalkan tari tradisional ke generasi muda? Lewat sekolah formal, atau ada pendekatan lain yang lebih berhasil?',
-   likes:156,comments:3,
+   likes:0,comments:3,
    replies:[
     {avatar:'https://i.pravatar.cc/40?img=8',name:'RanggaWibawa',time:'31 Mei 2026, 11:00',text:'Wajib masuk kurikulum tapi jangan dijadikan mata pelajaran yang dinilai dengan angka. Jadikan pengalaman budaya yang menyenangkan.',replyTo:null},
     {avatar:'https://i.pravatar.cc/40?img=21',name:'LestariHandayani',time:'31 Mei 2026, 12:30',text:'Setuju! Di sekolah tempat gw dulu, ada "Festival Budaya" tahunan yang bikin anak-anak mau belajar tari karena ada panggung-nya, bukan karena takut nilai jelek.',replyTo:{name:'RanggaWibawa',text:'jangan dijadikan mata pelajaran yang dinilai'}},

@@ -8,7 +8,7 @@ let DOCS = [
     fullText:'Tari Kecak adalah tarian ritual dari Bali yang berasal dari upacara keagamaan Hindu. Ratusan penari duduk melingkar sambil mengucapkan "cak cak cak" secara serempak. Setiap gerakan punya makna spiritual yang dalam, menggambarkan kisah Ramayana.',
     img:'https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=800&q=80',
     author:'Maria Damaris', authorAvatar:'https://i.pinimg.com/1200x/b0/0f/fb/b00ffb3a94d32e4741c7273338f667c3.jpg',
-    time:'2 jam yang lalu', likes:245, views:1200, userUploaded:false,
+    time:'2 jam yang lalu', likes:0, views:1200, userUploaded:false,
   },
   {
     id:2, cat:'kuliner', catLabel:'Kuliner', catColor:'#cc8800', catBg:'rgba(245,159,0,0.12)',
@@ -17,7 +17,7 @@ let DOCS = [
     fullText:'Rendang adalah masakan daging sapi khas Minangkabau yang dimasak dengan santan dan rempah selama berjam-jam hingga kering. Setiap tahap proses memasak punya makna budaya tersendiri.',
     img:'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=800&q=80',
     author:'Marcel Tandiawan', authorAvatar:'https://i.pinimg.com/webp/1200x/09/a0/a2/09a0a23164fddfe5027ba6b10dc0315a.webp',
-    time:'5 jam yang lalu', likes:189, views:890, userUploaded:false,
+    time:'5 jam yang lalu', likes:1, views:890, userUploaded:false,
   },
   {
     id:3, cat:'seni', catLabel:'Seni & Kriya', catColor:'#555', catBg:'rgba(85,85,85,0.10)',
@@ -26,7 +26,7 @@ let DOCS = [
     fullText:'Kain Hinggi dari Sumba adalah salah satu tekstil tradisional paling ikonik di Indonesia. Motif-motifnya bukan sekadar dekorasi, melainkan simbol status sosial dan kepercayaan.',
     img:'https://images.unsplash.com/photo-1590736704728-f4730bb30770?w=800&q=80',
     author:'Putri Asmita', authorAvatar:'https://i.pravatar.cc/64?img=25',
-    time:'31 Mei 2026', likes:312, views:2100, userUploaded:false,
+    time:'31 Mei 2026', likes:0, views:2100, userUploaded:false,
   },
   {
     id:4, cat:'pakaian', catLabel:'Pakaian Adat', catColor:'#9e2016', catBg:'rgba(158,32,22,0.1)',
@@ -35,7 +35,7 @@ let DOCS = [
     fullText:'Baju Bodo diyakini sebagai salah satu pakaian adat tertua di dunia. Warna merah untuk gadis remaja, putih untuk yang sudah tua — filosofi yang mendalam tersimpan di balik pilihan warna.',
     img:'https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=800&q=80',
     author:'Michelle Putri', authorAvatar:'https://i.pravatar.cc/64?img=32',
-    time:'14 Mei 2026', likes:145, views:670, userUploaded:false,
+    time:'14 Mei 2026', likes:3, views:670, userUploaded:false,
   },
   {
     id:5, cat:'musik', catLabel:'Musik', catColor:'#444', catBg:'rgba(14,14,14,0.08)',
@@ -44,7 +44,7 @@ let DOCS = [
     fullText:'Sasando berasal dari pulau Rote, NTT. Nama sasando berasal dari kata "sasandu" yang artinya alat yang bergetar. Instrumen ini semakin langka dan perlu dilestarikan.',
     img:'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800&q=80',
     author:'Muhammad Haikal', authorAvatar:'https://i.pravatar.cc/64?img=59',
-    time:'5 Mei 2026', likes:415, views:3200, userUploaded:false,
+    time:'5 Mei 2026', likes:1, views:3200, userUploaded:false,
   },
 ];
 

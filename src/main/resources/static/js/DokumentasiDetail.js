@@ -22,20 +22,20 @@ Kata mereka, tarian ini sebenernya udah ada dari tahun 1930-an, aslinya dari rit
 Nah, kalau plot pertunjukan yang gw tonton tadi, mereka cerita kalau itu diambil dari kisah Ramayana. Khususnya pas bagian Dewi Sinta diculik ama Rahwana, terus perjuangan Rama yang dibantu ama Hanoman dan pasukan kera buat nyelametin Sinta.
 
 Asli sih, kalo kapan-kapan kalian ke Bali juga dan punya kesempatan buat nonton tari kecak, jangan sampe kelewatan deh. Itu bakalan jadi pengalaman yang berkesan banget.`,
-    likes:124, replies:32,
+    likes:0, replies:4,
     comments:[
       {id:'c1', avatarUrl:'https://i.pravatar.cc/40?img=5', avatarBg:'', name:'Siti Aminah', time:'1 jam yang lalu', initials:'S', bg:'#427452', textColor:'#c1f8cd',
        text:'Sama mbaa. dulu pas pertama kali aku liet tari kecak, aku juga mesmerized bangett. soalnya emang kayak unik banget kan. aku kena goosebumps sih., dari keliatannya aja aku tuh uda bisa sense kalo dia nih maknanya dalem banget, dan ternyata emang bener?!?! jadi pengen liet lagi 😭',
-       likes:15,
+       likes:0,
        nested:[
          {id:'r1', initials:'S', bg:'#795900', textColor:'#fff8e1', name:'Setiawan', time:'45 mnt yang lalu',
           text:'duh pada bilang gini.... lama-lama gw jadi penasaran juga mau nonton tari kecak secara langsung... when yahh....',
-          likes:8}
+          likes:1}
        ]
       },
       {id:'c2', avatarUrl:'', initials:'G', bg:'#427452', textColor:'#c1f8cd', name:'Gilang Mulyo', time:'30 mnt yang lalu',
        text:'loh sedalam itu yah ternyata maknanya?? jujur aku ga ekspek sih... bner-bener tarian-tarian tradisional indonesia tu pada keren-keren yah',
-       likes:3, nested:[]
+       likes:0, nested:[]
       }
     ]
   },
@@ -54,15 +54,15 @@ Kemarin gw sempat ngobrol sama nenek gw yang asli Minang, dan dia cerita kalau r
 Setiap tahap punya makna: dari cara motong daging, urutan bumbu yang dimasukkan, sampai api yang harus dijaga. Ada bumbu yang baru boleh dimasukkan setelah bumbu sebelumnya sudah "menyatu" dengan daging. Nenek bilang, sabar adalah kunci utamanya.
 
 Rendang bukan cuma makanan — ini adalah wujud kesabaran dan kecintaan orang Minang terhadap budayanya. Filosofi hidup yang tertuang dalam satu piring masakan.`,
-    likes:89, replies:28,
+    likes:1, replies:3,
     comments:[
       {id:'c1', avatarUrl:'https://i.pravatar.cc/40?img=31', initials:'S', bg:'#2e7d32', textColor:'#e8f5e9', name:'SitiNurhaliza', time:'4 jam lalu',
        text:'Wah resep turun-temurun tuh beneran beda rasanya! Nenek saya juga punya versi sendiri yang agak beda dari yang biasa dijual.',
-       likes:12, nested:[]
+       likes:0, nested:[]
       },
       {id:'c2', avatarUrl:'https://i.pravatar.cc/40?img=35', initials:'F', bg:'#33489a', textColor:'#e8eaf6', name:'FajarNugroho', time:'3 jam lalu',
        text:'Betul! Proses slow-cook itulah yang bikin rendang beda dari olahan daging lainnya. Filosofi kesabaran yang tersirat di situ.',
-       likes:8, nested:[]
+       likes:0, nested:[]
       }
     ]
   },
@@ -81,18 +81,18 @@ Tenun Sumba atau yang dikenal sebagai 'Hinggi' ini dibuat dengan teknik ikat yan
 Setiap motif punya cerita dan makna spiritual yang berbeda-beda, mencerminkan status sosial, kepercayaan, dan identitas pemakainya. Motif kuda misalnya, melambangkan kebangsawanan dan kekuatan.
 
 Kalau kalian mau support pengrajin lokal, membeli tenun langsung dari pengrajin adalah salah satu cara terbaik untuk memastikan warisan ini terus hidup!`,
-    likes:312, replies:56,
+    likes:0, replies:5,
     comments:[
       {id:'c1', avatarUrl:'https://i.pravatar.cc/40?img=41', initials:'A', bg:'#33489a', textColor:'#e8eaf6', name:'AnggaKusuma', time:'30 Mei lalu',
        text:'Tenun Sumba emang luar biasa. Ada yang tau toko online terpercaya yang jual langsung dari pengrajinnya?',
-       likes:18, nested:[
+       likes:1, nested:[
          {id:'r1', initials:'D', bg:'#2e7d32', textColor:'#e8f5e9', name:'DewiSartika', time:'30 Mei lalu',
           text:'Coba cek di marketplace official Dekranas atau langsung ke koperasi pengrajin di NTB!', likes:7}
        ]
       },
       {id:'c2', avatarUrl:'https://i.pravatar.cc/40?img=48', initials:'H', bg:'#795900', textColor:'#fff8e1', name:'HendraLim', time:'1 hari lalu',
        text:'Motif kuda yang ada di Hinggi itu punya makna kebangsawanan. Saya pernah riset tentang ini untuk tesis saya.',
-       likes:24, nested:[]
+       likes:0, nested:[]
       }
     ]
   },
@@ -113,11 +113,11 @@ Baju Bodo adalah salah satu pakaian adat tertua di dunia yang berasal dari Sulaw
 Warnanya yang mencolok punya makna mendalam — setiap warna melambangkan status sosial pemakainya. Merah untuk gadis remaja, jingga untuk wanita muda yang belum menikah, hijau untuk bangsawan, ungu untuk janda, dan putih untuk orang yang sudah tua.
 
 Udah saatnya kita bangga pakai ini sehari-hari!`,
-    likes:145, replies:58,
+    likes:3, replies:5,
     comments:[
       {id:'c1', avatarUrl:'https://i.pravatar.cc/40?img=53', initials:'N', bg:'#9e2016', textColor:'#ffe5e1', name:'NurulHidayah', time:'13 Mei lalu',
        text:'Iya baju Bodo emang cantik banget! Warna merah untuk gadis remaja, putih untuk yang sudah tua. Filosofinya dalam banget.',
-       likes:31, nested:[]
+       likes:1, nested:[]
       }
     ]
   },
@@ -138,15 +138,15 @@ Sasando adalah alat musik petik yang terbuat dari daun lontar yang dibentuk sepe
 Bunyi yang dihasilkan tuh unik banget, seperti harpa tapi punya nuansa yang lebih etnik dan organik. Ada sentuhan mistis yang sulit dijelaskan tapi langsung terasa saat pertama kali mendengarnya.
 
 Pengrajinnya pun makin sedikit karena butuh keahlian khusus yang membutuhkan waktu bertahun-tahun untuk dikuasai. Gw harap makin banyak yang mau belajar dan melestarikan alat musik ini.`,
-    likes:415, replies:67,
+    likes:1, replies:3,
     comments:[
       {id:'c1', avatarUrl:'https://i.pravatar.cc/40?img=62', initials:'Y', bg:'#33489a', textColor:'#e8eaf6', name:'YusufTambelo', time:'4 Mei lalu',
        text:'Sasando itu keajaiban dari NTT! Saya orang Rote dan bangga banget alat ini mulai dikenal luas.',
-       likes:42, nested:[]
+       likes:2, nested:[]
       },
       {id:'c2', avatarUrl:'https://i.pravatar.cc/40?img=65', initials:'C', bg:'#c0392b', textColor:'#ffe5e1', name:'CintaLarasati', time:'4 Mei lalu',
        text:'Ada info workshopnya lagi ga? Pengen banget ikut belajar!',
-       likes:19, nested:[]
+       likes:0, nested:[]
       }
     ]
   }
