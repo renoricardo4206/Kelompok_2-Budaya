@@ -18,6 +18,7 @@ public class Comments{
     @JoinColumn(name = "thread_id", nullable = false)
     private Threads thread;
 
+    @Column(columnDefinition = "TEXT")
     private String content;
     private String createdAt;
 

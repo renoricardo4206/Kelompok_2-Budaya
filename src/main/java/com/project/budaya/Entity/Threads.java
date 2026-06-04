@@ -18,8 +18,10 @@ public class Threads {
     private Forums forum;
 
     private String title;
+    @Column(columnDefinition = "TEXT")
     private String content;
     private String createdAt;
+    private String mediaURL;
 
     @OneToMany(mappedBy = "thread", cascade = CascadeType.ALL)
     private List<Comments> comments;
@@ -30,12 +32,13 @@ public class Threads {
     public Threads() {
     }
 
-    public Threads(User user, Forums forum, String title, String content, String createdAt) {
+    public Threads(User user, Forums forum, String title, String content, String createdAt, String mediaURL) {
         this.user = user;
         this.forum = forum;
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
+        this.mediaURL = mediaURL;
     }
 
     // Getters and Setters
@@ -102,5 +105,13 @@ public class Threads {
 
     public void setLikes(List<Likes> likes) {
         this.likes = likes;
+    }
+
+    public String getMediaURL() {
+        return mediaURL;
+    }
+
+    public void setMediaURL(String mediaURL) {
+        this.mediaURL = mediaURL;
     }
 }

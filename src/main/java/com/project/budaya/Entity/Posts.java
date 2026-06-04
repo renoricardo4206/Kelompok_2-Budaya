@@ -22,6 +22,7 @@ public class Posts {
     private List<PostLikes> postLikes;
     
     private String title;
+    @Column(columnDefinition = "TEXT")
     private String content;
     private String media_url;
     private String createdAt;
