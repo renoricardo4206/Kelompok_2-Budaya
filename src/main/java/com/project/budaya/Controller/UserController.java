@@ -14,6 +14,12 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
+
+    @GetMapping("/")
+    public String beranda() {
+        return "Beranda";
+    }
+
     @GetMapping("/login")
     public String loginpage(){
         return "login";
