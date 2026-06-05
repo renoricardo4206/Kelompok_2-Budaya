@@ -1,65 +1,140 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-<title id="pageTitle">Dokumentasi – Warisan</title>
+<title th:text="${post.title} + ' – Warisan'">Dokumentasi – Warisan</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400;0,600&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 <link rel="stylesheet" th:href="@{/css/Global.css}">
 <link rel="stylesheet" th:href="@{/css/Shared.css}">
 <link rel="stylesheet" th:href="@{/css/DokumentasiDetail.css}">
+<style>
+.detail-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+.detail-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    margin-bottom: 40px;
+}
+.detail-header {
+    padding: 30px 30px 0 30px;
+}
+.detail-cat-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: #f0f0f0;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 16px;
+}
+.detail-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 20px 0;
+    line-height: 1.3;
+}
+.detail-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+.detail-author {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.detail-author-name {
+    font-weight: 600;
+    display: block;
+}
+.detail-date {
+    font-size: 13px;
+    color: #999;
+    display: block;
+}
+.detail-image {
+    margin: 20px 0;
+}
+.detail-image img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+.detail-content {
+    padding: 20px 30px 30px 30px;
+    font-size: 16px;
+    line-height: 1.7;
+    color: #333;
+}
+.detail-actions {
+    display: flex;
+    gap: 16px;
+    padding: 0 30px 30px 30px;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+}
+.detail-like-btn, .detail-share-btn {
+    padding: 10px 24px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 40px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.detail-like-btn:hover {
+    background: #9e2016;
+    color: white;
+    border-color: #9e2016;
+}
+.recommendations {
+    margin-top: 40px;
+}
+.recommendations-title {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+.recommendations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+.rec-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.rec-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+.rec-body {
+    padding: 15px;
+}
+.rec-body h4 {
+    font-size: 14px;
+    margin: 0 0 10px 0;
+    line-height: 1.4;
+}
+.rec-link {
+    color: #9e2016;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+}
+</style>
 </head>
 <body>
-
-<div class="modal-overlay" id="uploadModal">
-  <div class="modal">
-    <div class="modal-head">
-      <h2>Upload Konten</h2>
-      <button class="modal-close" onclick="closeModal()"><i class="bi bi-x-lg"></i></button>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Judul Konten *</label>
-      <input type="text" class="form-input" id="inputJudul" placeholder="Contoh: Mengenal Batik Parang dari Yogyakarta">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Kategori *</label>
-      <select class="form-input" id="inputKategori">
-        <option value="">Pilih kategori...</option>
-        <option value="tari">Tari</option>
-        <option value="kuliner">Kuliner</option>
-        <option value="pakaian">Pakaian Adat</option>
-        <option value="musik">Musik</option>
-        <option value="bahasa">Bahasa</option>
-        <option value="seni">Seni & Kriya</option>
-        <option value="lainnya">Lainnya</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Deskripsi Singkat *</label>
-      <textarea class="form-input" id="inputDeskripsi" placeholder="Ceritakan isi konten kamu secara singkat..."></textarea>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Foto / Gambar</label>
-      <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()" ondragover="handleDrag(event,true)" ondragleave="handleDrag(event,false)" ondrop="handleDrop(event)">
-        <i class="bi bi-cloud-arrow-up"></i>
-        <p>Klik atau seret gambar ke sini</p>
-        <span>PNG, JPG, WEBP — maks. 5MB</span>
-      </div>
-      <div class="upload-preview" id="uploadPreview" style="display:none">
-        <img id="uploadPreviewImg" src="" alt="preview">
-        <button class="upload-preview-remove" onclick="removePreview(event)"><i class="bi bi-x-lg"></i></button>
-      </div>
-      <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFile(this)">
-    </div>
-    <div class="modal-actions">
-      <button class="btn-submit" onclick="submitUpload()">Upload Konten</button>
-    </div>
-  </div>
-</div>
-
-<!-- TOAST -->
-<div class="toast-container" id="toastContainer"></div>
 
 <!-- DRAWER -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
@@ -71,7 +146,7 @@
   <ul class="drawer-nav">
     <li><a href="/"><i class="bi bi-house"></i>Beranda</a></li>
     <li><a href="/forum"><i class="bi bi-chat-dots"></i>Forum</a></li>
-    <li><a href="/dokumentasi" class="active" onclick="closeDrawer()"><i class="bi bi-journal-richtext"></i>Dokumentasi</a></li>
+    <li><a href="/dokumentasi" class="active"><i class="bi bi-journal-richtext"></i>Dokumentasi</a></li>
   </ul>
   <div class="drawer-divider"></div>
   <div class="drawer-auth">
@@ -102,35 +177,100 @@
   </div>
 </nav>
 
-<!-- MAIN -->
+<!-- MAIN CONTENT -->
 <div class="page-wrapper">
   <div class="detail-layout">
-
-    <!-- SIDEBAR LEFT -->
+    
+    <!-- SIDEBAR KATEGORI -->
     <aside class="sidebar-left">
       <div class="sidebar-title">Kategori Budaya</div>
       <div class="sidebar-subtitle">Filter dokumentasi</div>
-      <nav class="cat-nav" id="sidebarCatNav">
+      <nav class="cat-nav">
         <a href="/dokumentasi" class="cat-link"><i class="bi bi-compass"></i>Semua Dokumentasi</a>
-        <a href="/dokumentasi?cat=tari" class="cat-link" id="sideCatTari"><i class="bi bi-person-arms-up"></i>Tari</a>
-        <a href="/dokumentasi?cat=bahasa" class="cat-link"><i class="bi bi-translate"></i>Bahasa</a>
-        <a href="/dokumentasi?cat=seni" class="cat-link"><i class="bi bi-palette"></i>Seni &amp; Kriya</a>
-        <a href="/dokumentasi?cat=musik" class="cat-link" id="sideCatMusik"><i class="bi bi-music-note"></i>Musik</a>
-        <a href="/dokumentasi?cat=pakaian" class="cat-link" id="sideCatPakaian"><i class="bi bi-stars"></i>Pakaian Adat</a>
-        <a href="/dokumentasi?cat=kuliner" class="cat-link" id="sideCatKuliner"><i class="bi bi-egg-fried"></i>Kuliner</a>
-        <a href="/dokumentasi?cat=lainnya" class="cat-link"><i class="bi bi-three-dots"></i>Lainnya</a>
+        <a th:href="@{/dokumentasi(cat='Tari Tradisional')}" class="cat-link"><i class="bi bi-person-arms-up"></i>Tari Tradisional</a>
+        <a th:href="@{/dokumentasi(cat='Kuliner')}" class="cat-link"><i class="bi bi-egg-fried"></i>Kuliner</a>
+        <a th:href="@{/dokumentasi(cat='Seni & Kriya')}" class="cat-link"><i class="bi bi-palette"></i>Seni &amp; Kriya</a>
+        <a th:href="@{/dokumentasi(cat='Pakaian Adat')}" class="cat-link"><i class="bi bi-stars"></i>Pakaian Adat</a>
+        <a th:href="@{/dokumentasi(cat='Musik Tradisional')}" class="cat-link"><i class="bi bi-music-note"></i>Musik Tradisional</a>
+        <a th:href="@{/dokumentasi(cat='Lainnya')}" class="cat-link"><i class="bi bi-three-dots"></i>Lainnya</a>
       </nav>
       <button class="btn-new-thread" onclick="openModal()">
         <i class="bi bi-cloud-arrow-up"></i> Upload Konten
       </button>
     </aside>
 
-    <!-- CENTER COLUMN -->
+    <!-- CENTER COLUMN - DETAIL POST -->
     <main id="mainContent">
-      <!-- populated by JS -->
+      <div class="detail-container">
+        <!-- Breadcrumbs -->
+        <nav class="breadcrumbs">
+          <a href="/dokumentasi">Dokumentasi</a>
+          <span><i class="bi bi-chevron-right"></i></span>
+          <a th:href="@{/dokumentasi(cat=${post.category.name})}" th:text="${post.category.name}">Kategori</a>
+          <span><i class="bi bi-chevron-right"></i></span>
+          <span class="current" th:text="${post.title}">Judul Post</span>
+        </nav>
+
+        <!-- Post Card -->
+        <div class="detail-card">
+          <div class="detail-header">
+            <div class="detail-category">
+              <span class="detail-cat-badge" th:text="${post.category.name}">Kategori</span>
+            </div>
+            <h1 class="detail-title" th:text="${post.title}">Judul Dokumentasi</h1>
+            <div class="detail-meta">
+              <div class="detail-author">
+                <div class="detail-author-avatar" 
+                     th:text="${post.user != null ? post.user.username.substring(0,1) : 'A'}"
+                     style="width:44px;height:44px;border-radius:50%;background:#9e2016;color:white;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:18px">
+                  A
+                </div>
+                <div>
+                  <span class="detail-author-name" th:text="${post.user != null ? post.user.username : 'Anonymous'}">Author</span>
+                  <span class="detail-date" th:text="${#dates.format(post.createdAt, 'dd MMMM yyyy')}">Tanggal</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-image" th:if="${post.media_url != null and post.media_url != ''}">
+            <img th:src="${post.media_url}" th:alt="${post.title}" 
+                 onerror="this.src='https://placehold.co/800x400/fff1ec/9e2016?text=Warisan'">
+          </div>
+
+          <div class="detail-content">
+            <p th:text="${post.content}">Konten dokumentasi lengkap ada di sini...</p>
+          </div>
+
+          <div class="detail-actions">
+            <button class="detail-like-btn" onclick="toggleLike()">
+              <i class="bi bi-heart"></i>
+              <span>Dukung</span>
+            </button>
+            <button class="detail-share-btn" onclick="sharePost()">
+              <i class="bi bi-share"></i>
+              <span>Bagikan</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Rekomendasi Lainnya -->
+        <div class="recommendations" th:if="${not otherPosts.isEmpty()}">
+          <h3 class="recommendations-title">Dokumentasi Lainnya</h3>
+          <div class="recommendations-grid">
+            <div th:each="other : ${otherPosts}" class="rec-card" onclick="location.href='/dokumentasi/' + ${other.id}" style="cursor:pointer">
+              <img th:src="${other.media_url != null and other.media_url != '' ? other.media_url : 'https://placehold.co/300x180/fff1ec/9e2016?text=Warisan'}" 
+                   th:alt="${other.title}"
+                   onerror="this.src='https://placehold.co/300x180/fff1ec/9e2016?text=Warisan'">
+              <div class="rec-body">
+                <h4 th:text="${other.title}">Judul</h4>
+                <a th:href="@{/dokumentasi/{id}(id=${other.id})}" class="rec-link">Baca →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
-
-
 
   </div>
 </div>
@@ -141,11 +281,7 @@
     <div>
       <div class="footer-brand">Warisan</div>
       <div class="footer-tagline">Melestarikan Budaya, Menghubungkan Bangsa.</div>
-      <div class="footer-links" style="margin-bottom: 16px;">
-        <a href="https://wa.me/6282261137206" target="_blank" rel="noopener noreferrer">
-          <i class="bi bi-whatsapp" style="margin-right: 4px;"></i> Hubungi Kami
-        </a>
-      </div>
+      <div class="footer-links"><a href="https://wa.me/6282261137206" target="_blank"><i class="bi bi-whatsapp"></i> Hubungi Kami</a></div>
       <div class="footer-copy">© 2026 Warisan. Seluruh hak cipta dilindungi.</div>
     </div>
   </div>
@@ -165,50 +301,69 @@
 <div class="auth-overlay" id="authOverlay" onclick="if(event.target===this) closeAuthModal()">
   <div class="auth-modal-card">
     <button class="auth-close" onclick="closeAuthModal()"><i class="bi bi-x-lg"></i></button>
-    
     <div id="authMainSection">
       <div class="auth-tab-toggle" id="authTabToggle" data-active="masuk">
         <div class="auth-tab-indicator" id="authTabIndicator"></div>
         <button class="auth-tab-btn active" id="btnAuthMasuk" onclick="switchAuthTab('masuk')">Masuk</button>
         <button class="auth-tab-btn inactive" id="btnAuthDaftar" onclick="switchAuthTab('daftar')">Daftar</button>
       </div>
-
       <div class="auth-form-panel active" id="authFormMasuk">
-        <div class="auth-heading">
-          <h2>Selamat Datang Kembali</h2>
-          <p>Lanjutkan perjalanan budaya Anda.</p>
-        </div>
-        <div class="auth-field">
-          <label>Email</label>
-          <input type="email" placeholder="nama@email.com">
-        </div>
-        <div class="auth-field">
-          <label>Kata Sandi</label>
-          <input type="password" placeholder="Min. 8 karakter">
-        </div>
+        <div class="auth-heading"><h2>Selamat Datang Kembali</h2><p>Lanjutkan perjalanan budaya Anda.</p></div>
+        <div class="auth-field"><label>Email</label><input type="email" placeholder="nama@email.com"></div>
+        <div class="auth-field"><label>Kata Sandi</label><input type="password" placeholder="Min. 8 karakter"></div>
         <button class="auth-btn-primary" onclick="showToast('Berhasil masuk!','success'); closeAuthModal();">Masuk</button>
       </div>
-
       <div class="auth-form-panel" id="authFormDaftar">
-        <div class="auth-heading">
-          <h2>Buat Akun Baru</h2>
-          <p>Bergabunglah dengan komunitas pelestari budaya.</p>
-        </div>
+        <div class="auth-heading"><h2>Buat Akun Baru</h2><p>Bergabunglah dengan komunitas pelestari budaya.</p></div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
           <div class="auth-field"><label>Nama Depan</label><input type="text" placeholder="Depan"></div>
           <div class="auth-field"><label>Nama Belakang</label><input type="text" placeholder="Belakang"></div>
         </div>
-        <div class="auth-field">
-          <label>Email</label>
-          <input type="email" placeholder="nama@email.com">
-        </div>
-        <div class="auth-field">
-          <label>Kata Sandi</label>
-          <input type="password" placeholder="Min. 8 karakter">
-        </div>
+        <div class="auth-field"><label>Email</label><input type="email" placeholder="nama@email.com"></div>
+        <div class="auth-field"><label>Kata Sandi</label><input type="password" placeholder="Min. 8 karakter"></div>
         <button class="auth-btn-primary" onclick="showToast('Akun berhasil dibuat! 🎉','success'); closeAuthModal();">Daftar Sekarang</button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- MODAL UPLOAD -->
+<div class="modal-overlay" id="uploadModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Upload Konten</h2>
+      <button class="modal-close" onclick="closeModal()"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <form th:action="@{/dokumentasi/upload}" method="post">
+      <div class="form-group">
+        <label class="form-label">Judul Konten *</label>
+        <input type="text" class="form-input" name="title" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Kategori *</label>
+        <select class="form-input" name="category" required>
+          <option value="">Pilih kategori...</option>
+          <option value="Tari Tradisional">Tari Tradisional</option>
+          <option value="Kuliner">Kuliner</option>
+          <option value="Pakaian Adat">Pakaian Adat</option>
+          <option value="Musik Tradisional">Musik Tradisional</option>
+          <option value="Bahasa">Bahasa</option>
+          <option value="Seni & Kriya">Seni & Kriya</option>
+          <option value="Lainnya">Lainnya</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Deskripsi *</label>
+        <textarea class="form-input" name="description" rows="5" required></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">URL Gambar</label>
+        <input type="text" class="form-input" name="imageUrl" placeholder="https://...">
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="btn-submit">Upload Konten</button>
+      </div>
+    </form>
   </div>
 </div>
 
