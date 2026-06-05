@@ -1,545 +1,267 @@
-/* ── FORUMDETAIL.JS — Warisan ── */
+// ═══════════════════════════════════════════════
+//   ForumDetail.js — Warisan
+//   Menampilkan detail thread dari API,
+//   dengan fitur edit & hapus untuk pemilik thread
+// ═══════════════════════════════════════════════
 
-const THREADS = [
-  {
-    id: 1, 
-    cat: 'bahasa', catLabel: 'Bahasa', catColor: '#1565c0',
-    username: 'Revan Athallah', avatarUrl: 'https://i.pravatar.cc/64?img=11',
-    avatarBg: '#1565c0', avatarInitial: 'R',
-    time: '1 jam yang lalu',
-    title: 'Bahasa daerah kita bakal punah dalam 50 tahun ke depan — setuju atau tidak?',
-    img: '',
-    fullText: `Baru baca laporan UNESCO yang bilang ratusan bahasa daerah di Indonesia masuk kategori terancam punah. Gw jadi mikir, emang kita udah nggak peduli lagi sama bahasa ibu kita sendiri?
+// ── STATE ──
+let thread      = null;
+let currentUser = null;
+let isLiked     = false;
 
-Gw orang Jawa tapi jujur aja bahasa Jawa gw payah banget. Ngomong sama nenek aja masih sering minta tolong kakak buat translasi. Dan kayaknya ini relate banget sama banyak orang generasi kita.
+// ── INIT ──
+async function init() {
+  const pathParts = window.location.pathname.split('/');
+  const threadId  = pathParts[pathParts.length - 1];
 
-Pertanyaan gw: ini salah siapa? Salah sistem pendidikan yang terlalu fokus ke Bahasa Indonesia dan Inggris? Atau emang kita sendiri yang males? Atau ini udah takdir evolusi bahasa yang wajar?
+  if (!threadId || isNaN(threadId)) { showNotFound(); return; }
 
-Menurut kalian, masih worth it nggak buat belajar dan lestarikan bahasa daerah di era sekarang? Atau energinya mending dialihkan ke bahasa yang lebih "berguna" secara ekonomi?`,
-    likes: 312, replies: 4,
-    comments: [
-      {
-        id: 'c1', avatarUrl: 'https://i.pravatar.cc/40?img=20', initials: 'S', bg: '#427452', textColor: '#c1f8cd', name: 'SariIndrawati', time: '1 jam lalu',
-        text: 'Worth it banget! Bahasa daerah bukan cuma alat komunikasi, tapi wadah budaya. Banyak konsep dan filosofi lokal yang literally nggak bisa diterjemahkan ke bahasa lain.',
-        likes: 15, nested: []
-      },
-      {
-        id: 'c2', avatarUrl: 'https://i.pravatar.cc/40?img=33', initials: 'B', bg: '#c0392b', textColor: '#ffe5e1', name: 'BramoPratama', time: '50 mnt lalu',
-        text: 'Salah sistemnya menurut gw. Pelajaran bahasa daerah di sekolah itu cuma formalitas, nggak ada yang beneran serius ngajarinnya.',
-        likes: 24,
-        nested: [
-          {
-            id: 'r1', initials: 'N', bg: '#795900', textColor: '#fff8e1', name: 'NinditaRaras', time: '20 mnt lalu',
-            text: 'Setuju sama Bramo. Ditambah lagi konten hiburan kita hampir semua pakai Bahasa Indonesia atau Inggris. Anak-anak sekarang lebih familiar sama slang TikTok daripada bahasa neneknya.',
-            likes: 18
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 2, 
-    cat: 'seni', catLabel: 'Seni & Kriya', catColor: '#6a1b9a',
-    username: 'Clarissa Dewi', avatarUrl: 'https://i.pravatar.cc/64?img=47',
-    avatarBg: '#6a1b9a', avatarInitial: 'C',
-    time: '4 jam yang lalu',
-    title: 'Batik printing vs batik tulis — ini beda produk atau beda budaya?',
-    img: '',
-    fullText: `Kemarin debat sama teman soal ini dan nggak ada yang mau ngalah. Dia bilang batik printing tetap bisa disebut "batik" karena motifnya sama. Gw nggak setuju.
+  const [userRes, threadRes] = await Promise.all([
+    fetch('/api/auth/me').then(r => r.json()).catch(() => ({ loggedIn: false })),
+    fetch(`/api/threads/${threadId}`).then(r => r.json()).catch(() => null)
+  ]);
 
-Menurut gw, batik itu bukan cuma soal motif — tapi soal proses. Proses nglowong, nembok, nyelup, nglorod itu bagian dari jiwanya batik. Kalau itu dilewatin dan diganti mesin cetak, yang tersisa cuma gambarnya doang, bukan budayanya.
+  currentUser = userRes.loggedIn ? userRes : null;
+  thread      = threadRes && !threadRes.error ? threadRes : null;
 
-Tapi di sisi lain, gw juga paham argumen sebaliknya: batik printing bikin motif tradisional lebih terjangkau dan accessible buat semua kalangan. Tanpa batik printing, mungkin generasi muda nggak bakal kenal motif Parang atau Kawung sama sekali.
+  if (!thread) { showNotFound(); return; }
 
-Jadi pertanyaannya: apakah kita harus strict soal definisi "batik"? Atau fleksibilitas itu justru yang bikin budaya bisa bertahan?`,
-    likes: 278, replies: 3,
-    comments: [
-      {
-        id: 'c3', avatarUrl: 'https://i.pravatar.cc/40?img=14', initials: 'H', bg: '#33489a', textColor: '#e8eaf6', name: 'HafidzNurul', time: '3 jam lalu',
-        text: 'Ini pertanyaan yang beneran susah. Tapi gw condong ke camp kamu — kalau proses tradisionalnya hilang, yang kita jual cuma estetika, bukan budaya.',
-        likes: 45, nested: []
-      },
-      {
-        id: 'c4', avatarUrl: 'https://i.pravatar.cc/40?img=28', initials: 'M', bg: '#2e7d32', textColor: '#e8f5e9', name: 'MirandaKusuma', time: '2 jam lalu',
-        text: 'Eh tapi UNESCO sendiri mendefinisikan batik Indonesia berdasarkan motif dan filosofinya, bukan hanya prosesnya. Jadi secara formal, batik printing masih bisa masuk kategori batik.',
-        likes: 32,
-        nested: [
-          {
-            id: 'r2', initials: 'H', bg: '#33489a', textColor: '#e8eaf6', name: 'HafidzNurul', time: '1 jam lalu',
-            text: 'Kalau gitu bedainnya gimana dong waktu beli? Harga doang? Kasian pengrajin batik tulis yang bisa butuh berminggu-minggu buat satu kain.',
-            likes: 12
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 3, 
-    cat: 'musik', catLabel: 'Musik', catColor: '#444',
-    username: 'Fadhil Ramadhan', avatarUrl: 'https://i.pravatar.cc/64?img=59',
-    avatarBg: '#444', avatarInitial: 'F',
-    time: '1 hari yang lalu',
-    title: 'Kenapa musisi muda Indonesia jarang eksplorasi alat musik tradisional?',
-    img: '',
-    fullText: `Gw nonton konser indie kemarin dan mikir — dari 8 band yang tampil, nggak ada satupun yang pakai alat musik tradisional. Padahal kita punya gamelan, sasando, kolintang, tifa, dan banyak lagi.
-
-Gw bukan yang tipe puritan "harus pakai alat tradisional". Tapi gw penasaran kenapa eksplorasi itu jarang banget terjadi di scene musik indie lokal, padahal potensinya luar biasa.
-
-Apa karena susah belajarnya? Mahal alatnya? Atau emang nggak ada yang ngajarin dengan cara yang relevan buat anak muda?
-
-Sementara itu di luar negeri, banyak banget musisi yang fuse traditional instruments dengan modern sound dan hasilnya keren parah. Kita seharusnya bisa lebih dari itu dengan kekayaan instrumen yang kita punya.
-
-Ada yang punya pengalaman belajar alat musik tradisional? Susah nggak aksesnya?`,
-    likes: 203, replies: 3,
-    comments: [
-      {
-        id: 'c5', avatarUrl: 'https://i.pravatar.cc/40?img=62', initials: 'A', bg: '#9e2016', textColor: '#ffe5e1', name: 'AldoSantoso', time: '20 jam lalu',
-        text: 'Gw belajar gamelan waktu SMA tapi berhenti karena literally nggak ada komunitas yang aktif di kota gw. Itu masalah utamanya — ekosistemnya belum ada.',
-        likes: 67, nested: []
-      },
-      {
-        id: 'c6', avatarUrl: 'https://i.pravatar.cc/40?img=17', initials: 'R', bg: '#795900', textColor: '#fff8e1', name: 'RizkiAmelia', time: '18 jam lalu',
-        text: 'Coba dengerin Kua Etnika atau Krakatau — mereka udah lama fuse tradisional sama kontemporer. Tapi emang kurang exposure ke anak muda sekarang.',
-        likes: 41,
-        nested: [
-          {
-            id: 'r3', initials: 'T', bg: '#2a5b3b', textColor: '#c1f8cd', name: 'TommyWijaya', time: '15 jam lalu',
-            text: 'Masalahnya juga di persepsi. Alat musik tradisional masih dianggap "kuno" dan nggak cool. Butuh tokoh atau influencer yang bisa reframe itu.',
-            likes: 29
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 4, 
-    cat: 'kuliner', catLabel: 'Kuliner', catColor: '#cc8800',
-    username: 'Nadhira Putri', avatarUrl: 'https://i.pravatar.cc/64?img=25',
-    avatarBg: '#cc8800', avatarInitial: 'N',
-    time: '2 hari yang lalu',
-    title: 'Makanan fusion Indonesia — inovasi yang perlu didukung atau ancaman buat kuliner asli?',
-    img: '',
-    fullText: `Akhir-akhir ini makin banyak restoran yang jual "rendang pasta", "soto ramen", atau "nasi goreng sushi". Gw nggak tau harus excited atau khawatir.
-
-Di satu sisi, ini bukti bahwa kuliner Indonesia makin percaya diri dan mau bereksperimen. Fusion bisa jadi pintu masuk orang asing buat kenal rasa-rasa Indonesia.
-
-Tapi di sisi lain, gw takut identitas kuliner kita jadi blur. Kalau generasi berikutnya lebih kenal "rendang pasta" daripada rendang asli, itu worth it nggak?
-
-Gw juga mau tanya soal sudut pandang pengrajin dan pedagang makanan tradisional — mereka diuntungkan atau dirugikan sama tren ini?
-
-Menurut kalian, ada batasnya nggak antara inovasi yang sehat dan komodifikasi yang kebablasan?`,
-    likes: 187, replies: 3,
-    comments: [
-      {
-        id: 'c7', avatarUrl: 'https://i.pravatar.cc/40?img=31', initials: 'G', bg: '#1565c0', textColor: '#e8eaf6', name: 'GalihPrasetyo', time: '1 hari lalu',
-        text: 'Selama yang aslinya juga tetap ada dan dirawat, fusion itu sah-sah aja. Yang bahaya kalau fusion menggantikan, bukan melengkapi.',
-        likes: 52, nested: []
-      },
-      {
-        id: 'c8', avatarUrl: 'https://i.pravatar.cc/40?img=44', initials: 'F', bg: '#c0392b', textColor: '#ffe5e1', name: 'FeliksiaAnanda', time: '1 hari lalu',
-        text: 'Gw malah optimis. Fusion bisa jadi gateway. Orang yang pertama kali makan rendang pasta bisa jadi penasaran sama rendang aslinya.',
-        likes: 38,
-        nested: [
-          {
-            id: 'r4', initials: 'D', bg: '#2e7d32', textColor: '#e8f5e9', name: 'DindaMaharani', time: '20 jam lalu',
-            text: 'Masalahnya sering nggak ada edukasi. Orang beli fusion tanpa tau konteks originalnya. Jadi ya otomatis identitasnya hilang perlahan.',
-            likes: 21
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 5, 
-    cat: 'tari', catLabel: 'Tari', catColor: '#2e7d32',
-    username: 'Salsa Bening', avatarUrl: 'https://i.pravatar.cc/64?img=32',
-    avatarBg: '#2e7d32', avatarInitial: 'S',
-    time: '3 hari yang lalu',
-    title: 'Tari tradisional wajib masuk kurikulum sekolah — perlu atau nggak?',
-    img: '',
-    fullText: `Gw guru SD dan lagi debat sama rekan kerja soal ini. Ada yang bilang anak-anak sekarang udah overloaded sama pelajaran, tambah tari malah jadi beban. Tapi ada yang bilang justru ini yang bikin anak kenal budayanya.
-
-Sekarang di sekolah gw, tari tradisional cuma masuk di ekstrakulikuler — yang artinya opsional dan sering nggak diambil. Hasilnya? Mayoritas murid kelas 6 nggak bisa ngebedain tari Saman sama tari Jaipong.
-
-Tapi gw juga paham bahwa memaksakan tari ke semua anak bisa jadi kontraproduktif. Kalau nggak ada passion-nya, jadinya malah hafalan yang dilupain begitu ujian selesai.
-
-Jadi pertanyaan gw buat komunitas ini: gimana cara yang paling efektif buat mengenalkan tari tradisional ke generasi muda? Lewat sekolah formal, atau ada pendekatan lain yang lebih berhasil?`,
-    likes: 156, replies: 3,
-    comments: [
-      {
-        id: 'c9', avatarUrl: 'https://i.pravatar.cc/40?img=8', initials: 'R', bg: '#795900', textColor: '#fff8e1', name: 'RanggaWibawa', time: '2 hari lalu',
-        text: 'Wajib masuk kurikulum tapi jangan dijadikan mata pelajaran yang dinilai dengan angka. Jadikan pengalaman budaya yang menyenangkan.',
-        likes: 88,
-        nested: [
-          {
-            id: 'r5', initials: 'L', bg: '#33489a', textColor: '#e8eaf6', name: 'LestariHandayani', time: '2 hari lalu',
-            text: 'Setuju! Di sekolah tempat gw dulu, ada "Festival Budaya" tahunan yang bikin anak-anak mau belajar tari karena ada panggung-nya, bukan karena takut nilai jelek.',
-            likes: 45
-          }
-        ]
-      },
-      {
-        id: 'c10', avatarUrl: 'https://i.pravatar.cc/40?img=49', initials: 'A', bg: '#444', textColor: '#f4f4f4', name: 'AhmadRifai', time: '1 hari lalu',
-        text: 'Yang lebih penting mungkin pelatihnya. Kalau gurunya sendiri nggak antusias, anaknya juga bakal ngerasa itu bukan hal yang penting.',
-        likes: 31, nested: []
-      }
-    ]
-  }
-];
-
-let currentThread = null;
-let likedPost = false;
-let likedComments = new Set();
-
-function getThreadFromURL(){
-  const pathparts = window.location.pathname.split('/');
-  const id = parseInt(pathparts[pathparts.length-1]) || 1;
-  return THREADS.find(t => t.id === id) || THREADS[0];
+  document.title = thread.title + ' – Warisan';
+  render();
 }
 
-function renderPage(){
-  const t = getThreadFromURL();
-  currentThread = t;
+// ── RENDER ──
+function render() {
+  const isOwner  = currentUser && currentUser.userId === thread.user?.id;
+  const replies  = thread.comments || [];
+  const likeCount = thread.likes?.length ?? 0;
 
-  // Page title
-  document.getElementById('pageTitle').textContent = t.title + ' – Warisan';
+  const ownerActions = isOwner ? `
+    <button class="action-pill" onclick="openEditModal()" style="gap:6px">
+      <i class="bi bi-pencil"></i> Edit
+    </button>
+    <button class="action-pill" onclick="openDeleteModal()"
+      style="color:#c62828;border-color:rgba(198,40,40,0.25);gap:6px">
+      <i class="bi bi-trash3"></i> Hapus
+    </button>` : '';
 
-  // Highlight active category in sidebar
-  document.querySelectorAll('.cat-link').forEach(l => l.classList.remove('active'));
-  const activeLink = document.querySelector(`.cat-link[href*="cat=${t.cat}"]`);
-  if(activeLink) activeLink.classList.add('active');
-
-  // Render main content
   document.getElementById('mainContent').innerHTML = `
-    <!-- BREADCRUMBS -->
-    <nav class="breadcrumbs">
-      <a href="/dokumentasi">Dokumentasi</a>
-      <span><i class="bi bi-chevron-right" style="font-size:9px"></i></span>
-      <a href="/dokumentasi?cat=${t.cat}">${t.catLabel}</a>
-      <span><i class="bi bi-chevron-right" style="font-size:9px"></i></span>
-      <span class="current">${t.title}</span>
-    </nav>
+    <div class="breadcrumbs">
+      <a href="/">Beranda</a><span class="sep">/</span>
+      <a href="/forum">Forum</a><span class="sep">/</span>
+      <span class="current">${escHtml(thread.title)}</span>
+    </div>
 
-    <!-- OP CARD -->
     <div class="op-card">
+      <div class="op-header">
+        <div class="op-author-row">
+          <div class="op-avatar-placeholder">${thread.user?.username?.[0]?.toUpperCase() ?? '?'}</div>
+          <div class="op-author-info">
+            <div class="op-author-name">${escHtml(thread.user?.username ?? 'Anonim')}</div>
+            <div class="op-author-time">${escHtml(thread.createdAt ?? '')}</div>
+          </div>
+        </div>
+        <h1 class="op-title" id="threadTitle">${escHtml(thread.title)}</h1>
+      </div>
       <div class="op-body">
-        <div class="op-meta">
-          <div class="op-author">
-            ${t.avatarUrl
-              ? `<img class="op-avatar" src="${t.avatarUrl}" alt="${t.username}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-              : ''}
-            <div class="op-avatar-placeholder" style="background:${t.avatarBg};color:#fff;display:${t.avatarUrl?'none':'flex'}">${t.avatarInitial}</div>
-            <div>
-              <div class="op-name">${t.username}</div>
-              <div class="op-time">${t.time}</div>
-            </div>
-          </div>
-          <button class="op-menu" onclick="showToast('Opsi lainnya segera hadir!')">
-            <i class="bi bi-three-dots-vertical"></i>
+        <p class="op-text" id="threadContent">${escHtml(thread.content ?? '')}</p>
+        <div class="op-actions">
+          <button class="action-pill${isLiked ? ' liked' : ''}" id="likeBtn" onclick="toggleLike()">
+            <i class="bi ${isLiked ? 'bi-heart-fill' : 'bi-heart'}"></i>
+            <span id="likeCount">${likeCount + (isLiked ? 1 : 0)}</span> Suka
           </button>
+          <button class="action-share" onclick="shareThread()">
+            <i class="bi bi-link-45deg"></i> Bagikan
+          </button>
+          ${ownerActions}
+          <a href="/forum" class="back-btn"><i class="bi bi-arrow-left"></i> Kembali</a>
         </div>
-        <h1 class="op-title">${t.title}</h1>
-        <p class="op-text">${escapeHtml(t.fullText)}</p>
-        <img class="op-img" src="${t.img}" alt="${t.title}" onerror="this.style.display='none'">
-      </div>
-      <div class="interact-bar">
-        <button class="ibar-btn" id="likePostBtn" onclick="toggleLikePost()">
-          <i class="bi bi-heart" id="likePostIcon"></i>
-          <span id="likePostCount">${t.likes} Dukungan</span>
-        </button>
-        <button class="ibar-btn" onclick="document.getElementById('commentTextarea').focus()">
-          <i class="bi bi-chat"></i>
-          <span>${t.replies} Balasan</span>
-        </button>
-        <button class="ibar-btn ibar-share" onclick="shareThread()">
-          <i class="bi bi-share"></i>
-          <span>Bagikan</span>
-        </button>
       </div>
     </div>
 
-    <!-- DISCUSSION SECTION -->
-    <div class="discussion-section">
-      <h2 class="discussion-title">Diskusi</h2>
-
-      <!-- Comment Form -->
-      <div class="comment-form">
-        <div class="cf-avatar">A</div>
-        <div class="cf-right">
-          <textarea class="cf-textarea" id="commentTextarea" placeholder="Tuliskan pandangan Anda..." rows="3"></textarea>
-          <div class="cf-submit-row">
-            <button class="cf-submit" onclick="submitComment()">Kirim Balasan</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Comment Thread -->
-      <div class="comment-thread" id="commentThread">
-        ${renderComments(t.comments)}
-      </div>
+    <div class="replies-header">
+      <span class="replies-label">Balasan</span>
+      <span class="replies-count" id="repliesCount">${replies.length} balasan</span>
+      <div class="replies-line"></div>
     </div>
-  `;
-}
 
-function renderComments(comments){
-  return comments.map(c => `
-    <div class="comment-item">
-      ${c.avatarUrl
-        ? `<img class="comment-avatar" src="${c.avatarUrl}" alt="${c.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="comment-avatar-initials" style="background:${c.bg};color:${c.textColor};display:none">${c.initials}</div>`
-        : `<div class="comment-avatar-initials" style="background:${c.bg};color:${c.textColor}">${c.initials}</div>`
-      }
-      <div class="comment-right">
-        <div class="comment-bubble">
-          <div class="comment-header">
-            <span class="comment-name">${c.name}</span>
-            <span class="comment-time">${c.time}</span>
-          </div>
-          <p class="comment-text">${escapeHtml(c.text)}</p>
-        </div>
-        <div class="comment-actions">
-          <button class="ca-btn" onclick="toggleCommentLike('${c.id}',this)">
-            <i class="bi ${likedComments.has(c.id)?'bi-heart-fill':'bi-heart'}" style="color:${likedComments.has(c.id)?'#9e2016':''}"></i>
-            <span id="clikes-${c.id}">${c.likes}</span>
-          </button>
-          <button class="ca-btn" onclick="showToast('Fitur balas segera hadir!')">
-            <i class="bi bi-reply"></i> Balas
-          </button>
-        </div>
-        ${c.nested && c.nested.length ? `
-        <div class="nested-replies">
-          ${c.nested.map(r => `
-            <div class="reply-item">
-              <div class="reply-avatar-initials" style="background:${r.bg};color:${r.textColor}">${r.initials}</div>
-              <div>
-                <div class="reply-bubble">
-                  <div class="reply-header">
-                    <span class="reply-name">${r.name}</span>
-                    <span class="reply-time">${r.time}</span>
-                  </div>
-                  <p class="reply-text">${escapeHtml(r.text)}</p>
-                </div>
-                <div class="reply-actions">
-                  <button class="ra-btn" onclick="toggleCommentLike('${r.id}',this)">
-                    <i class="bi ${likedComments.has(r.id)?'bi-heart-fill':'bi-heart'}" style="color:${likedComments.has(r.id)?'#9e2016':''}"></i>
-                    <span id="clikes-${r.id}">${r.likes}</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          `).join('')}
-        </div>` : ''}
+    <div id="repliesContainer">${renderReplies(replies)}</div>
+
+    <div class="reply-input-section">
+      <div class="reply-input-title"><i class="bi bi-chat-square-text"></i> Tulis Balasan</div>
+      <textarea class="reply-textarea" id="replyInput"
+        placeholder="${currentUser ? 'Bagikan pendapat atau pengalamanmu...' : 'Login terlebih dahulu untuk membalas.'}"
+        ${currentUser ? '' : 'disabled'}
+        rows="3" oninput="autoResize(this)" onkeydown="handleReplyKey(event)"></textarea>
+      <div class="reply-input-foot">
+        <button class="btn-cancel-reply"
+          onclick="document.getElementById('replyInput').value=''">Batal</button>
+        <button class="btn-submit-reply" onclick="submitReply()" ${currentUser ? '' : 'disabled'}>
+          <i class="bi bi-send"></i> Kirim Balasan
+        </button>
       </div>
-    </div>
-  `).join('');
+    </div>`;
 }
 
-function escapeHtml(str){
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-/* ── LIKE POST ── */
-function toggleLikePost(){
-  const btn = document.getElementById('likePostBtn');
-  const icon = document.getElementById('likePostIcon');
-  const countEl = document.getElementById('likePostCount');
-  likedPost = !likedPost;
-  if(likedPost){
-    icon.className = 'bi bi-heart-fill';
-    icon.style.color = '#9e2016';
-    currentThread.likes++;
-    btn.classList.add('liked');
-    icon.style.transform = 'scale(1.4)';
-    setTimeout(()=>icon.style.transform='',180);
-    showToast('Kamu mendukung thread ini ❤️','success');
-  } else {
-    icon.className = 'bi bi-heart';
-    icon.style.color = '';
-    currentThread.likes--;
-    btn.classList.remove('liked');
+function renderReplies(replies) {
+  if (!replies || replies.length === 0) {
+    return `<div style="text-align:center;padding:32px 20px;color:var(--text-mid);font-size:14px">
+      <i class="bi bi-chat" style="font-size:32px;opacity:.25;display:block;margin-bottom:8px"></i>
+      Belum ada balasan. Jadilah yang pertama!</div>`;
   }
-  countEl.textContent = currentThread.likes + ' Dukungan';
+  return replies.map((r, i) => `
+    <div class="reply-card" style="animation-delay:${i * 40}ms">
+      <div class="reply-top">
+        <div class="reply-avatar-placeholder">${r.user?.username?.[0]?.toUpperCase() ?? '?'}</div>
+        <div>
+          <div class="reply-author-name">${escHtml(r.user?.username ?? 'Anonim')}</div>
+          <div class="reply-author-time">${escHtml(r.createdAt ?? '')}</div>
+        </div>
+      </div>
+      <p class="reply-text">${escHtml(r.content ?? '')}</p>
+    </div>`).join('');
 }
 
-/* ── LIKE COMMENT ── */
-function toggleCommentLike(cid, btn){
-  const icon = btn.querySelector('i');
-  const countEl = document.getElementById('clikes-'+cid);
-  const liked = likedComments.has(cid);
-  if(liked){
-    likedComments.delete(cid);
-    icon.className='bi bi-heart';icon.style.color='';
-    if(countEl) countEl.textContent=parseInt(countEl.textContent)-1;
-  } else {
-    likedComments.add(cid);
-    icon.className='bi bi-heart-fill';icon.style.color='#9e2016';
-    if(countEl) countEl.textContent=parseInt(countEl.textContent)+1;
-    icon.style.transform='scale(1.4)';setTimeout(()=>icon.style.transform='',160);
-  }
+function showNotFound() {
+  document.getElementById('mainContent').innerHTML = `
+    <div style="text-align:center;padding:80px 20px">
+      <i class="bi bi-chat-square-x" style="font-size:48px;opacity:.3;display:block;margin-bottom:16px"></i>
+      <h2>Thread tidak ditemukan</h2>
+      <p style="color:var(--text-mid)">Thread yang kamu cari sudah dihapus atau tidak tersedia.</p>
+      <a href="/forum" style="display:inline-flex;align-items:center;gap:6px;margin-top:16px;
+        font-size:14px;font-weight:600;color:var(--primary);text-decoration:none">
+        <i class="bi bi-arrow-left"></i> Kembali ke Forum
+      </a>
+    </div>`;
 }
 
-/* ── SUBMIT COMMENT ── */
-function submitComment(){
-  const ta = document.getElementById('commentTextarea');
-  const text = ta.value.trim();
-  if(!text){ showToast('Tulis komentar dulu ya!'); return; }
-  const newId = 'new-'+Date.now();
-  const newComment = {id:newId, avatarUrl:'', initials:'K', bg:'#c0392b', textColor:'#ffe5e1', name:'Kamu', time:'Baru saja', text, likes:0, nested:[]};
-  currentThread.comments.push(newComment);
-  ta.value='';
-  const thread = document.getElementById('commentThread');
-  const div = document.createElement('div');
-  div.innerHTML = renderComments([newComment]);
-  thread.appendChild(div.firstElementChild);
-  showToast('Balasan terkirim!','success');
-  div.firstElementChild.scrollIntoView({behavior:'smooth',block:'nearest'});
+// ── EDIT ──
+function openEditModal() {
+  document.getElementById('editInputJudul').value = thread.title ?? '';
+  document.getElementById('editInputIsi').value   = thread.content ?? '';
+  document.getElementById('editModal').style.display = 'flex';
 }
+function closeEditModal() { document.getElementById('editModal').style.display = 'none'; }
 
-/* ── SHARE ── */
-function shareThread(){
-  if(navigator.share){
-    navigator.share({title:currentThread.title,text:currentThread.fullText.slice(0,120)+'...',url:window.location.href}).catch(()=>{});
-  } else {
-    navigator.clipboard?.writeText(window.location.href)
-      .then(()=>showToast('Link disalin!','success'))
-      .catch(()=>showToast('Link: '+window.location.href));
-  }
-}
+async function submitEdit() {
+  const judul = document.getElementById('editInputJudul').value.trim();
+  const isi   = document.getElementById('editInputIsi').value.trim();
+  if (!judul) { showToast('Judul tidak boleh kosong.'); return; }
+  if (!isi)   { showToast('Isi thread tidak boleh kosong.'); return; }
 
-function openThreadModal() {
-  document.getElementById('threadModal').classList.add('open');
-  document.body.classList.add('locked');
-}
-
-function closeThreadModal() {
-  document.getElementById('threadModal').classList.remove('open');
-  document.body.classList.remove('locked');
-  resetThreadModal();
-}
-
-function resetThreadModal() {
-  selectedThreadCat = null;
-  document.querySelectorAll('.cat-option').forEach(b => b.classList.remove('selected'));
-  document.getElementById('threadInputJudul').value = '';
-  document.getElementById('threadInputIsi').value = '';
-  document.getElementById('errThreadKategori').style.display = 'none';
-  document.getElementById('errThreadJudul').style.display = 'none';
-  document.getElementById('errThreadIsi').style.display = 'none';
-  threadRemovePreview({ stopPropagation: () => {} });
-  const btn = document.getElementById('btnThreadSubmit');
-  btn.disabled = false;
-  btn.textContent = 'Posting Thread';
-}
-
-function selectThreadCat(btn) {
-  document.querySelectorAll('#threadCatOptions .cat-option').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  selectedThreadCat = btn.dataset.cat;
-  document.getElementById('errThreadKategori').style.display = 'none';
-}
-
-function clearThreadErr(inputId, errId) {
-  document.getElementById(inputId).classList.remove('error');
-  document.getElementById(errId).style.display = 'none';
-}
-
-function threadHandleDrag(e, on) {
-  e.preventDefault();
-  document.getElementById('threadUploadArea').classList.toggle('dragover', on);
-}
-
-function threadHandleDrop(e) {
-  e.preventDefault();
-  threadHandleDrag(e, false);
-  const file = e.dataTransfer.files[0];
-  if (file && file.type.startsWith('image/')) threadLoadPreview(file);
-}
-
-function threadHandleFile(input) {
-  if (input.files[0]) threadLoadPreview(input.files[0]);
-}
-
-function threadLoadPreview(file) {
-  if (file.size > 5 * 1024 * 1024) { showToast('Ukuran gambar maksimal 5 MB'); return; }
-  const r = new FileReader();
-  r.onload = e => {
-    document.getElementById('threadUploadArea').style.display = 'none';
-    document.getElementById('threadUploadPreview').style.display = 'block';
-    document.getElementById('threadPreviewImg').src = e.target.result;
-  };
-  r.readAsDataURL(file);
-}
-
-function threadRemovePreview(e) {
-  e.stopPropagation();
-  document.getElementById('threadUploadArea').style.display = 'block';
-  document.getElementById('threadUploadPreview').style.display = 'none';
-  document.getElementById('threadPreviewImg').src = '';
-  document.getElementById('threadFileInput').value = '';
-}
-
-function validateThreadForm() {
-  let ok = true;
-  if (!selectedThreadCat) {
-    document.getElementById('errThreadKategori').style.display = 'block';
-    ok = false;
-  }
-  const judul = document.getElementById('threadInputJudul').value.trim();
-  if (!judul) {
-    document.getElementById('threadInputJudul').classList.add('error');
-    document.getElementById('errThreadJudul').style.display = 'block';
-    ok = false;
-  }
-  const isi = document.getElementById('threadInputIsi').value.trim();
-  if (!isi) {
-    document.getElementById('threadInputIsi').classList.add('error');
-    document.getElementById('errThreadIsi').style.display = 'block';
-    ok = false;
-  }
-  return ok;
-}
-
-async function submitThread() {
-  if (!validateThreadForm()) return;
-
-  const btn = document.getElementById('btnThreadSubmit');
-  btn.disabled = true;
-  btn.textContent = 'Memposting...';
-
-  const body = {
-    title:   document.getElementById('threadInputJudul').value.trim(),
-    content: document.getElementById('threadInputIsi').value.trim(),
-    forum:   { id: 1 },  // ganti dengan forum id yang sesuai
-    user:    { id: 1 },  // ganti dengan id user yang sedang login
-  };
+  const btn = document.getElementById('btnEditSubmit');
+  btn.disabled = true; btn.textContent = 'Menyimpan...';
 
   try {
-    const res = await fetch('/api/threads', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
+    const res  = await fetch(`/api/threads/${thread.id}`, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: judul, content: isi })
     });
-
-    if (res.ok) {
-      closeThreadModal();
-      showToast('Thread berhasil diposting! 🎉', 'success');
-      // Reload feed setelah backend siap
-      // renderFeed();
+    const data = await res.json();
+    if (data.success) {
+      thread.title = judul; thread.content = isi;
+      document.getElementById('threadTitle').textContent   = judul;
+      document.getElementById('threadContent').textContent = isi;
+      document.title = judul + ' – Warisan';
+      closeEditModal();
+      showToast('Thread berhasil diperbarui! ✏️', 'success');
     } else {
-      showToast('Gagal memposting thread. Coba lagi.', 'error');
-      btn.disabled = false;
-      btn.textContent = 'Posting Thread';
+      showToast(data.message ?? 'Gagal menyimpan perubahan.');
     }
-  } catch (err) {
-    showToast('Terjadi kesalahan koneksi.', 'error');
-    btn.disabled = false;
-    btn.textContent = 'Posting Thread';
+  } catch { showToast('Terjadi kesalahan koneksi.'); }
+  finally { btn.disabled = false; btn.textContent = 'Simpan Perubahan'; }
+}
+
+// ── HAPUS ──
+function openDeleteModal()  { document.getElementById('deleteModal').style.display = 'flex'; }
+function closeDeleteModal() { document.getElementById('deleteModal').style.display = 'none'; }
+
+async function confirmDelete() {
+  const btn = document.getElementById('btnDeleteConfirm');
+  btn.disabled = true; btn.textContent = 'Menghapus...';
+  try {
+    const res  = await fetch(`/api/threads/${thread.id}`, { method: 'DELETE' });
+    const data = await res.json();
+    if (data.success) {
+      showToast('Thread berhasil dihapus.', 'success');
+      setTimeout(() => window.location.href = '/forum', 1500);
+    } else {
+      showToast(data.message ?? 'Gagal menghapus thread.');
+      btn.disabled = false; btn.textContent = 'Hapus Sekarang';
+    }
+  } catch {
+    showToast('Terjadi kesalahan koneksi.');
+    btn.disabled = false; btn.textContent = 'Hapus Sekarang';
   }
 }
 
-// Tutup modal jika klik di luar konten
-const _tm = document.getElementById('threadModal'); if (_tm) _tm.addEventListener('click', function(e) {
-  if (e.target === this) closeThreadModal();
+// ── LIKE ──
+function toggleLike() {
+  if (!currentUser) { showToast('Login dulu untuk menyukai thread ini.'); return; }
+  isLiked = !isLiked;
+  const count = (thread.likes?.length ?? 0) + (isLiked ? 1 : 0);
+  const btn   = document.getElementById('likeBtn');
+  btn.className = 'action-pill' + (isLiked ? ' liked' : '');
+  btn.querySelector('i').className = 'bi ' + (isLiked ? 'bi-heart-fill' : 'bi-heart');
+  document.getElementById('likeCount').textContent = count;
+  if (isLiked) showToast('Kamu menyukai thread ini ❤️', 'success');
+}
+
+// ── REPLY ──
+async function submitReply() {
+  if (!currentUser) { showToast('Login dulu untuk membalas.'); return; }
+  const input = document.getElementById('replyInput');
+  const text  = input.value.trim();
+  if (!text) { showToast('Tulis balasan dulu ya!'); return; }
+  try {
+    const res  = await fetch('/api/comments', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: text, thread: { id: thread.id } })
+    });
+    const data = await res.json();
+    if (data.id) {
+      if (!thread.comments) thread.comments = [];
+      thread.comments.push(data);
+      input.value = ''; input.style.height = 'auto';
+      document.getElementById('repliesContainer').innerHTML = renderReplies(thread.comments);
+      document.getElementById('repliesCount').textContent   = thread.comments.length + ' balasan';
+      showToast('Balasan terkirim!', 'success');
+      setTimeout(() => {
+        const last = document.querySelector('#repliesContainer .reply-card:last-child');
+        if (last) last.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+    } else { showToast('Gagal mengirim balasan.'); }
+  } catch { showToast('Terjadi kesalahan koneksi.'); }
+}
+
+// ── UTILS ──
+function escHtml(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function autoResize(ta) { ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 200) + 'px'; }
+function handleReplyKey(e) { if (e.key === 'Enter' && e.ctrlKey) { e.preventDefault(); submitReply(); } }
+function shareThread() {
+  if (navigator.clipboard) navigator.clipboard.writeText(window.location.href).then(() => showToast('Link disalin!', 'success'));
+  else showToast('Link disalin!', 'success');
+}
+
+// ── TOAST ──
+function showToast(msg, type = '') {
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = 'toast-item' + (type ? ' ' + type : '');
+  t.textContent = msg; c.appendChild(t);
+  requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add('show')));
+  const timer = setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 320); }, 3500);
+  t.addEventListener('click', () => { clearTimeout(timer); t.classList.remove('show'); setTimeout(() => t.remove(), 320); });
+}
+
+// Tutup modal jika klik di luar
+document.addEventListener('click', function(e) {
+  if (e.target.id === 'editModal')   closeEditModal();
+  if (e.target.id === 'deleteModal') closeDeleteModal();
 });
 
-/* ── INIT ── */
-renderPage();
+init();

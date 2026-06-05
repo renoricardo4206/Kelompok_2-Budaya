@@ -12,54 +12,7 @@
 </head>
 <body>
 
-<!-- THREAD MODAL -->
-<div class="modal-overlay" id="threadModal">
-  <div class="modal">
-    <div class="modal-head">
-      <h2>Buat Thread Baru</h2>
-      <button class="modal-close" onclick="closeThreadModal()"><i class="bi bi-x-lg"></i></button>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Kategori *</label>
-      <div class="thread-cat-options" id="threadCatOptions">
-        <button class="cat-option" data-cat="tari" onclick="selectThreadCat(this)"><i class="bi bi-person-arms-up"></i> Tari</button>
-        <button class="cat-option" data-cat="bahasa" onclick="selectThreadCat(this)"><i class="bi bi-translate"></i> Bahasa</button>
-        <button class="cat-option" data-cat="seni" onclick="selectThreadCat(this)"><i class="bi bi-palette"></i> Seni & Kriya</button>
-        <button class="cat-option" data-cat="musik" onclick="selectThreadCat(this)"><i class="bi bi-music-note"></i> Musik</button>
-        <button class="cat-option" data-cat="pakaian" onclick="selectThreadCat(this)"><i class="bi bi-stars"></i> Pakaian Adat</button>
-        <button class="cat-option" data-cat="kuliner" onclick="selectThreadCat(this)"><i class="bi bi-egg-fried"></i> Kuliner</button>
-        <button class="cat-option" data-cat="lainnya" onclick="selectThreadCat(this)"><i class="bi bi-three-dots"></i> Lainnya</button>
-      </div>
-      <span class="field-error" id="errThreadKategori">Pilih kategori terlebih dahulu</span>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Judul Thread *</label>
-      <input type="text" class="form-input" id="threadInputJudul" placeholder="Contoh: Batik printing vs batik tulis — beda produk atau beda budaya?" maxlength="150" oninput="clearThreadErr('threadInputJudul','errThreadJudul')">
-      <span class="field-error" id="errThreadJudul">Judul tidak boleh kosong</span>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Isi Thread *</label>
-      <textarea class="form-input" id="threadInputIsi" placeholder="Ceritakan topik atau pertanyaan yang ingin kamu diskusikan..." rows="5" oninput="clearThreadErr('threadInputIsi','errThreadIsi')"></textarea>
-      <span class="field-error" id="errThreadIsi">Isi thread tidak boleh kosong</span>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Gambar <span style="font-weight:400;color:var(--text-mid)">(opsional)</span></label>
-      <div class="upload-area" id="threadUploadArea" onclick="document.getElementById('threadFileInput').click()" ondragover="threadHandleDrag(event,true)" ondragleave="threadHandleDrag(event,false)" ondrop="threadHandleDrop(event)">
-        <i class="bi bi-cloud-arrow-up"></i>
-        <p>Klik atau seret gambar ke sini</p>
-        <span>PNG, JPG, WEBP — maks. 5MB</span>
-      </div>
-      <div class="upload-preview" id="threadUploadPreview" style="display:none">
-        <img id="threadPreviewImg" src="" alt="preview">
-        <button class="upload-preview-remove" onclick="threadRemovePreview(event)"><i class="bi bi-x-lg"></i></button>
-      </div>
-      <input type="file" id="threadFileInput" accept="image/*" style="display:none" onchange="threadHandleFile(this)">
-    </div>
-    <div class="modal-actions">
-      <button class="btn-submit" id="btnThreadSubmit" onclick="submitThread()">Posting Thread</button>
-    </div>
-  </div>
-</div>
+
 
 <!-- TOAST -->
 <div class="toast-container" id="toastContainer"></div>
@@ -123,7 +76,7 @@
         <a href="/forum?cat=kuliner" class="cat-link" id="sideCatKuliner"><i class="bi bi-egg-fried"></i>Kuliner</a>
         <a href="/forum?cat=lainnya" class="cat-link"><i class="bi bi-three-dots"></i>Lainnya</a>
       </nav>
-      <button class="btn-new-thread" onclick="openThreadModal()">
+      <button class="btn-new-thread" onclick="location.href='/forum'">
         <i class="bi bi-plus-lg"></i> Buat Thread Baru
       </button>
     </aside>
@@ -213,6 +166,41 @@
         </div>
         <button class="auth-btn-primary" onclick="showToast('Akun berhasil dibuat! 🎉','success'); closeAuthModal();">Daftar Sekarang</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDIT -->
+<div id="editModal" style="display:none;position:fixed;inset:0;background:rgba(42,23,15,.5);z-index:400;align-items:center;justify-content:center;padding:20px">
+  <div style="background:white;border-radius:16px;width:100%;max-width:560px;padding:32px;box-shadow:0 20px 60px rgba(44,24,16,.2)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+      <h2 style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--text-dark);margin:0">Edit Thread</h2>
+      <button onclick="closeEditModal()" style="width:36px;height:36px;border-radius:9999px;border:none;background:var(--primary-light);cursor:pointer;font-size:18px;color:var(--text-mid)"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div style="margin-bottom:18px">
+      <label style="display:block;font-size:14px;font-weight:600;color:var(--text-dark);margin-bottom:6px">Judul</label>
+      <input id="editInputJudul" type="text" style="width:100%;font-family:inherit;font-size:15px;background:var(--primary-light);border:1.5px solid rgba(225,191,185,.5);border-radius:10px;padding:11px 14px;outline:none">
+    </div>
+    <div style="margin-bottom:18px">
+      <label style="display:block;font-size:14px;font-weight:600;color:var(--text-dark);margin-bottom:6px">Isi Thread</label>
+      <textarea id="editInputIsi" style="width:100%;font-family:inherit;font-size:15px;background:var(--primary-light);border:1.5px solid rgba(225,191,185,.5);border-radius:10px;padding:11px 14px;outline:none;resize:vertical;min-height:120px"></textarea>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button onclick="closeEditModal()" style="font-family:inherit;font-size:14px;font-weight:600;color:var(--text-mid);background:var(--primary-light);border:none;padding:11px 22px;border-radius:10px;cursor:pointer">Batal</button>
+      <button id="btnEditSubmit" onclick="submitEdit()" style="font-family:inherit;font-size:14px;font-weight:600;color:#fff;background:var(--primary);border:none;padding:11px 24px;border-radius:10px;cursor:pointer">Simpan Perubahan</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL HAPUS -->
+<div id="deleteModal" style="display:none;position:fixed;inset:0;background:rgba(42,23,15,.5);z-index:400;align-items:center;justify-content:center;padding:20px">
+  <div style="background:white;border-radius:16px;width:100%;max-width:420px;padding:32px;box-shadow:0 20px 60px rgba(44,24,16,.2);text-align:center">
+    <i class="bi bi-trash3" style="font-size:40px;color:#c62828;display:block;margin-bottom:16px"></i>
+    <h2 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--text-dark);margin:0 0 8px">Hapus Thread?</h2>
+    <p style="font-size:14px;color:var(--text-mid);margin:0 0 24px">Thread yang sudah dihapus tidak bisa dikembalikan.</p>
+    <div style="display:flex;gap:10px;justify-content:center">
+      <button onclick="closeDeleteModal()" style="font-family:inherit;font-size:14px;font-weight:600;color:var(--text-mid);background:var(--primary-light);border:none;padding:11px 22px;border-radius:10px;cursor:pointer">Batal</button>
+      <button id="btnDeleteConfirm" onclick="confirmDelete()" style="font-family:inherit;font-size:14px;font-weight:600;color:#fff;background:#c62828;border:none;padding:11px 24px;border-radius:10px;cursor:pointer">Hapus Sekarang</button>
     </div>
   </div>
 </div>
