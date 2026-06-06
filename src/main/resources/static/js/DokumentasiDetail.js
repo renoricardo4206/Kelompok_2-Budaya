@@ -1,47 +1,48 @@
 /* ── DOKUMENTASIDETAIL.JS — Warisan ── */
+/* Isi halaman detail sekarang dirender server-side dari database (lihat DokumentasiDetail.html).
+   File ini hanya mengurus interaksi ringan: tombol suka (visual) & bagikan. */
 
-// ========== SHARE FUNCTION ==========
-function sharePost() {
-    const url = window.location.href;
-    const title = document.title;
-    
-    if (navigator.share) {
-        navigator.share({
-            title: title,
-            url: url
-        }).catch(() => {});
-    } else {
-        navigator.clipboard.writeText(url);
-        showToast('Link disalin!', 'success');
-    }
+let likedPost = false;
+
+/* ── LIKE (visual saja, belum disimpan ke database) ── */
+function toggleLikePost() {
+  const btn     = document.getElementById('likePostBtn');
+  const icon    = document.getElementById('likePostIcon');
+  const countEl = document.getElementById('likePostCount');
+  if (!btn || !icon || !countEl) return;
+
+  // angka dukungan ada di <span> pertama di dalam countEl
+  const numEl = countEl.querySelector('span');
+  let count = numEl ? parseInt(numEl.textContent) || 0 : 0;
+
+  likedPost = !likedPost;
+  if (likedPost) {
+    icon.className = 'bi bi-heart-fill';
+    icon.style.color = '#9e2016';
+    btn.classList.add('liked');
+    count++;
+    icon.style.transform = 'scale(1.4)';
+    setTimeout(() => icon.style.transform = '', 180);
+    showToast('Kamu mendukung dokumentasi ini ❤️', 'success');
+  } else {
+    icon.className = 'bi bi-heart';
+    icon.style.color = '';
+    btn.classList.remove('liked');
+    count--;
+  }
+  if (numEl) numEl.textContent = count;
 }
 
-// ========== LIKE FUNCTION ==========
-function toggleLike() {
-    showToast('Fitur dukung akan segera hadir!', 'info');
-}
-
-// ========== UPLOAD MODAL ==========
-function openModal() {
-    const modal = document.getElementById('uploadModal');
-    if (modal) {
-        modal.classList.add('open');
-        document.body.classList.add('locked');
-    }
-}
-
-function closeModal() {
-    const modal = document.getElementById('uploadModal');
-    if (modal) {
-        modal.classList.remove('open');
-        document.body.classList.remove('locked');
-    }
-}
-
-// Close modal when clicking outside
-const uploadModal = document.getElementById('uploadModal');
-if (uploadModal) {
-    uploadModal.addEventListener('click', function(e) {
-        if (e.target === this) closeModal();
-    });
+/* ── SHARE ── */
+function shareThread() {
+  const url = window.location.href;
+  if (navigator.share) {
+    navigator.share({ title: document.title, url }).catch(() => {});
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(url)
+      .then(() => showToast('Link disalin!', 'success'))
+      .catch(() => showToast('Link: ' + url));
+  } else {
+    showToast('Link: ' + url);
+  }
 }

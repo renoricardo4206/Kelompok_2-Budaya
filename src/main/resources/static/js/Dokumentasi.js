@@ -1,78 +1,80 @@
 /* ── DOKUMENTASI.JS — Warisan ── */
+/* Data dokumentasi & filter kategori sekarang ditangani server-side (Spring + Thymeleaf).
+   File ini hanya mengurus: pencarian, toggle tampilan grid/list, dan modal upload. */
 
-// ========== GRID/LIST VIEW ==========
-let currentView = 'grid';
-
-function setView(view) {
-    currentView = view;
-    const grid = document.getElementById('docGrid');
-    const gridBtn = document.getElementById('viewGrid');
-    const listBtn = document.getElementById('viewList');
-    
-    if (!grid) return;
-    
-    if (view === 'grid') {
-        grid.classList.remove('list-view');
-        if (gridBtn) gridBtn.classList.add('active');
-        if (listBtn) listBtn.classList.remove('active');
-    } else {
-        grid.classList.add('list-view');
-        if (gridBtn) gridBtn.classList.remove('active');
-        if (listBtn) listBtn.classList.add('active');
-    }
+/* ── SEARCH (filter kartu yang sudah dirender) ── */
+function handleSearch(q) {
+  q = (q || '').toLowerCase().trim();
+  let visible = 0;
+  document.querySelectorAll('.doc-card').forEach(card => {
+    const title   = card.querySelector('.doc-title')?.textContent.toLowerCase()       || '';
+    const excerpt = card.querySelector('.doc-excerpt')?.textContent.toLowerCase()     || '';
+    const author  = card.querySelector('.doc-author-name')?.textContent.toLowerCase() || '';
+    const show = !q || title.includes(q) || excerpt.includes(q) || author.includes(q);
+    card.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  const count = document.getElementById('contentCount');
+  if (count) count.textContent = visible + ' konten';
 }
 
-// ========== SEARCH FILTER ==========
-function filterDocs(keyword) {
-    const cards = document.querySelectorAll('.doc-card');
-    let count = 0;
-    
-    cards.forEach(card => {
-        const title = card.getAttribute('data-title') || '';
-        const content = card.getAttribute('data-content') || '';
-        const match = title.toLowerCase().includes(keyword.toLowerCase()) || 
-                     content.toLowerCase().includes(keyword.toLowerCase());
-        
-        if (match) {
-            card.style.display = '';
-            count++;
-        } else {
-            card.style.display = 'none';
-        }
-    });
-    
-    const countElem = document.getElementById('contentCount');
-    if (countElem) countElem.innerText = count + ' konten';
+/* ── TOGGLE GRID / LIST ── */
+function setView(v) {
+  document.getElementById('viewGrid').classList.toggle('active', v === 'grid');
+  document.getElementById('viewList').classList.toggle('active', v === 'list');
+  document.getElementById('docGrid').classList.toggle('list-view', v === 'list');
 }
 
-// ========== UPLOAD MODAL ==========
-function openModal() {
-    const modal = document.getElementById('uploadModal');
-    if (modal) {
-        modal.classList.add('open');
-        document.body.classList.add('locked');
-    }
+/* ── UPLOAD MODAL ── */
+function openModal()  { document.getElementById('uploadModal').classList.add('open');    document.body.classList.add('locked'); }
+function closeModal() { document.getElementById('uploadModal').classList.remove('open'); document.body.classList.remove('locked'); }
+
+const uploadModalEl = document.getElementById('uploadModal');
+if (uploadModalEl) {
+  uploadModalEl.addEventListener('click', function (e) {
+    if (e.target === this) closeModal();
+  });
 }
 
-function closeModal() {
-    const modal = document.getElementById('uploadModal');
-    if (modal) {
-        modal.classList.remove('open');
-        document.body.classList.remove('locked');
-    }
+function handleDrag(e, on) {
+  e.preventDefault();
+  document.getElementById('uploadArea').classList.toggle('dragover', on);
 }
 
-// Close modal when clicking outside
-const uploadModal = document.getElementById('uploadModal');
-if (uploadModal) {
-    uploadModal.addEventListener('click', function(e) {
-        if (e.target === this) closeModal();
-    });
+function handleDrop(e) {
+  e.preventDefault();
+  handleDrag(e, false);
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) loadPreview(file);
 }
 
-// ========== COUNTER INIT ==========
-document.addEventListener('DOMContentLoaded', function() {
-    const cards = document.querySelectorAll('.doc-card');
-    const countElem = document.getElementById('contentCount');
-    if (countElem) countElem.innerText = cards.length + ' konten';
+function handleFile(input) {
+  if (input.files[0]) loadPreview(input.files[0]);
+}
+
+function loadPreview(file) {
+  const r = new FileReader();
+  r.onload = e => {
+    document.getElementById('uploadArea').style.display = 'none';
+    document.getElementById('uploadPreview').style.display = 'block';
+    document.getElementById('uploadPreviewImg').src = e.target.result;
+  };
+  r.readAsDataURL(file);
+}
+
+function removePreview(e) {
+  e.stopPropagation();
+  document.getElementById('uploadArea').style.display = 'block';
+  document.getElementById('uploadPreview').style.display = 'none';
+  document.getElementById('fileInput').value = '';
+}
+
+/* ── FLASH MESSAGE DARI SERVER ── */
+/* Form upload sekarang submit langsung ke /dokumentasi/upload (lihat Dokumentasi.html),
+   lalu server redirect balik ke sini sambil membawa pesan sukses/error. */
+document.addEventListener('DOMContentLoaded', () => {
+  const ok  = document.getElementById('flashSuccess');
+  const err = document.getElementById('flashError');
+  if (ok  && ok.textContent.trim())  showToast(ok.textContent.trim(),  'success');
+  if (err && err.textContent.trim()) showToast(err.textContent.trim(), 'error');
 });

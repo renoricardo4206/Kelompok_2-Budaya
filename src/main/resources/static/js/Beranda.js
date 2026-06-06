@@ -3,6 +3,14 @@
 const originalOrder = [];
 document.querySelectorAll('.post-card').forEach(c => originalOrder.push(c));
 
+/* ── Toast flash dari server (login/daftar) ── */
+document.addEventListener('DOMContentLoaded', () => {
+  const ok  = document.getElementById('flashSuccess');
+  const err = document.getElementById('flashError');
+  if (ok  && ok.textContent.trim())  showToast(ok.textContent.trim(),  'success');
+  if (err && err.textContent.trim()) showToast(err.textContent.trim(), 'error');
+});
+
 function setTab(btn, mode) {
   document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');

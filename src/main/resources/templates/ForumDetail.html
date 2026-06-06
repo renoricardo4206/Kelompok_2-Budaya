@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-<title id="pageTitle">Dokumentasi – Warisan</title>
+<title th:text="${thread.title} + ' – Warisan'">Forum – Warisan</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400;0,600&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 <link rel="stylesheet" th:href="@{/css/Global.css}">
@@ -12,10 +12,12 @@
 </head>
 <body>
 
-
-
 <!-- TOAST -->
 <div class="toast-container" id="toastContainer"></div>
+
+<!-- Flash message dari server -->
+<div id="flashSuccess" style="display:none" th:if="${flashSuccess}" th:text="${flashSuccess}"></div>
+<div id="flashError" style="display:none" th:if="${flashError}" th:text="${flashError}"></div>
 
 <!-- DRAWER -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
@@ -51,8 +53,10 @@
         <i class="bi bi-search si"></i>
         <input type="search" placeholder="Cari budaya, tarian, atau kuliner...">
       </div>
-      <button class="btn-masuk" onclick="openAuthModal('masuk')">Masuk</button>
-      <button class="btn-daftar" onclick="openAuthModal('daftar')">Daftar</button>
+      <button class="btn-masuk" th:if="${session.currentUser == null}" onclick="openAuthModal('masuk')">Masuk</button>
+      <button class="btn-daftar" th:if="${session.currentUser == null}" onclick="openAuthModal('daftar')">Daftar</button>
+      <span th:if="${session.currentUser != null}" style="font-size:14px;font-weight:600;color:var(--text-mid);margin-right:8px" th:text="${session.currentUser.username}">User</span>
+      <button class="btn-masuk" th:if="${session.currentUser != null}" onclick="location.href='/logout'">Keluar</button>
     </div>
     <button class="btn-hamburger" onclick="openDrawer()"><i class="bi bi-list"></i></button>
   </div>
@@ -67,26 +71,121 @@
       <div class="sidebar-title">Forum</div>
       <div class="sidebar-subtitle">Pilih topik diskusi</div>
       <nav class="cat-nav" id="sidebarCatNav">
-        <a href="/forum" class="cat-link"><i class="bi bi-compass"></i>Semua Diskusi</a>
-        <a href="/forum?cat=tari" class="cat-link" id="sideCatTari"><i class="bi bi-person-arms-up"></i>Tari</a>
-        <a href="/forum?cat=bahasa" class="cat-link"><i class="bi bi-translate"></i>Bahasa</a>
-        <a href="/forum?cat=seni" class="cat-link"><i class="bi bi-palette"></i>Seni &amp; Kriya</a>
-        <a href="/forum?cat=musik" class="cat-link" id="sideCatMusik"><i class="bi bi-music-note"></i>Musik</a>
-        <a href="/forum?cat=pakaian" class="cat-link" id="sideCatPakaian"><i class="bi bi-stars"></i>Pakaian Adat</a>
-        <a href="/forum?cat=kuliner" class="cat-link" id="sideCatKuliner"><i class="bi bi-egg-fried"></i>Kuliner</a>
-        <a href="/forum?cat=lainnya" class="cat-link"><i class="bi bi-three-dots"></i>Lainnya</a>
+        <a th:href="@{/forum}" class="cat-link"><i class="bi bi-compass"></i>Semua Diskusi</a>
+        <a th:each="f : ${forums}" th:href="@{/forum(forum=${f.name})}" class="cat-link"
+           th:classappend="${thread.forum != null and #strings.equalsIgnoreCase(thread.forum.name, f.name)} ? ' active'">
+          <i class="bi bi-chat-square-text"></i> <span th:text="${f.name}">Forum</span>
+        </a>
       </nav>
-      <button class="btn-new-thread" onclick="location.href='/forum'">
+      <button class="btn-new-thread" onclick="location.href='/threads/create'">
         <i class="bi bi-plus-lg"></i> Buat Thread Baru
       </button>
     </aside>
 
     <!-- CENTER COLUMN -->
     <main id="mainContent">
-      <!-- populated by JS -->
+
+      <!-- BREADCRUMBS -->
+      <nav class="breadcrumbs">
+        <a th:href="@{/forum}">Forum</a>
+        <span><i class="bi bi-chevron-right" style="font-size:9px"></i></span>
+        <a th:if="${thread.forum != null}" th:href="@{/forum(forum=${thread.forum.name})}"
+           th:text="${thread.forum.name}">Forum</a>
+        <span><i class="bi bi-chevron-right" style="font-size:9px"></i></span>
+        <span class="current" th:text="${thread.title}">Judul</span>
+      </nav>
+
+      <!-- OP CARD -->
+      <div class="op-card">
+        <div class="op-body">
+          <div class="op-meta">
+            <div class="op-author">
+              <div class="op-avatar-placeholder" style="background:#9e2016;color:#fff;display:flex"
+                   th:text="${thread.user != null ? #strings.substring(thread.user.username,0,1) : 'A'}">A</div>
+              <div>
+                <div class="op-name" th:text="${thread.user != null ? thread.user.username : 'Anonim'}">Penulis</div>
+                <div class="op-time" th:text="${thread.createdAt}">waktu</div>
+              </div>
+            </div>
+          </div>
+          <h1 class="op-title" th:text="${thread.title}">Judul Thread</h1>
+          <p class="op-text" th:text="${thread.content}">Isi thread...</p>
+          <img class="op-img" th:if="${thread.mediaURL != null and !thread.mediaURL.isEmpty()}"
+               th:src="${thread.mediaURL}" th:alt="${thread.title}" onerror="this.style.display='none'">
+        </div>
+        <div class="interact-bar">
+          <button class="ibar-btn" id="likePostBtn" onclick="toggleLikePost()">
+            <i class="bi bi-heart" id="likePostIcon"></i>
+            <span id="likePostCount"><span th:text="${likeCount}">0</span> Dukungan</span>
+          </button>
+          <button class="ibar-btn" onclick="document.getElementById('commentTextarea').focus()">
+            <i class="bi bi-chat"></i>
+            <span><span th:text="${commentCount}">0</span> Balasan</span>
+          </button>
+          <button class="ibar-btn ibar-share" onclick="shareThread()">
+            <i class="bi bi-share"></i>
+            <span>Bagikan</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- DISCUSSION -->
+      <div class="discussion-section">
+        <h2 class="discussion-title">Diskusi</h2>
+
+        <!-- Comment Form -->
+        <form class="comment-form" th:action="@{/forum/{id}/comment(id=${thread.id})}" method="post">
+          <div class="cf-avatar">A</div>
+          <div class="cf-right">
+            <textarea class="cf-textarea" id="commentTextarea" name="content" required
+                      placeholder="Tuliskan pandangan Anda..." rows="3"></textarea>
+            <div class="cf-submit-row">
+              <button type="submit" class="cf-submit">Kirim Balasan</button>
+            </div>
+          </div>
+        </form>
+
+        <!-- Comment Thread -->
+        <div class="comment-thread" id="commentThread">
+          <p th:if="${#lists.isEmpty(comments)}" style="color:var(--text-mid);font-size:14px">
+            Belum ada balasan. Jadilah yang pertama!
+          </p>
+          <div th:each="c : ${comments}" class="comment-item">
+            <div class="comment-avatar-initials" style="background:#427452;color:#c1f8cd"
+                 th:text="${c.user != null ? #strings.substring(c.user.username,0,1) : 'A'}">A</div>
+            <div class="comment-right">
+              <div class="comment-bubble">
+                <div class="comment-header">
+                  <span class="comment-name" th:text="${c.user != null ? c.user.username : 'Anonim'}">Nama</span>
+                  <span class="comment-time" th:text="${c.createdAt}">waktu</span>
+                </div>
+                <p class="comment-text" th:text="${c.content}">Isi komentar...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </main>
 
-
+    <!-- SIDEBAR RIGHT -->
+    <aside class="sidebar-right">
+      <div class="related-widget">
+        <div class="related-title">Diskusi Terkait</div>
+        <div class="related-items" id="relatedItems">
+          <p th:if="${#lists.isEmpty(related)}" style="font-size:13px;color:var(--text-mid)">
+            Belum ada diskusi lain di forum ini.
+          </p>
+          <div th:each="r : ${related}" class="related-item"
+               th:attr="onclick=|window.location.href='/forum/${r.id}'|">
+            <span class="ri-cat" style="color:#9e2016"
+                  th:if="${r.forum != null}" th:text="${r.forum.name}">Forum</span>
+            <p class="ri-title" th:text="${r.title}">Judul terkait</p>
+            <span class="ri-meta" th:text="${r.user != null ? 'Oleh ' + r.user.username : ''}">Oleh —</span>
+          </div>
+        </div>
+      </div>
+    </aside>
 
   </div>
 </div>
@@ -99,7 +198,7 @@
       <div class="footer-tagline">Melestarikan Budaya, Menghubungkan Bangsa.</div>
       
       <div class="footer-links" style="margin-bottom: 16px;">
-        <a href="https://wa.me/6282261137206" target="_blank" rel="noopener noreferrer">
+        <a href="https://wa.me/628XXXXXXXXXX" target="_blank" rel="noopener noreferrer">
           <i class="bi bi-whatsapp" style="margin-right: 4px;"></i> Hubungi Kami
         </a>
       </div>
@@ -132,75 +231,46 @@
       </div>
 
       <div class="auth-form-panel active" id="authFormMasuk">
-        <div class="auth-heading">
-          <h2>Selamat Datang Kembali</h2>
-          <p>Lanjutkan perjalanan budaya Anda.</p>
-        </div>
-        <div class="auth-field">
-          <label>Email</label>
-          <input type="email" placeholder="nama@email.com">
-        </div>
-        <div class="auth-field">
-          <label>Kata Sandi</label>
-          <input type="password" placeholder="Min. 8 karakter">
-        </div>
-        <button class="auth-btn-primary" onclick="showToast('Berhasil masuk!','success'); closeAuthModal();">Masuk</button>
+        <form action="/login" method="post" style="display:flex;flex-direction:column;gap:16px">
+          <div class="auth-heading">
+            <h2>Selamat Datang Kembali</h2>
+            <p>Lanjutkan perjalanan budaya Anda.</p>
+          </div>
+          <div class="auth-field">
+            <label>Email</label>
+            <input type="email" name="username" required placeholder="nama@email.com">
+          </div>
+          <div class="auth-field">
+            <label>Kata Sandi</label>
+            <input type="password" name="password" required placeholder="••••••••">
+          </div>
+          <button type="submit" class="auth-btn-primary">Masuk</button>
+        </form>
+        <div class="auth-divider"><span>atau</span></div>
+        <button class="auth-btn-google" onclick="showToast('Login Google segera hadir!','success')"><i class="bi bi-google" style="color:#EA4335;"></i> Lanjutkan dengan Google</button>
       </div>
 
       <div class="auth-form-panel" id="authFormDaftar">
-        <div class="auth-heading">
-          <h2>Buat Akun Baru</h2>
-          <p>Bergabunglah dengan komunitas pelestari budaya.</p>
-        </div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-          <div class="auth-field"><label>Nama Depan</label><input type="text" placeholder="Depan"></div>
-          <div class="auth-field"><label>Nama Belakang</label><input type="text" placeholder="Belakang"></div>
-        </div>
-        <div class="auth-field">
-          <label>Email</label>
-          <input type="email" placeholder="nama@email.com">
-        </div>
-        <div class="auth-field">
-          <label>Kata Sandi</label>
-          <input type="password" placeholder="Min. 8 karakter">
-        </div>
-        <button class="auth-btn-primary" onclick="showToast('Akun berhasil dibuat! 🎉','success'); closeAuthModal();">Daftar Sekarang</button>
+        <form action="/register" method="post" style="display:flex;flex-direction:column;gap:16px">
+          <div class="auth-heading">
+            <h2>Buat Akun Baru</h2>
+            <p>Bergabunglah dengan komunitas pelestari budaya.</p>
+          </div>
+          <div class="auth-field">
+            <label>Username</label>
+            <input type="text" name="username" required placeholder="Nama pengguna">
+          </div>
+          <div class="auth-field">
+            <label>Email</label>
+            <input type="email" name="email" required placeholder="nama@email.com">
+          </div>
+          <div class="auth-field">
+            <label>Kata Sandi</label>
+            <input type="password" name="password" required placeholder="Min. 8 karakter">
+          </div>
+          <button type="submit" class="auth-btn-primary">Daftar Sekarang</button>
+        </form>
       </div>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL EDIT -->
-<div id="editModal" style="display:none;position:fixed;inset:0;background:rgba(42,23,15,.5);z-index:400;align-items:center;justify-content:center;padding:20px">
-  <div style="background:white;border-radius:16px;width:100%;max-width:560px;padding:32px;box-shadow:0 20px 60px rgba(44,24,16,.2)">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
-      <h2 style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--text-dark);margin:0">Edit Thread</h2>
-      <button onclick="closeEditModal()" style="width:36px;height:36px;border-radius:9999px;border:none;background:var(--primary-light);cursor:pointer;font-size:18px;color:var(--text-mid)"><i class="bi bi-x-lg"></i></button>
-    </div>
-    <div style="margin-bottom:18px">
-      <label style="display:block;font-size:14px;font-weight:600;color:var(--text-dark);margin-bottom:6px">Judul</label>
-      <input id="editInputJudul" type="text" style="width:100%;font-family:inherit;font-size:15px;background:var(--primary-light);border:1.5px solid rgba(225,191,185,.5);border-radius:10px;padding:11px 14px;outline:none">
-    </div>
-    <div style="margin-bottom:18px">
-      <label style="display:block;font-size:14px;font-weight:600;color:var(--text-dark);margin-bottom:6px">Isi Thread</label>
-      <textarea id="editInputIsi" style="width:100%;font-family:inherit;font-size:15px;background:var(--primary-light);border:1.5px solid rgba(225,191,185,.5);border-radius:10px;padding:11px 14px;outline:none;resize:vertical;min-height:120px"></textarea>
-    </div>
-    <div style="display:flex;gap:10px;justify-content:flex-end">
-      <button onclick="closeEditModal()" style="font-family:inherit;font-size:14px;font-weight:600;color:var(--text-mid);background:var(--primary-light);border:none;padding:11px 22px;border-radius:10px;cursor:pointer">Batal</button>
-      <button id="btnEditSubmit" onclick="submitEdit()" style="font-family:inherit;font-size:14px;font-weight:600;color:#fff;background:var(--primary);border:none;padding:11px 24px;border-radius:10px;cursor:pointer">Simpan Perubahan</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL HAPUS -->
-<div id="deleteModal" style="display:none;position:fixed;inset:0;background:rgba(42,23,15,.5);z-index:400;align-items:center;justify-content:center;padding:20px">
-  <div style="background:white;border-radius:16px;width:100%;max-width:420px;padding:32px;box-shadow:0 20px 60px rgba(44,24,16,.2);text-align:center">
-    <i class="bi bi-trash3" style="font-size:40px;color:#c62828;display:block;margin-bottom:16px"></i>
-    <h2 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--text-dark);margin:0 0 8px">Hapus Thread?</h2>
-    <p style="font-size:14px;color:var(--text-mid);margin:0 0 24px">Thread yang sudah dihapus tidak bisa dikembalikan.</p>
-    <div style="display:flex;gap:10px;justify-content:center">
-      <button onclick="closeDeleteModal()" style="font-family:inherit;font-size:14px;font-weight:600;color:var(--text-mid);background:var(--primary-light);border:none;padding:11px 22px;border-radius:10px;cursor:pointer">Batal</button>
-      <button id="btnDeleteConfirm" onclick="confirmDelete()" style="font-family:inherit;font-size:14px;font-weight:600;color:#fff;background:#c62828;border:none;padding:11px 24px;border-radius:10px;cursor:pointer">Hapus Sekarang</button>
     </div>
   </div>
 </div>

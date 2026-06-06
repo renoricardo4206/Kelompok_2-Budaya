@@ -1,134 +1,128 @@
 package com.project.budaya.Controller;
 
-import com.project.budaya.Repository.UserRepository;
-import com.project.budaya.Repository.PostsRepository;
-import com.project.budaya.Repository.CategoriesRepository;
-import com.project.budaya.Entity.Posts;
-import com.project.budaya.Entity.Categories;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.stream.Collectors;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import jakarta.servlet.http.HttpSession;
+
+import com.project.budaya.Entity.Categories;
+import com.project.budaya.Entity.Posts;
+import com.project.budaya.Entity.User;
+import com.project.budaya.Repository.PostsRepository;
+import com.project.budaya.Repository.CategoriesRepository;
+import com.project.budaya.Repository.UserRepository;
 
 @Controller
 public class PostsController {
 
-    private final UserRepository userRepository;
     private final PostsRepository postsRepository;
     private final CategoriesRepository categoriesRepository;
+    private final UserRepository userRepository;
 
-    public PostsController(PostsRepository postsRepository, 
-                           CategoriesRepository categoriesRepository, 
+    public PostsController(PostsRepository postsRepository,
+                           CategoriesRepository categoriesRepository,
                            UserRepository userRepository) {
         this.postsRepository = postsRepository;
         this.categoriesRepository = categoriesRepository;
         this.userRepository = userRepository;
     }
 
-    
     @GetMapping("/dokumentasi")
     public String dokumentasi(@RequestParam(required = false) String cat, Model model) {
-        List<Posts> posts;
-        String activeCategory = "Semua";
-        
-        try {
-            // Batasi hanya 20 data per halaman untuk menghindari timeout
-            Pageable pageable = PageRequest.of(0, 20);
-            
-            if (cat != null && !"semua".equalsIgnoreCase(cat) && cat.trim().length() > 0) {
-                // Filter berdasarkan kategori
-                Categories category = categoriesRepository.findByNameIgnoreCase(cat);
-                if (category != null) {
-                    posts = postsRepository.findByCategory(category, pageable).getContent();
-                    activeCategory = cat;
-                } else {
-                    posts = postsRepository.findAll(pageable).getContent();
-                    activeCategory = "Semua";
-                }
-            } else {
-                posts = postsRepository.findAll(pageable).getContent();
-                activeCategory = "Semua";
-            }
-            
-            // Potong content untuk tampilan card (max 150 karakter)
-            for (Posts post : posts) {
-                if (post.getContent() != null && post.getContent().length() > 150) {
-                    post.setContent(post.getContent().substring(0, 150) + "...");
-                }
-            }
-            
-        } catch (Exception e) {
-            // Jika error, ambil data tanpa pagination
-            posts = postsRepository.findAll().stream().limit(10).collect(Collectors.toList());
-            e.printStackTrace();
-        }
-        
-        List<Categories> allCategories = categoriesRepository.findAll();
-        
-        model.addAttribute("posts", posts);
-        model.addAttribute("categories", allCategories);
-        model.addAttribute("activeCategory", activeCategory);
-        model.addAttribute("totalPosts", posts.size());
-        
+        boolean semua = (cat == null || cat.isBlank() || cat.equalsIgnoreCase("semua"));
+
+        model.addAttribute("posts",
+                semua ? postsRepository.findAll()
+                      : postsRepository.findByCategory_NameIgnoreCase(cat));
+        model.addAttribute("categories", categoriesRepository.findAll());
+        model.addAttribute("activeCat", semua ? "semua" : cat);
         return "Dokumentasi";
     }
 
-    
     @GetMapping("/dokumentasi/{id}")
     public String dokumentasiDetail(@PathVariable Integer id, Model model) {
-        Posts post = postsRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Dokumentasi tidak ditemukan dengan id : " + id));
-        
+        Posts post = postsRepository.findById(id).orElse(null);
+        if (post == null) {
+            return "redirect:/dokumentasi";
+        }
+
+        // Dokumentasi terkait: kategori sama, kecuali post ini sendiri
+        List<Posts> related = new ArrayList<>();
+        if (post.getCategory() != null) {
+            related = postsRepository.findByCategory_NameIgnoreCase(post.getCategory().getName());
+            related.removeIf(p -> p.getId().equals(post.getId()));
+        }
+
+        int likeCount = (post.getPostLikes() != null) ? post.getPostLikes().size() : 0;
+
         model.addAttribute("post", post);
-        
-        // Ambil 5 dokumentasi lain untuk rekomendasi
-        List<Posts> otherPosts = postsRepository.findAll().stream()
-            .filter(p -> !p.getId().equals(id))
-            .limit(5)
-            .collect(Collectors.toList());
-        
-        model.addAttribute("otherPosts", otherPosts);
-        
+        model.addAttribute("related", related);
+        model.addAttribute("likeCount", likeCount);
+        model.addAttribute("categories", categoriesRepository.findAll());
         return "DokumentasiDetail";
     }
-    
-    
+
     @PostMapping("/dokumentasi/upload")
-    public String uploadDokumentasi(@RequestParam String title,
-                                   @RequestParam String category,
-                                   @RequestParam String description,
-                                   @RequestParam(required = false) String imageUrl,
-                                   Model model) {
-        
-        try {
-            Categories existingCategory = categoriesRepository.findByNameIgnoreCase(category);
-            if (existingCategory == null) {
-                existingCategory = new Categories(category);
-                categoriesRepository.save(existingCategory);
-            }
-            
-            Posts post = new Posts();
-            post.setTitle(title);
-            post.setContent(description);
-            post.setMedia_url(imageUrl);
-            post.setCategory(existingCategory);
-            post.setCreatedAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            
-            // TODO: Set user dari session/login
-            // post.setUser(currentUser);
-            
-            postsRepository.save(post);
-            
-            model.addAttribute("successMessage", "Dokumentasi berhasil diunggah!");
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", "Gagal mengunggah dokumentasi: " + e.getMessage());
+    public String uploadDokumentasi(
+            @RequestParam String title,
+            @RequestParam Integer categoryId,
+            @RequestParam String content,
+            @RequestParam(required = false) MultipartFile image,
+            HttpSession session,
+            RedirectAttributes ra) {
+
+        // Gerbang: harus login dulu
+        User user = (User) session.getAttribute("currentUser");
+        if (user == null) {
+            ra.addFlashAttribute("uploadError", "Silakan login atau daftar dulu untuk mengupload konten.");
+            return "redirect:/dokumentasi";
         }
-        
+
+        Categories category = categoriesRepository.findById(categoryId).orElse(null);
+        if (category == null) {
+            ra.addFlashAttribute("uploadError", "Kategori tidak ditemukan.");
+            return "redirect:/dokumentasi";
+        }
+
+        // Simpan gambar (jika ada) ke folder uploads/
+        String mediaUrl = null;
+        if (image != null && !image.isEmpty()) {
+            try {
+                String original = image.getOriginalFilename();
+                String ext = (original != null && original.contains("."))
+                        ? original.substring(original.lastIndexOf('.'))
+                        : "";
+                String filename = System.currentTimeMillis() + ext;
+
+                Path uploadDir = Paths.get("uploads");
+                Files.createDirectories(uploadDir);
+                Files.copy(image.getInputStream(), uploadDir.resolve(filename),
+                        StandardCopyOption.REPLACE_EXISTING);
+
+                mediaUrl = "/uploads/" + filename;
+            } catch (IOException e) {
+                ra.addFlashAttribute("uploadError", "Gagal menyimpan gambar: " + e.getMessage());
+                return "redirect:/dokumentasi";
+            }
+        }
+
+        String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("d MMM yyyy"));
+        postsRepository.save(new Posts(user, category, title, content, mediaUrl, now));
+
+        ra.addFlashAttribute("uploadSuccess", "Konten berhasil diupload!");
         return "redirect:/dokumentasi";
     }
 }

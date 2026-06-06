@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 <title>Dokumentasi – Warisan</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400;0,600&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 <link rel="stylesheet" th:href="@{/css/Global.css}">
 <link rel="stylesheet" th:href="@{/css/Shared.css}">
@@ -12,38 +12,40 @@
 </head>
 <body>
 
-<!-- MODAL UPLOAD -->
 <div class="modal-overlay" id="uploadModal">
   <div class="modal">
     <div class="modal-head">
       <h2>Upload Konten</h2>
       <button class="modal-close" onclick="closeModal()"><i class="bi bi-x-lg"></i></button>
     </div>
-    <form th:action="@{/dokumentasi/upload}" method="post">
+    <form th:action="@{/dokumentasi/upload}" method="post" enctype="multipart/form-data">
       <div class="form-group">
         <label class="form-label">Judul Konten *</label>
-        <input type="text" class="form-input" name="title" placeholder="Contoh: Mengenal Batik Parang dari Yogyakarta" required>
+        <input type="text" class="form-input" id="inputJudul" name="title" required placeholder="Contoh: Mengenal Batik Parang dari Yogyakarta">
       </div>
       <div class="form-group">
         <label class="form-label">Kategori *</label>
-        <select class="form-input" name="category" required>
+        <select class="form-input" id="inputKategori" name="categoryId" required>
           <option value="">Pilih kategori...</option>
-          <option value="Tari">Tari</option>
-          <option value="Kuliner">Kuliner</option>
-          <option value="Pakaian Adat">Pakaian Adat</option>
-          <option value="Musik">Musik</option>
-          <option value="Bahasa">Bahasa</option>
-          <option value="Seni & Kriya">Seni & Kriya</option>
-          <option value="Lainnya">Lainnya</option>
+          <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}">Kategori</option>
         </select>
       </div>
       <div class="form-group">
         <label class="form-label">Deskripsi Singkat *</label>
-        <textarea class="form-input" name="description" placeholder="Ceritakan isi konten kamu secara singkat..." required></textarea>
+        <textarea class="form-input" id="inputDeskripsi" name="content" required placeholder="Ceritakan isi konten kamu secara singkat..."></textarea>
       </div>
       <div class="form-group">
-        <label class="form-label">URL Gambar</label>
-        <input type="text" class="form-input" name="imageUrl" placeholder="https://...">
+        <label class="form-label">Foto / Gambar</label>
+        <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()" ondragover="handleDrag(event,true)" ondragleave="handleDrag(event,false)" ondrop="handleDrop(event)">
+          <i class="bi bi-cloud-arrow-up"></i>
+          <p>Klik atau seret gambar ke sini</p>
+          <span>PNG, JPG, WEBP — maks. 5MB</span>
+        </div>
+        <div class="upload-preview" id="uploadPreview" style="display:none">
+          <img id="uploadPreviewImg" src="" alt="preview">
+          <button type="button" class="upload-preview-remove" onclick="removePreview(event)"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <input type="file" id="fileInput" name="image" accept="image/*" style="display:none" onchange="handleFile(this)">
       </div>
       <div class="modal-actions">
         <button type="submit" class="btn-submit">Upload Konten</button>
@@ -52,26 +54,25 @@
   </div>
 </div>
 
-<!-- DRAWER -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
-<div class="drawer" id="mobileDrawer">
+<div class="drawer" id="drawer">
   <div class="drawer-header">
-    <span class="drawer-brand">Warisan</span>
-    <button class="drawer-close" onclick="closeDrawer()"><i class="bi bi-x"></i></button>
+    <span class="drawer-logo">Warisan</span>
+    <button class="drawer-close" onclick="closeDrawer()"><i class="bi bi-x-lg"></i></button>
   </div>
-  <ul class="drawer-nav">
-    <li><a href="/"><i class="bi bi-house"></i>Beranda</a></li>
-    <li><a href="/forum"><i class="bi bi-chat-dots"></i>Forum</a></li>
-    <li><a href="/dokumentasi" class="active"><i class="bi bi-journal-richtext"></i>Dokumentasi</a></li>
+  <ul class="drawer-links">
+    <li><a href="/" onclick="closeDrawer()"><i class="bi bi-house"></i>Beranda</a></li>
+    <li><a href="/forum" onclick="closeDrawer()"><i class="bi bi-chat-dots"></i>Forum</a></li>
+    <li><a href="/dokumentasi" class="active" onclick="closeDrawer()"><i class="bi bi-journal-richtext"></i>Dokumentasi</a></li>
   </ul>
-  <div class="drawer-divider"></div>
-  <div class="drawer-auth">
-    <button class="drawer-btn-masuk" onclick="openAuthModal('masuk')">Masuk</button>
-    <button class="drawer-btn-daftar" onclick="openAuthModal('daftar')">Daftar Sekarang</button>
-  </div>
 </div>
 
-<!-- NAVBAR -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Flash message dari server (dibaca oleh Dokumentasi.js untuk ditampilkan sebagai toast) -->
+<div id="flashSuccess" style="display:none" th:if="${uploadSuccess}" th:text="${uploadSuccess}"></div>
+<div id="flashError" style="display:none" th:if="${uploadError}" th:text="${uploadError}"></div>
+
 <nav class="wastra-nav" id="mainNav">
   <div class="nav-inner">
     <a href="/" class="nav-brand">Warisan</a>
@@ -84,17 +85,19 @@
     <div class="nav-auth">
       <div class="nav-search" style="margin-right:6px">
         <i class="bi bi-search search-icon"></i>
-        <input type="search" id="searchInput" placeholder="Cari budaya, tarian, atau kuliner..." oninput="filterDocs(this.value)">
+        <input type="search" id="searchInput" placeholder="Cari dokumentasi budaya..." oninput="handleSearch(this.value)">
       </div>
-      <button class="btn-masuk" onclick="openAuthModal('masuk')">Masuk</button>
-      <button class="btn-daftar" onclick="openAuthModal('daftar')">Daftar</button>
+      <button class="btn-masuk" th:if="${session.currentUser == null}" onclick="openAuthModal('masuk')">Masuk</button>
+      <button class="btn-daftar" th:if="${session.currentUser == null}" onclick="openAuthModal('daftar')">Daftar</button>
+      <span th:if="${session.currentUser != null}" style="font-size:14px;font-weight:600;color:var(--text-mid);margin-right:8px" th:text="${session.currentUser.username}">User</span>
+      <button class="btn-masuk" th:if="${session.currentUser != null}" onclick="location.href='/logout'">Keluar</button>
     </div>
     <button class="btn-hamburger" onclick="openDrawer()"><i class="bi bi-list"></i></button>
   </div>
 </nav>
 
-<!-- MAIN CONTENT -->
 <div class="page-wrapper">
+
   <div class="doc-hero">
     <div class="doc-hero-content">
       <div class="doc-hero-text">
@@ -105,28 +108,19 @@
   </div>
 
   <div class="doc-layout">
-    <!-- SIDEBAR KATEGORI -->
+
     <aside class="sidebar-left">
       <div class="sidebar-title">Kategori</div>
       <div class="sidebar-subtitle">Filter dokumentasi</div>
       <nav class="cat-nav">
-        <a th:href="@{/dokumentasi}" 
-           class="cat-link" 
-           th:classappend="${activeCategory == 'Semua' ? 'active' : ''}">
+        <a th:href="@{/dokumentasi}" class="cat-link"
+           th:classappend="${activeCat == 'semua'} ? ' active'">
           <i class="bi bi-compass"></i> Semua Dokumentasi
         </a>
-        <a th:each="cat : ${categories}" 
-           th:href="@{/dokumentasi(cat=${cat.name})}" 
-           class="cat-link"
-           th:classappend="${activeCategory == cat.name ? 'active' : ''}">
-          <i th:if="${#strings.contains(cat.name, 'Tari')}" class="bi bi-person-arms-up"></i>
-          <i th:if="${#strings.contains(cat.name, 'Kuliner')}" class="bi bi-egg-fried"></i>
-          <i th:if="${#strings.contains(cat.name, 'Seni & Kriya')}" class="bi bi-palette"></i>
-          <i th:if="${#strings.contains(cat.name, 'Pakaian Adat')}" class="bi bi-stars"></i>
-          <i th:if="${#strings.contains(cat.name, 'Musik')}" class="bi bi-music-note"></i>
-          <i th:if="${#strings.contains(cat.name, 'Bahasa')}" class="bi bi-translate"></i>
-          <i th:if="${#strings.contains(cat.name, 'Lainnya')}" class="bi bi-three-dots"></i>
-          <span th:text="${cat.name}"></span>
+        <a th:each="c : ${categories}"
+           th:href="@{/dokumentasi(cat=${c.name})}" class="cat-link"
+           th:classappend="${activeCat != null and #strings.equalsIgnoreCase(activeCat, c.name)} ? ' active'">
+          <i class="bi bi-journal-richtext"></i> <span th:text="${c.name}">Kategori</span>
         </a>
       </nav>
       <button class="btn-new-thread" onclick="openModal()">
@@ -134,61 +128,75 @@
       </button>
     </aside>
 
-    <!-- MAIN CONTENT -->
     <main>
       <div class="content-header">
-        <span class="content-title" th:text="'Dokumentasi ' + ${activeCategory}">Semua Dokumentasi</span>
+        <span class="content-title" id="contentLabel"
+              th:text="${activeCat == 'semua'} ? 'Semua Dokumentasi' : ${activeCat}">Semua Dokumentasi</span>
         <div style="display:flex;align-items:center;gap:12px">
-          <span id="contentCount" style="font-size:14px;color:var(--text-mid)"></span>
+          <span id="contentCount" style="font-size:14px;color:var(--text-mid)"
+                th:text="${#lists.size(posts)} + ' konten'"></span>
           <div class="view-toggle">
             <button class="view-btn active" id="viewGrid" onclick="setView('grid')" title="Grid"><i class="bi bi-grid"></i></button>
             <button class="view-btn" id="viewList" onclick="setView('list')" title="List"><i class="bi bi-list-ul"></i></button>
           </div>
         </div>
       </div>
-      
+
       <div class="doc-grid" id="docGrid">
-        <div th:each="post : ${posts}" class="doc-card" th:data-title="${post.title}" th:data-content="${post.content}">
+
+        <!-- Tampilkan saat tidak ada konten -->
+        <div th:if="${#lists.isEmpty(posts)}"
+             style="grid-column:1/-1;text-align:center;padding:60px 20px;display:flex;flex-direction:column;align-items:center;gap:12px">
+          <i class="bi bi-journal-x" style="font-size:48px;color:rgba(158,32,22,.2)"></i>
+          <h3 style="font-size:18px;color:var(--text-mid);margin:0">Belum ada dokumentasi</h3>
+          <p style="font-size:14px;color:var(--text-mid);opacity:.7;margin:0">Coba kategori lain atau upload konten baru.</p>
+        </div>
+
+        <!-- Kartu dokumentasi dari database -->
+        <div th:each="post : ${posts}" class="doc-card"
+             th:data-cat="${post.category != null ? post.category.name : ''}"
+             th:attr="onclick=|window.location.href='/dokumentasi/${post.id}'|">
           <div class="doc-thumb">
-            <img th:src="${post.media_url != null ? post.media_url : 'https://placehold.co/600x300/fff1ec/9e2016?text=Warisan'}" 
-                 th:alt="${post.title}" 
+            <img th:src="${post.media_url}" th:alt="${post.title}"
                  onerror="this.src='https://placehold.co/600x300/fff1ec/9e2016?text=Warisan'">
-            <span class="doc-cat-badge" th:text="${post.category.name}">Kategori</span>
+            <span class="doc-cat-badge" style="background:#fff;color:#9e2016"
+                  th:if="${post.category != null}" th:text="${post.category.name}">Kategori</span>
           </div>
           <div class="doc-body">
-            <h3 class="doc-title" th:text="${post.title}">Judul</h3>
-            <p class="doc-excerpt" th:text="${#strings.abbreviate(post.content, 150)}">Deskripsi</p>
+            <h3 class="doc-title" th:text="${post.title}">Judul Dokumentasi</h3>
+            <p class="doc-excerpt" th:text="${post.content}">Deskripsi singkat...</p>
             <div class="doc-foot">
               <div class="doc-author">
-                <div class="doc-author-name" th:text="${post.user != null ? post.user.username : 'Anonymous'}">Author</div>
-                <div class="doc-author-time" th:text="${#dates.format(post.createdAt, 'dd MMM yyyy')}">Tanggal</div>
+                <div>
+                  <div class="doc-author-name"
+                       th:text="${post.user != null ? post.user.username : 'Anonim'}">Penulis</div>
+                  <div class="doc-author-time" th:text="${post.createdAt}">waktu</div>
+                </div>
               </div>
-              <a th:href="@{/dokumentasi/{id}(id=${post.id})}" class="doc-card-link">Baca →</a>
+              <div class="doc-acts">
+                <button class="doc-act" onclick="event.stopPropagation()">
+                  <i class="bi bi-hand-thumbs-up"></i>
+                  <span th:text="${post.postLikes != null ? post.postLikes.size() : 0}">0</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
-        
-        <!-- Pesan jika tidak ada data -->
-        <div th:if="${posts.empty}" style="grid-column:1/-1;text-align:center;padding:60px 20px;">
-          <i class="bi bi-journal-x" style="font-size:48px;color:rgba(158,32,22,.2)"></i>
-          <h3>Belum ada dokumentasi</h3>
-          <p>Jadilah yang pertama mengupload konten budaya!</p>
-          <button class="btn-new-thread" onclick="openModal()" style="margin-top:20px">Upload Konten</button>
-        </div>
+
       </div>
     </main>
+
   </div>
 </div>
 
-<!-- FOOTER -->
 <footer class="wastra-footer">
   <div class="footer-inner">
     <div>
       <div class="footer-brand">Warisan</div>
       <div class="footer-tagline">Melestarikan Budaya, Menghubungkan Bangsa.</div>
       <div class="footer-links" style="margin-bottom: 16px;">
-        <a href="https://wa.me/6282261137206" target="_blank">
-          <i class="bi bi-whatsapp"></i> Hubungi Kami
+        <a href="https://wa.me/628XXXXXXXXXX" target="_blank" rel="noopener noreferrer">
+          <i class="bi bi-whatsapp" style="margin-right: 4px;"></i> Hubungi Kami
         </a>
       </div>
       <div class="footer-copy">© 2026 Warisan. Seluruh hak cipta dilindungi.</div>
@@ -196,41 +204,66 @@
   </div>
 </footer>
 
-<!-- BOTTOM NAV -->
-<nav class="bottom-nav">
+<nav class="bottom-nav" id="bottomNav">
   <div class="bottom-nav-inner">
     <button class="bnav-btn" onclick="location.href='/'"><i class="bi bi-house"></i>Beranda</button>
     <button class="bnav-btn" onclick="location.href='/forum'"><i class="bi bi-chat-dots"></i>Forum</button>
-    <button class="bnav-btn active" onclick="location.href='/dokumentasi'"><i class="bi bi-journal-richtext"></i>Dokumen</button>
+    <button class="bnav-btn active"><i class="bi bi-journal-richtext"></i>Dokumen</button>
     <button class="bnav-btn" onclick="showToast('Segera hadir!')"><i class="bi bi-person"></i>Profil</button>
   </div>
 </nav>
 
-<!-- AUTH MODAL -->
 <div class="auth-overlay" id="authOverlay" onclick="if(event.target===this) closeAuthModal()">
   <div class="auth-modal-card">
     <button class="auth-close" onclick="closeAuthModal()"><i class="bi bi-x-lg"></i></button>
+    
     <div id="authMainSection">
       <div class="auth-tab-toggle" id="authTabToggle" data-active="masuk">
         <div class="auth-tab-indicator" id="authTabIndicator"></div>
         <button class="auth-tab-btn active" id="btnAuthMasuk" onclick="switchAuthTab('masuk')">Masuk</button>
         <button class="auth-tab-btn inactive" id="btnAuthDaftar" onclick="switchAuthTab('daftar')">Daftar</button>
       </div>
+
       <div class="auth-form-panel active" id="authFormMasuk">
-        <div class="auth-heading"><h2>Selamat Datang Kembali</h2><p>Lanjutkan perjalanan budaya Anda.</p></div>
-        <div class="auth-field"><label>Email</label><input type="email" placeholder="nama@email.com"></div>
-        <div class="auth-field"><label>Kata Sandi</label><input type="password" placeholder="Min. 8 karakter"></div>
-        <button class="auth-btn-primary" onclick="showToast('Berhasil masuk!','success'); closeAuthModal();">Masuk</button>
+        <form action="/login" method="post" style="display:flex;flex-direction:column;gap:16px">
+          <div class="auth-heading">
+            <h2>Selamat Datang Kembali</h2>
+            <p>Lanjutkan perjalanan budaya Anda.</p>
+          </div>
+          <div class="auth-field">
+            <label>Email</label>
+            <input type="email" name="username" required placeholder="nama@email.com">
+          </div>
+          <div class="auth-field">
+            <label>Kata Sandi</label>
+            <input type="password" name="password" required placeholder="••••••••">
+          </div>
+          <button type="submit" class="auth-btn-primary">Masuk</button>
+        </form>
+        <div class="auth-divider"><span>atau</span></div>
+        <button class="auth-btn-google" onclick="showToast('Login Google segera hadir!','success')"><i class="bi bi-google" style="color:#EA4335;"></i> Lanjutkan dengan Google</button>
       </div>
+
       <div class="auth-form-panel" id="authFormDaftar">
-        <div class="auth-heading"><h2>Buat Akun Baru</h2><p>Bergabunglah dengan komunitas pelestari budaya.</p></div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-          <div class="auth-field"><label>Nama Depan</label><input type="text" placeholder="Depan"></div>
-          <div class="auth-field"><label>Nama Belakang</label><input type="text" placeholder="Belakang"></div>
-        </div>
-        <div class="auth-field"><label>Email</label><input type="email" placeholder="nama@email.com"></div>
-        <div class="auth-field"><label>Kata Sandi</label><input type="password" placeholder="Min. 8 karakter"></div>
-        <button class="auth-btn-primary" onclick="showToast('Akun berhasil dibuat! 🎉','success'); closeAuthModal();">Daftar Sekarang</button>
+        <form action="/register" method="post" style="display:flex;flex-direction:column;gap:16px">
+          <div class="auth-heading">
+            <h2>Buat Akun Baru</h2>
+            <p>Bergabunglah dengan komunitas pelestari budaya.</p>
+          </div>
+          <div class="auth-field">
+            <label>Username</label>
+            <input type="text" name="username" required placeholder="Nama pengguna">
+          </div>
+          <div class="auth-field">
+            <label>Email</label>
+            <input type="email" name="email" required placeholder="nama@email.com">
+          </div>
+          <div class="auth-field">
+            <label>Kata Sandi</label>
+            <input type="password" name="password" required placeholder="Min. 8 karakter">
+          </div>
+          <button type="submit" class="auth-btn-primary">Daftar Sekarang</button>
+        </form>
       </div>
     </div>
   </div>
@@ -238,71 +271,6 @@
 
 <script th:src="@{/js/Global.js}"></script>
 <script th:src="@{/js/Shared.js}"></script>
-<script>
-// Fungsi untuk grid/list view
-let currentView = 'grid';
-
-function setView(view) {
-    currentView = view;
-    const grid = document.getElementById('docGrid');
-    const gridBtn = document.getElementById('viewGrid');
-    const listBtn = document.getElementById('viewList');
-    
-    if (view === 'grid') {
-        grid.classList.remove('list-view');
-        gridBtn.classList.add('active');
-        listBtn.classList.remove('active');
-    } else {
-        grid.classList.add('list-view');
-        gridBtn.classList.remove('active');
-        listBtn.classList.add('active');
-    }
-}
-
-// Fungsi filter pencarian client-side
-function filterDocs(keyword) {
-    const cards = document.querySelectorAll('.doc-card');
-    let count = 0;
-    
-    cards.forEach(card => {
-        const title = card.getAttribute('data-title') || '';
-        const content = card.getAttribute('data-content') || '';
-        const match = title.toLowerCase().includes(keyword.toLowerCase()) || 
-                     content.toLowerCase().includes(keyword.toLowerCase());
-        
-        if (match) {
-            card.style.display = '';
-            count++;
-        } else {
-            card.style.display = 'none';
-        }
-    });
-    
-    document.getElementById('contentCount').innerText = count + ' konten';
-}
-
-// Update counter awal
-document.addEventListener('DOMContentLoaded', function() {
-    const cards = document.querySelectorAll('.doc-card');
-    document.getElementById('contentCount').innerText = cards.length + ' konten';
-});
-
-// Modal functions
-function openModal() {
-    document.getElementById('uploadModal').classList.add('open');
-    document.body.classList.add('locked');
-}
-
-function closeModal() {
-    document.getElementById('uploadModal').classList.remove('open');
-    document.body.classList.remove('locked');
-}
-
-if (document.getElementById('uploadModal')) {
-    document.getElementById('uploadModal').addEventListener('click', function(e) {
-        if (e.target === this) closeModal();
-    });
-}
-</script>
+<script th:src="@{/js/Dokumentasi.js}"></script>
 </body>
 </html>
