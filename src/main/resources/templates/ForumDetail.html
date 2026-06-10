@@ -50,7 +50,7 @@
     <div style="flex:1"></div>
     <div class="nav-auth">
       <div class="nav-search" style="margin-right:6px">
-        <i class="bi bi-search si"></i>
+        <i class="bi bi-search search-icon"></i>
         <input type="search" placeholder="Cari budaya, tarian, atau kuliner...">
       </div>
       <button class="btn-masuk" th:if="${session.currentUser == null}" onclick="openAuthModal('masuk')">Masuk</button>
@@ -77,7 +77,10 @@
           <i class="bi bi-chat-square-text"></i> <span th:text="${f.name}">Forum</span>
         </a>
       </nav>
-      <button class="btn-new-thread" onclick="location.href='/threads/create'">
+      <button class="btn-new-thread" th:if="${session.currentUser != null}" onclick="location.href='/threads/create'">
+        <i class="bi bi-plus-lg"></i> Buat Thread Baru
+      </button>
+      <button class="btn-new-thread" th:if="${session.currentUser == null}" onclick="requireLoginForThread()">
         <i class="bi bi-plus-lg"></i> Buat Thread Baru
       </button>
     </aside>
@@ -112,6 +115,17 @@
           <p class="op-text" th:text="${thread.content}">Isi thread...</p>
           <img class="op-img" th:if="${thread.mediaURL != null and !thread.mediaURL.isEmpty()}"
                th:src="${thread.mediaURL}" th:alt="${thread.title}" onerror="this.style.display='none'">
+
+          <!-- Tombol Edit/Hapus — hanya muncul untuk pemilik thread -->
+          <div class="owner-actions"
+               th:if="${session.currentUser != null and thread.user != null and session.currentUser.id == thread.user.id}">
+            <a class="owner-action edit" th:href="@{'/threads/' + ${thread.id} + '/edit'}">
+              <i class="bi bi-pencil"></i> Edit
+            </a>
+            <button type="button" class="owner-action delete" onclick="askDeleteThread()">
+              <i class="bi bi-trash"></i> Hapus
+            </button>
+          </div>
         </div>
         <div class="interact-bar">
           <button class="ibar-btn" id="likePostBtn" onclick="toggleLikePost()">
@@ -217,6 +231,21 @@
     <button class="bnav-btn" onclick="showToast('Segera hadir!')"><i class="bi bi-person"></i>Profil</button>
   </div>
 </nav>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="confirm-overlay" id="confirmDeleteOverlay" onclick="if(event.target===this) closeConfirmDelete()">
+  <div class="confirm-card">
+    <div class="confirm-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
+    <h3 class="confirm-title">Hapus Thread?</h3>
+    <p class="confirm-text">Thread ini akan dihapus permanen beserta semua balasan dan dukungannya. Tindakan ini tidak bisa dibatalkan.</p>
+    <div class="confirm-actions">
+      <button type="button" class="confirm-btn cancel" onclick="closeConfirmDelete()">Batal</button>
+      <form th:action="@{'/threads/' + ${thread.id} + '/delete'}" method="post" style="flex:1;max-width:160px">
+        <button type="submit" class="confirm-btn delete" style="width:100%">Ya, Hapus</button>
+      </form>
+    </div>
+  </div>
+</div>
 
 <!-- AUTH MODAL -->
 <div class="auth-overlay" id="authOverlay" onclick="if(event.target===this) closeAuthModal()">

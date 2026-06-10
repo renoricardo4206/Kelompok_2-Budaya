@@ -135,29 +135,119 @@ public class ForumController {
             return "redirect:/threads/create";
         }
 
-        String mediaUrl = null;
-        if (image != null && !image.isEmpty()) {
-            try {
-                String original = image.getOriginalFilename();
-                String ext = (original != null && original.contains("."))
-                        ? original.substring(original.lastIndexOf('.'))
-                        : "";
-                String filename = System.currentTimeMillis() + ext;
-
-                Path uploadDir = Paths.get("uploads");
-                Files.createDirectories(uploadDir);
-                Files.copy(image.getInputStream(), uploadDir.resolve(filename),
-                        StandardCopyOption.REPLACE_EXISTING);
-
-                mediaUrl = "/uploads/" + filename;
-            } catch (IOException e) {
-                ra.addFlashAttribute("flashError", "Gagal menyimpan gambar: " + e.getMessage());
-                return "redirect:/threads/create";
-            }
+        String mediaUrl = saveImage(image, ra, "/threads/create");
+        if (mediaUrl != null && mediaUrl.equals("__error__")) {
+            return "redirect:/threads/create";
         }
 
         Threads saved = threadsRepository.save(
                 new Threads(user, forum, title, content, now(), mediaUrl));
         return "redirect:/forum/" + saved.getId();
+    }
+
+    @GetMapping("/threads/{id}/edit")
+    public String editThreadForm(@PathVariable Integer id,
+                                 HttpSession session,
+                                 Model model,
+                                 RedirectAttributes ra) {
+        User user = (User) session.getAttribute("currentUser");
+        if (user == null) {
+            ra.addFlashAttribute("flashError", "Silakan login dulu untuk mengedit thread.");
+            return "redirect:/forum";
+        }
+        Threads thread = threadsRepository.findById(id).orElse(null);
+        if (thread == null) {
+            return "redirect:/forum";
+        }
+        if (thread.getUser() == null || !thread.getUser().getId().equals(user.getId())) {
+            ra.addFlashAttribute("flashError", "Anda tidak punya akses untuk mengedit thread ini.");
+            return "redirect:/forum/" + id;
+        }
+        model.addAttribute("thread", thread);
+        model.addAttribute("forums", forumsRepository.findAll());
+        return "BuatThreadBaru";
+    }
+
+    @PostMapping("/threads/{id}/update")
+    public String updateThread(@PathVariable Integer id,
+                               @RequestParam String title,
+                               @RequestParam Integer forumId,
+                               @RequestParam String content,
+                               @RequestParam(required = false) MultipartFile image,
+                               HttpSession session,
+                               RedirectAttributes ra) {
+        User user = (User) session.getAttribute("currentUser");
+        if (user == null) {
+            ra.addFlashAttribute("flashError", "Silakan login dulu.");
+            return "redirect:/forum";
+        }
+        Threads thread = threadsRepository.findById(id).orElse(null);
+        if (thread == null) return "redirect:/forum";
+        if (thread.getUser() == null || !thread.getUser().getId().equals(user.getId())) {
+            ra.addFlashAttribute("flashError", "Anda tidak punya akses untuk mengubah thread ini.");
+            return "redirect:/forum/" + id;
+        }
+
+        Forums forum = forumsRepository.findById(forumId).orElse(null);
+        if (forum == null) {
+            ra.addFlashAttribute("flashError", "Forum tidak ditemukan.");
+            return "redirect:/threads/" + id + "/edit";
+        }
+
+        thread.setTitle(title);
+        thread.setContent(content);
+        thread.setForum(forum);
+
+        if (image != null && !image.isEmpty()) {
+            String mediaUrl = saveImage(image, ra, "/threads/" + id + "/edit");
+            if (mediaUrl != null && mediaUrl.equals("__error__")) {
+                return "redirect:/threads/" + id + "/edit";
+            }
+            thread.setMediaURL(mediaUrl);
+        }
+
+        threadsRepository.save(thread);
+        ra.addFlashAttribute("flashSuccess", "Thread berhasil diperbarui!");
+        return "redirect:/forum/" + id;
+    }
+
+    @PostMapping("/threads/{id}/delete")
+    public String deleteThread(@PathVariable Integer id,
+                               HttpSession session,
+                               RedirectAttributes ra) {
+        User user = (User) session.getAttribute("currentUser");
+        if (user == null) {
+            ra.addFlashAttribute("flashError", "Silakan login dulu.");
+            return "redirect:/forum";
+        }
+        Threads thread = threadsRepository.findById(id).orElse(null);
+        if (thread == null) return "redirect:/forum";
+        if (thread.getUser() == null || !thread.getUser().getId().equals(user.getId())) {
+            ra.addFlashAttribute("flashError", "Anda tidak punya akses untuk menghapus thread ini.");
+            return "redirect:/forum/" + id;
+        }
+        threadsRepository.delete(thread);
+        ra.addFlashAttribute("flashSuccess", "Thread berhasil dihapus.");
+        return "redirect:/forum";
+    }
+
+    /* Helper: simpan file gambar ke folder uploads/. Return URL atau "__error__" kalau gagal. */
+    private String saveImage(MultipartFile image, RedirectAttributes ra, String redirectOnError) {
+        if (image == null || image.isEmpty()) return null;
+        try {
+            String original = image.getOriginalFilename();
+            String ext = (original != null && original.contains("."))
+                    ? original.substring(original.lastIndexOf('.'))
+                    : "";
+            String filename = System.currentTimeMillis() + ext;
+            Path uploadDir = Paths.get("uploads");
+            Files.createDirectories(uploadDir);
+            Files.copy(image.getInputStream(), uploadDir.resolve(filename),
+                    StandardCopyOption.REPLACE_EXISTING);
+            return "/uploads/" + filename;
+        } catch (IOException e) {
+            ra.addFlashAttribute("flashError", "Gagal menyimpan gambar: " + e.getMessage());
+            return "__error__";
+        }
     }
 }

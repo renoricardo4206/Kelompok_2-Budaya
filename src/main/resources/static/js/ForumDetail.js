@@ -12,6 +12,23 @@ document.addEventListener('DOMContentLoaded', () => {
   if (err && err.textContent.trim()) showToast(err.textContent.trim(), 'error');
 });
 
+/* ── GERBANG LOGIN ── */
+/* Dipanggil oleh tombol "Buat Thread Baru" yang dirender saat user belum login */
+function requireLoginForThread() {
+  showToast('Silakan login atau daftar dulu untuk membuat thread.', 'error');
+  openAuthModal('masuk');
+}
+
+/* ── DELETE CONFIRM ── */
+function askDeleteThread() {
+  document.getElementById('confirmDeleteOverlay')?.classList.add('open');
+  document.body.classList.add('locked');
+}
+function closeConfirmDelete() {
+  document.getElementById('confirmDeleteOverlay')?.classList.remove('open');
+  document.body.classList.remove('locked');
+}
+
 /* ── LIKE (visual saja, belum disimpan ke database) ── */
 function toggleLikePost() {
   const btn     = document.getElementById('likePostBtn');

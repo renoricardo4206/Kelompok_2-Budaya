@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-<title>Buat Thread Baru – Warisan</title>
+<title th:text="${thread != null ? 'Edit Thread' : 'Buat Thread Baru'} + ' – Warisan'">Buat Thread Baru – Warisan</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 <link rel="stylesheet" th:href="@{/css/Global.css}">
@@ -55,27 +55,35 @@
     <span><i class="bi bi-chevron-right" style="font-size:9px"></i></span>
     <a href="/forum">Forum</a>
     <span><i class="bi bi-chevron-right" style="font-size:9px"></i></span>
-    <span class="current">Buat Thread Baru</span>
+    <span class="current" th:text="${thread != null ? 'Edit Thread' : 'Buat Thread Baru'}">Buat Thread Baru</span>
   </nav>
 
   <div class="create-layout">
 
     <!-- ══ FORM CARD ══ -->
     <div class="form-card">
-      <h1 class="form-card-title">Buat Thread Baru</h1>
-      <p class="form-card-sub">Bagikan cerita, pengalaman, atau pertanyaanmu seputar budaya lokal Nusantara kepada komunitas.</p>
+      <h1 class="form-card-title" th:text="${thread != null ? 'Edit Thread' : 'Buat Thread Baru'}">Buat Thread Baru</h1>
+      <p class="form-card-sub"
+         th:text="${thread != null
+                    ? 'Perbarui isi atau detail thread kamu di bawah ini.'
+                    : 'Bagikan cerita, pengalaman, atau pertanyaanmu seputar budaya lokal Nusantara kepada komunitas.'}">Bagikan cerita, pengalaman, atau pertanyaanmu seputar budaya lokal Nusantara kepada komunitas.</p>
       <div class="form-divider"></div>
 
-      <form id="threadForm" th:action="@{/threads/create}" method="post"
+      <form id="threadForm"
+            th:action="${thread != null ? '/threads/' + thread.id + '/update' : '/threads/create'}"
+            method="post"
             enctype="multipart/form-data" novalidate onsubmit="return handleSubmit(event)">
 
         <!-- Forum / Kategori -->
         <div class="field">
           <label class="field-label">Forum<span class="required">*</span></label>
-          <input type="hidden" name="forumId" id="forumId">
+          <input type="hidden" name="forumId" id="forumId"
+                 th:value="${thread != null and thread.forum != null ? thread.forum.id : ''}">
           <div class="cat-selector" id="catSelector">
             <button type="button" class="cat-option" th:each="f : ${forums}"
-                    th:data-forumid="${f.id}" th:text="${f.name}" onclick="selectCat(this)">Forum</button>
+                    th:data-forumid="${f.id}" th:text="${f.name}"
+                    th:classappend="${thread != null and thread.forum != null and thread.forum.id == f.id} ? ' selected'"
+                    onclick="selectCat(this)">Forum</button>
           </div>
           <div class="field-error" id="errKategori">
             <i class="bi bi-exclamation-circle"></i> Pilih salah satu forum
@@ -88,6 +96,7 @@
           <input
             type="text" id="inputJudul" name="title" maxlength="120"
             placeholder="Contoh: Pengalaman pertama nonton Tari Kecak di Uluwatu"
+            th:value="${thread != null ? thread.title : ''}"
             oninput="updatePreview();countChars(this,'counterJudul',120)"
           >
           <div class="char-counter">
@@ -102,6 +111,7 @@
           <textarea
             id="inputIsi" name="content" maxlength="5000"
             placeholder="Ceritakan pengalamanmu, ajukan pertanyaan, atau bagikan pengetahuanmu tentang budaya ini..."
+            th:text="${thread != null ? thread.content : ''}"
             oninput="updatePreview();countChars(this,'counterIsi',5000)"
           ></textarea>
           <div class="char-counter">
@@ -115,8 +125,10 @@
           <label class="field-label">Gambar <span style="font-size:12px;font-weight:400;color:var(--text-mid)">(opsional)</span></label>
 
           <!-- Preview -->
-          <div class="upload-preview" id="uploadPreview">
-            <img id="previewImg" src="" alt="Preview">
+          <div class="upload-preview" id="uploadPreview"
+               th:style="${thread != null and thread.mediaURL != null and !#strings.isEmpty(thread.mediaURL)} ? 'display:block' : ''">
+            <img id="previewImg"
+                 th:src="${thread != null and thread.mediaURL != null ? thread.mediaURL : ''}" alt="Preview">
             <button type="button" class="upload-preview-remove" onclick="removeImage()" aria-label="Hapus gambar">
               <i class="bi bi-x"></i>
             </button>
@@ -124,6 +136,7 @@
 
           <!-- Drop area -->
           <div class="upload-area" id="uploadArea"
+            th:style="${thread != null and thread.mediaURL != null and !#strings.isEmpty(thread.mediaURL)} ? 'display:none' : ''"
             onclick="document.getElementById('fileInput').click()"
             ondragover="onDragOver(event)"
             ondragleave="onDragLeave(event)"
@@ -131,6 +144,9 @@
             <i class="bi bi-image"></i>
             <p>Klik atau seret gambar ke sini</p>
             <span>PNG, JPG, WEBP — Maks. 5 MB</span>
+            <span th:if="${thread != null}" style="display:block;margin-top:6px;font-size:12px;color:var(--text-mid)">
+              Biarkan kosong untuk tetap pakai gambar yang ada.
+            </span>
           </div>
           <input type="file" id="fileInput" name="image" accept="image/*" style="display:none" onchange="handleFile(this.files[0])">
           <div class="field-error" id="errGambar"><i class="bi bi-exclamation-circle"></i></div>
@@ -139,10 +155,17 @@
         <!-- Form Actions -->
         <div class="form-actions">
           <button type="submit" class="btn-submit" id="btnSubmit">
-            <span class="btn-label"><i class="bi bi-send"></i> Posting Thread</span>
+            <span class="btn-label">
+              <i th:class="${thread != null} ? 'bi bi-check2' : 'bi bi-send'"></i>
+              <span th:text="${thread != null ? 'Simpan Perubahan' : 'Posting Thread'}">Posting Thread</span>
+            </span>
             <span class="spinner"></span>
           </button>
-          <button type="button" class="btn-cancel" onclick="handleCancel()">
+          <button type="button" class="btn-cancel" th:if="${thread == null}" onclick="handleCancel()">
+            Batal
+          </button>
+          <button type="button" class="btn-cancel" th:if="${thread != null}"
+                  th:onclick="|window.location.href='/forum/${thread.id}'|">
             Batal
           </button>
         </div>

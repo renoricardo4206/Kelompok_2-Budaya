@@ -125,4 +125,81 @@ public class PostsController {
         ra.addFlashAttribute("uploadSuccess", "Konten berhasil diupload!");
         return "redirect:/dokumentasi";
     }
+
+    @PostMapping("/dokumentasi/{id}/update")
+    public String updatePost(@PathVariable Integer id,
+                             @RequestParam String title,
+                             @RequestParam Integer categoryId,
+                             @RequestParam String content,
+                             @RequestParam(required = false) MultipartFile image,
+                             HttpSession session,
+                             RedirectAttributes ra) {
+        User user = (User) session.getAttribute("currentUser");
+        if (user == null) {
+            ra.addFlashAttribute("uploadError", "Silakan login dulu.");
+            return "redirect:/dokumentasi";
+        }
+        Posts post = postsRepository.findById(id).orElse(null);
+        if (post == null) {
+            return "redirect:/dokumentasi";
+        }
+        if (post.getUser() == null || !post.getUser().getId().equals(user.getId())) {
+            ra.addFlashAttribute("uploadError", "Anda tidak punya akses untuk mengubah konten ini.");
+            return "redirect:/dokumentasi/" + id;
+        }
+
+        Categories category = categoriesRepository.findById(categoryId).orElse(null);
+        if (category == null) {
+            ra.addFlashAttribute("uploadError", "Kategori tidak ditemukan.");
+            return "redirect:/dokumentasi/" + id;
+        }
+
+        post.setTitle(title);
+        post.setContent(content);
+        post.setCategory(category);
+
+        if (image != null && !image.isEmpty()) {
+            try {
+                String original = image.getOriginalFilename();
+                String ext = (original != null && original.contains("."))
+                        ? original.substring(original.lastIndexOf('.'))
+                        : "";
+                String filename = System.currentTimeMillis() + ext;
+
+                Path uploadDir = Paths.get("uploads");
+                Files.createDirectories(uploadDir);
+                Files.copy(image.getInputStream(), uploadDir.resolve(filename),
+                        StandardCopyOption.REPLACE_EXISTING);
+
+                post.setMedia_url("/uploads/" + filename);
+            } catch (IOException e) {
+                ra.addFlashAttribute("uploadError", "Gagal menyimpan gambar: " + e.getMessage());
+                return "redirect:/dokumentasi/" + id;
+            }
+        }
+
+        postsRepository.save(post);
+        ra.addFlashAttribute("uploadSuccess", "Konten berhasil diperbarui!");
+        return "redirect:/dokumentasi/" + id;
+    }
+
+    @PostMapping("/dokumentasi/{id}/delete")
+    public String deletePost(@PathVariable Integer id,
+                             HttpSession session,
+                             RedirectAttributes ra) {
+        User user = (User) session.getAttribute("currentUser");
+        if (user == null) {
+            ra.addFlashAttribute("uploadError", "Silakan login dulu.");
+            return "redirect:/dokumentasi";
+        }
+        Posts post = postsRepository.findById(id).orElse(null);
+        if (post == null) return "redirect:/dokumentasi";
+        if (post.getUser() == null || !post.getUser().getId().equals(user.getId())) {
+            ra.addFlashAttribute("uploadError", "Anda tidak punya akses untuk menghapus konten ini.");
+            return "redirect:/dokumentasi/" + id;
+        }
+        postsRepository.delete(post);
+        ra.addFlashAttribute("uploadSuccess", "Konten berhasil dihapus.");
+        return "redirect:/dokumentasi";
+    }
 }

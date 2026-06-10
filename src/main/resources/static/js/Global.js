@@ -7,17 +7,24 @@ function showToast(message, type = 'info') {
         console.log(message);
         return;
     }
-    
+
+    const iconMap = {
+        success: 'bi-check-circle-fill',
+        error:   'bi-exclamation-triangle-fill',
+        info:    'bi-info-circle-fill'
+    };
+    const icon = iconMap[type] || iconMap.info;
+
     const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    toast.innerHTML = `<div class="toast-content"><span>${message}</span></div>`;
+    toast.className = `toast-item ${type}`;
+    toast.innerHTML = `<i class="bi ${icon}"></i><span>${message}</span>`;
     container.appendChild(toast);
-    
+
     setTimeout(() => toast.classList.add('show'), 10);
     setTimeout(() => {
         toast.classList.remove('show');
         setTimeout(() => toast.remove(), 300);
-    }, 3000);
+    }, 3500);
 }
 
 // ========== DRAWER ==========

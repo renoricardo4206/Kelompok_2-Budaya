@@ -5,6 +5,21 @@
 let selectedForumId = null;
 let selectedLabel = null;
 
+/* Edit mode init: kalau Thymeleaf sudah render salah satu button forum sebagai .selected,
+   sinkronkan state JS sehingga pratinjau & validasi tahu forum mana yang aktif. */
+document.addEventListener('DOMContentLoaded', () => {
+  const preSel = document.querySelector('.cat-option.selected');
+  if (preSel) {
+    selectedForumId = preSel.dataset.forumid;
+    selectedLabel = preSel.textContent.trim();
+  }
+  const judulEl = document.getElementById('inputJudul');
+  const isiEl   = document.getElementById('inputIsi');
+  if (judulEl) countChars(judulEl, 'counterJudul', 120);
+  if (isiEl)   countChars(isiEl,   'counterIsi',   5000);
+  updatePreview();
+});
+
 /* ── Pilih forum ── */
 function selectCat(btn) {
   document.querySelectorAll('.cat-option').forEach(b => b.classList.remove('selected'));

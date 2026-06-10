@@ -123,7 +123,10 @@
           <i class="bi bi-journal-richtext"></i> <span th:text="${c.name}">Kategori</span>
         </a>
       </nav>
-      <button class="btn-new-thread" onclick="openModal()">
+      <button class="btn-new-thread" th:if="${session.currentUser != null}" onclick="openModal()">
+        <i class="bi bi-cloud-arrow-up"></i> Upload Konten
+      </button>
+      <button class="btn-new-thread" th:if="${session.currentUser == null}" onclick="requireLoginForUpload()">
         <i class="bi bi-cloud-arrow-up"></i> Upload Konten
       </button>
     </aside>

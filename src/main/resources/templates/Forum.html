@@ -90,7 +90,8 @@
           <i class="bi bi-chat-square-text"></i> <span th:text="${f.name}">Forum</span>
         </a>
       </nav>
-      <button class="btn-new-thread" onclick="location.href='/threads/create'"><i class="bi bi-plus-lg"></i> Buat Thread Baru</button>
+      <button class="btn-new-thread" th:if="${session.currentUser != null}" onclick="location.href='/threads/create'"><i class="bi bi-plus-lg"></i> Buat Thread Baru</button>
+      <button class="btn-new-thread" th:if="${session.currentUser == null}" onclick="requireLoginForThread()"><i class="bi bi-plus-lg"></i> Buat Thread Baru</button>
     </aside>
 
     <main>

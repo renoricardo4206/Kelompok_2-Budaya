@@ -47,6 +47,13 @@ function setSort(mode, btn) {
   cards.forEach(c => feed.appendChild(c));
 }
 
+/* ── GERBANG LOGIN ── */
+/* Dipanggil oleh tombol "Buat Thread Baru" yang dirender saat user belum login */
+function requireLoginForThread() {
+  showToast('Silakan login atau daftar dulu untuk membuat thread.', 'error');
+  openAuthModal('masuk');
+}
+
 /* ── SHARE ── */
 function shareThread(id) {
   const url = window.location.origin + '/forum/' + id;

@@ -8,12 +8,17 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 <link rel="stylesheet" th:href="@{/css/Global.css}">
 <link rel="stylesheet" th:href="@{/css/Shared.css}">
+<link rel="stylesheet" th:href="@{/css/Dokumentasi.css}">
 <link rel="stylesheet" th:href="@{/css/DokumentasiDetail.css}">
 </head>
 <body>
 
 <!-- TOAST -->
 <div class="toast-container" id="toastContainer"></div>
+
+<!-- Flash message dari server (dibaca oleh DokumentasiDetail.js untuk ditampilkan sebagai toast) -->
+<div id="flashSuccess" style="display:none" th:if="${uploadSuccess}" th:text="${uploadSuccess}"></div>
+<div id="flashError"   style="display:none" th:if="${uploadError}"   th:text="${uploadError}"></div>
 
 <!-- DRAWER -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
@@ -46,7 +51,7 @@
     <div style="flex:1"></div>
     <div class="nav-auth">
       <div class="nav-search" style="margin-right:6px">
-        <i class="bi bi-search si"></i>
+        <i class="bi bi-search search-icon"></i>
         <input type="search" placeholder="Cari budaya, tarian, atau kuliner...">
       </div>
       <button class="btn-masuk" th:if="${session.currentUser == null}" onclick="openAuthModal('masuk')">Masuk</button>
@@ -74,7 +79,10 @@
           <i class="bi bi-journal-richtext"></i> <span th:text="${c.name}">Kategori</span>
         </a>
       </nav>
-      <button class="btn-new-thread" onclick="location.href='/dokumentasi'">
+      <button class="btn-new-thread" th:if="${session.currentUser != null}" onclick="location.href='/dokumentasi'">
+        <i class="bi bi-cloud-arrow-up"></i> Upload Konten
+      </button>
+      <button class="btn-new-thread" th:if="${session.currentUser == null}" onclick="requireLoginForUpload()">
         <i class="bi bi-cloud-arrow-up"></i> Upload Konten
       </button>
     </aside>
@@ -109,6 +117,17 @@
           <p class="op-text" th:text="${post.content}">Isi dokumentasi...</p>
           <img class="op-img" th:if="${post.media_url != null and !post.media_url.isEmpty()}"
                th:src="${post.media_url}" th:alt="${post.title}" onerror="this.style.display='none'">
+
+          <!-- Tombol Edit/Hapus — hanya muncul untuk pemilik konten -->
+          <div class="owner-actions"
+               th:if="${session.currentUser != null and post.user != null and session.currentUser.id == post.user.id}">
+            <button type="button" class="owner-action edit" onclick="openEditModal()">
+              <i class="bi bi-pencil"></i> Edit
+            </button>
+            <button type="button" class="owner-action delete" onclick="askDeletePost()">
+              <i class="bi bi-trash"></i> Hapus
+            </button>
+          </div>
         </div>
         <div class="interact-bar">
           <button class="ibar-btn" id="likePostBtn" onclick="toggleLikePost()">
@@ -171,6 +190,72 @@
     <button class="bnav-btn" onclick="showToast('Segera hadir!')"><i class="bi bi-person"></i>Profil</button>
   </div>
 </nav>
+
+<!-- EDIT MODAL — pemilik konten -->
+<div class="modal-overlay" id="editModal"
+     th:if="${session.currentUser != null and post.user != null and session.currentUser.id == post.user.id}">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Edit Konten</h2>
+      <button class="modal-close" onclick="closeEditModal()"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <form th:action="@{'/dokumentasi/' + ${post.id} + '/update'}" method="post" enctype="multipart/form-data">
+      <div class="form-group">
+        <label class="form-label">Judul Konten *</label>
+        <input type="text" class="form-input" name="title" required th:value="${post.title}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Kategori *</label>
+        <select class="form-input" name="categoryId" required>
+          <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}"
+                  th:selected="${post.category != null and post.category.id == c.id}">Kategori</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Deskripsi Singkat *</label>
+        <textarea class="form-input" name="content" required th:text="${post.content}"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Foto / Gambar</label>
+        <div class="upload-area" id="editUploadArea"
+             th:style="${post.media_url != null and !#strings.isEmpty(post.media_url)} ? 'display:none' : ''"
+             onclick="document.getElementById('editFileInput').click()"
+             ondragover="handleEditDrag(event,true)" ondragleave="handleEditDrag(event,false)" ondrop="handleEditDrop(event)">
+          <i class="bi bi-cloud-arrow-up"></i>
+          <p>Klik atau seret gambar ke sini</p>
+          <span>PNG, JPG, WEBP — maks. 5MB</span>
+          <span style="display:block;margin-top:6px;font-size:12px;color:var(--text-mid)">
+            Biarkan kosong untuk tetap pakai gambar yang ada.
+          </span>
+        </div>
+        <div class="upload-preview" id="editUploadPreview"
+             th:style="${post.media_url != null and !#strings.isEmpty(post.media_url)} ? 'display:block' : 'display:none'">
+          <img id="editUploadPreviewImg" th:src="${post.media_url}" alt="preview">
+          <button type="button" class="upload-preview-remove" onclick="removeEditPreview(event)"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <input type="file" id="editFileInput" name="image" accept="image/*" style="display:none" onchange="handleEditFile(this)">
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="btn-submit">Simpan Perubahan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="confirm-overlay" id="confirmDeleteOverlay" onclick="if(event.target===this) closeConfirmDelete()">
+  <div class="confirm-card">
+    <div class="confirm-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
+    <h3 class="confirm-title">Hapus Konten?</h3>
+    <p class="confirm-text">Konten ini akan dihapus permanen beserta semua dukungannya. Tindakan ini tidak bisa dibatalkan.</p>
+    <div class="confirm-actions">
+      <button type="button" class="confirm-btn cancel" onclick="closeConfirmDelete()">Batal</button>
+      <form th:action="@{'/dokumentasi/' + ${post.id} + '/delete'}" method="post" style="flex:1;max-width:160px">
+        <button type="submit" class="confirm-btn delete" style="width:100%">Ya, Hapus</button>
+      </form>
+    </div>
+  </div>
+</div>
 
 <!-- AUTH MODAL -->
 <div class="auth-overlay" id="authOverlay" onclick="if(event.target===this) closeAuthModal()">

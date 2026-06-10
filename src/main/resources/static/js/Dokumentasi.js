@@ -29,6 +29,12 @@ function setView(v) {
 function openModal()  { document.getElementById('uploadModal').classList.add('open');    document.body.classList.add('locked'); }
 function closeModal() { document.getElementById('uploadModal').classList.remove('open'); document.body.classList.remove('locked'); }
 
+/* Gerbang login: dipanggil oleh tombol Upload yang dirender saat user belum login */
+function requireLoginForUpload() {
+  showToast('Silakan login atau daftar dulu untuk mengupload konten.', 'error');
+  openAuthModal('masuk');
+}
+
 const uploadModalEl = document.getElementById('uploadModal');
 if (uploadModalEl) {
   uploadModalEl.addEventListener('click', function (e) {
