@@ -39,7 +39,7 @@
         <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()" ondragover="handleDrag(event,true)" ondragleave="handleDrag(event,false)" ondrop="handleDrop(event)">
           <i class="bi bi-cloud-arrow-up"></i>
           <p>Klik atau seret gambar ke sini</p>
-          <span>PNG, JPG, WEBP — maks. 5MB</span>
+          <span>PNG, JPG, WEBP — maks. 10MB</span>
         </div>
         <div class="upload-preview" id="uploadPreview" style="display:none">
           <img id="uploadPreviewImg" src="" alt="preview">
@@ -163,7 +163,9 @@
             <img th:src="${post.media_url}" th:alt="${post.title}"
                  onerror="this.src='https://placehold.co/600x300/fff1ec/9e2016?text=Warisan'">
             <span class="doc-cat-badge" style="background:#fff;color:#9e2016"
-                  th:if="${post.category != null}" th:text="${post.category.name}">Kategori</span>
+                  th:if="${post.category != null}">
+              <i class="bi bi-journal-richtext" style="font-size:10px;margin-right:4px"></i><span th:text="${post.category.name}">Kategori</span>
+            </span>
           </div>
           <div class="doc-body">
             <h3 class="doc-title" th:text="${post.title}">Judul Dokumentasi</h3>

@@ -209,6 +209,7 @@ public class ForumController {
                                @RequestParam Integer forumId,
                                @RequestParam String content,
                                @RequestParam(required = false) MultipartFile image,
+                               @RequestParam(required = false, defaultValue = "false") boolean removeImage,
                                HttpSession session,
                                RedirectAttributes ra) {
         User user = (User) session.getAttribute("currentUser");
@@ -234,12 +235,17 @@ public class ForumController {
         thread.setForum(forum);
 
         if (image != null && !image.isEmpty()) {
+            // Ada gambar baru → ganti
             String mediaUrl = saveImage(image, ra, "/threads/" + id + "/edit");
             if (mediaUrl != null && mediaUrl.equals("__error__")) {
                 return "redirect:/threads/" + id + "/edit";
             }
             thread.setMediaURL(mediaUrl);
+        } else if (removeImage) {
+            // User hapus gambar tanpa pengganti → kosongkan
+            thread.setMediaURL(null);
         }
+        // else: tidak ada perubahan gambar → pertahankan yang lama
 
         threadsRepository.save(thread);
         ra.addFlashAttribute("flashSuccess", "Thread berhasil diperbarui!");

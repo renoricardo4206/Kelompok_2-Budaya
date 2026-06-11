@@ -70,12 +70,15 @@ function handleFile(file) {
     errEl.classList.add('visible');
     return;
   }
-  if (file.size > 5 * 1024 * 1024) {
-    errEl.innerHTML = '<i class="bi bi-exclamation-circle"></i> Ukuran gambar maksimal 5 MB';
+  if (file.size > 10 * 1024 * 1024) {
+    errEl.innerHTML = '<i class="bi bi-exclamation-circle"></i> Ukuran gambar maksimal 10 MB';
     errEl.classList.add('visible');
     return;
   }
   errEl.classList.remove('visible');
+  // Upload gambar baru → batalkan penanda hapus (kalau sebelumnya sempat di-set)
+  const rm = document.getElementById('removeImage');
+  if (rm) rm.value = 'false';
   const reader = new FileReader();
   reader.onload = e => {
     document.getElementById('previewImg').src = e.target.result;
@@ -90,6 +93,9 @@ function removeImage() {
   document.getElementById('uploadPreview').style.display = 'none';
   document.getElementById('uploadArea').style.display = 'flex';
   document.getElementById('fileInput').value = '';
+  // Tandai supaya server mengosongkan gambar saat simpan (mode edit)
+  const rm = document.getElementById('removeImage');
+  if (rm) rm.value = 'true';
 }
 
 function onDragOver(e) {

@@ -73,7 +73,7 @@
       <div class="form-divider"></div>
 
       <form id="threadForm"
-            th:action="${thread != null ? '/threads/' + thread.id + '/update' : '/threads/create'}"
+            th:action="${thread != null} ? @{/threads/{id}/update(id=${thread.id})} : @{/threads/create}"
             method="post"
             enctype="multipart/form-data" novalidate onsubmit="return handleSubmit(event)">
 
@@ -146,12 +146,14 @@
             ondrop="onDrop(event)">
             <i class="bi bi-image"></i>
             <p>Klik atau seret gambar ke sini</p>
-            <span>PNG, JPG, WEBP — Maks. 5 MB</span>
+            <span>PNG, JPG, WEBP — Maks. 10 MB</span>
             <span th:if="${thread != null}" style="display:block;margin-top:6px;font-size:12px;color:var(--text-mid)">
               Biarkan kosong untuk tetap pakai gambar yang ada.
             </span>
           </div>
           <input type="file" id="fileInput" name="image" accept="image/*" style="display:none" onchange="handleFile(this.files[0])">
+          <!-- Penanda: di mode edit, kalau user klik hapus gambar tanpa upload baru, server akan mengosongkan gambar -->
+          <input type="hidden" name="removeImage" id="removeImage" value="false">
           <div class="field-error" id="errGambar"><i class="bi bi-exclamation-circle"></i></div>
         </div>
 
