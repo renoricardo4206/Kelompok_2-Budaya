@@ -79,18 +79,24 @@
 }
 .auth-back-btn:hover { color: var(--primary); }
 
-.auth-divider { display: flex; align-items: center; gap: 16px; margin: 8px 0; opacity: 0.6; }
-.auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--text-mid); }
-.auth-divider span { font-size: 12px; font-weight: 500; color: var(--text-mid); }
 
-.auth-btn-google {
-  width: 100%; background: #fff; border: 1.5px solid var(--border-soft);
-  border-radius: 8px; padding: 10px; font-family: inherit; font-size: 14px;
-  font-weight: 600; color: var(--text-dark); cursor: pointer;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  transition: background 0.2s;
+/* ── COMMENT LOGIN PROMPT (guest) ── */
+.comment-login-prompt {
+  background: var(--primary-light);
+  border: 1.5px dashed rgba(158, 32, 22, .25);
+  border-radius: 12px;
+  padding: 24px 20px;
+  text-align: center;
+  margin-bottom: 24px;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
 }
-.auth-btn-google:hover { background: var(--primary-light); }
+.comment-login-prompt i {
+  font-size: 32px; color: var(--primary); opacity: .6;
+}
+.comment-login-prompt p {
+  margin: 0; font-size: 14px; color: var(--text-mid); font-weight: 500;
+}
+.comment-login-prompt .cf-submit { max-width: 220px; }
 
 /* ── OWNER ACTIONS (Edit / Hapus) ── */
 .owner-actions {

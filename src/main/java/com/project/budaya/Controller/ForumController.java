@@ -20,10 +20,12 @@ import jakarta.servlet.http.HttpSession;
 
 import com.project.budaya.Entity.Comments;
 import com.project.budaya.Entity.Forums;
+import com.project.budaya.Entity.Likes;
 import com.project.budaya.Entity.Threads;
 import com.project.budaya.Entity.User;
 import com.project.budaya.Repository.CommentsRepository;
 import com.project.budaya.Repository.ForumsRepository;
+import com.project.budaya.Repository.LikesRepository;
 import com.project.budaya.Repository.ThreadsRepository;
 import com.project.budaya.Repository.UserRepository;
 
@@ -34,15 +36,18 @@ public class ForumController {
     private final ThreadsRepository threadsRepository;
     private final CommentsRepository commentsRepository;
     private final UserRepository userRepository;
+    private final LikesRepository likesRepository;
 
     public ForumController(ForumsRepository forumsRepository,
                            ThreadsRepository threadsRepository,
                            CommentsRepository commentsRepository,
-                           UserRepository userRepository) {
+                           UserRepository userRepository,
+                           LikesRepository likesRepository) {
         this.forumsRepository = forumsRepository;
         this.threadsRepository = threadsRepository;
         this.commentsRepository = commentsRepository;
         this.userRepository = userRepository;
+        this.likesRepository = likesRepository;
     }
 
     private String now() {
@@ -62,7 +67,7 @@ public class ForumController {
     }
 
     @GetMapping("/forum/{id}")
-    public String forumDetail(@PathVariable Integer id, Model model) {
+    public String forumDetail(@PathVariable Integer id, HttpSession session, Model model) {
         Threads thread = threadsRepository.findById(id).orElse(null);
         if (thread == null) {
             return "redirect:/forum";
@@ -75,13 +80,43 @@ public class ForumController {
             related.removeIf(t -> t.getId().equals(thread.getId()));
         }
 
+        boolean userLiked = false;
+        User current = (User) session.getAttribute("currentUser");
+        if (current != null) {
+            userLiked = likesRepository.findByUser_IdAndThread_Id(current.getId(), thread.getId()).isPresent();
+        }
+
         model.addAttribute("thread", thread);
         model.addAttribute("comments", thread.getComments());
         model.addAttribute("related", related);
         model.addAttribute("commentCount", thread.getComments() != null ? thread.getComments().size() : 0);
         model.addAttribute("likeCount", thread.getLikes() != null ? thread.getLikes().size() : 0);
+        model.addAttribute("userLiked", userLiked);
         model.addAttribute("forums", forumsRepository.findAll());
         return "ForumDetail";
+    }
+
+    @PostMapping("/forum/{id}/like")
+    public String toggleLikeThread(@PathVariable Integer id,
+                                   HttpSession session,
+                                   RedirectAttributes ra) {
+        User user = (User) session.getAttribute("currentUser");
+        if (user == null) {
+            ra.addFlashAttribute("flashError", "Silakan login atau daftar dulu untuk mendukung thread.");
+            return "redirect:/forum/" + id;
+        }
+        Threads thread = threadsRepository.findById(id).orElse(null);
+        if (thread == null) return "redirect:/forum";
+
+        likesRepository.findByUser_IdAndThread_Id(user.getId(), thread.getId()).ifPresentOrElse(
+            existing -> {
+                likesRepository.delete(existing);
+            },
+            () -> {
+                likesRepository.save(new Likes(user, thread, now()));
+            }
+        );
+        return "redirect:/forum/" + id;
     }
 
     @PostMapping("/forum/{id}/comment")

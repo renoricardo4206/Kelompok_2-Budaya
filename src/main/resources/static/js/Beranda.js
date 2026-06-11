@@ -43,22 +43,10 @@ function handleSearch(val) {
   });
 }
 
-function toggleLike(e, btn) {
-  e.stopPropagation();
-  const icon = btn.querySelector('i');
-  const countEl = btn.querySelector('span');
-  const count = parseInt(countEl.textContent);
-  const liked = icon.classList.contains('bi-heart-fill');
-  if (liked) {
-    icon.classList.replace('bi-heart-fill', 'bi-heart');
-    icon.style.color = ''; countEl.textContent = count - 1;
-  } else {
-    icon.classList.replace('bi-heart', 'bi-heart-fill');
-    icon.style.color = '#9e2016'; countEl.textContent = count + 1;
-    icon.style.transform = 'scale(1.5)';
-    setTimeout(() => icon.style.transform = 'scale(1)', 180);
-    showToast('Kamu menyukai post ini ❤️', 'success');
-  }
+/* Gerbang login untuk tombol like di kartu Beranda (saat belum login) */
+function requireLoginForLike() {
+  showToast('Silakan login atau daftar dulu untuk mendukung konten.', 'error');
+  openAuthModal('masuk');
 }
 
 /* ── FAB hide on scroll down ── */

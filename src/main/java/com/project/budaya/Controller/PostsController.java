@@ -19,9 +19,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import jakarta.servlet.http.HttpSession;
 
 import com.project.budaya.Entity.Categories;
+import com.project.budaya.Entity.PostComments;
+import com.project.budaya.Entity.PostLikes;
 import com.project.budaya.Entity.Posts;
 import com.project.budaya.Entity.User;
 import com.project.budaya.Repository.PostsRepository;
+import com.project.budaya.Repository.PostCommentsRepository;
+import com.project.budaya.Repository.PostLikesRepo;
 import com.project.budaya.Repository.CategoriesRepository;
 import com.project.budaya.Repository.UserRepository;
 
@@ -31,13 +35,23 @@ public class PostsController {
     private final PostsRepository postsRepository;
     private final CategoriesRepository categoriesRepository;
     private final UserRepository userRepository;
+    private final PostCommentsRepository postCommentsRepository;
+    private final PostLikesRepo postLikesRepo;
 
     public PostsController(PostsRepository postsRepository,
                            CategoriesRepository categoriesRepository,
-                           UserRepository userRepository) {
+                           UserRepository userRepository,
+                           PostCommentsRepository postCommentsRepository,
+                           PostLikesRepo postLikesRepo) {
         this.postsRepository = postsRepository;
         this.categoriesRepository = categoriesRepository;
         this.userRepository = userRepository;
+        this.postCommentsRepository = postCommentsRepository;
+        this.postLikesRepo = postLikesRepo;
+    }
+
+    private String now() {
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("d MMM yyyy, HH:mm"));
     }
 
     @GetMapping("/dokumentasi")
@@ -53,7 +67,7 @@ public class PostsController {
     }
 
     @GetMapping("/dokumentasi/{id}")
-    public String dokumentasiDetail(@PathVariable Integer id, Model model) {
+    public String dokumentasiDetail(@PathVariable Integer id, HttpSession session, Model model) {
         Posts post = postsRepository.findById(id).orElse(null);
         if (post == null) {
             return "redirect:/dokumentasi";
@@ -67,12 +81,64 @@ public class PostsController {
         }
 
         int likeCount = (post.getPostLikes() != null) ? post.getPostLikes().size() : 0;
+        int commentCount = (post.getComments() != null) ? post.getComments().size() : 0;
+
+        boolean userLiked = false;
+        User current = (User) session.getAttribute("currentUser");
+        if (current != null) {
+            userLiked = postLikesRepo.findByUser_IdAndPost_Id(current.getId(), post.getId()).isPresent();
+        }
 
         model.addAttribute("post", post);
         model.addAttribute("related", related);
+        model.addAttribute("comments", post.getComments());
         model.addAttribute("likeCount", likeCount);
+        model.addAttribute("commentCount", commentCount);
+        model.addAttribute("userLiked", userLiked);
         model.addAttribute("categories", categoriesRepository.findAll());
         return "DokumentasiDetail";
+    }
+
+    @PostMapping("/dokumentasi/{id}/comment")
+    public String addPostComment(@PathVariable Integer id,
+                                 @RequestParam String content,
+                                 HttpSession session,
+                                 RedirectAttributes ra) {
+        Posts post = postsRepository.findById(id).orElse(null);
+        if (post == null) {
+            return "redirect:/dokumentasi";
+        }
+        User user = (User) session.getAttribute("currentUser");
+        if (user == null) {
+            ra.addFlashAttribute("uploadError", "Silakan login atau daftar dulu untuk membalas.");
+            return "redirect:/dokumentasi/" + id;
+        }
+        postCommentsRepository.save(new PostComments(user, post, content, now()));
+        ra.addFlashAttribute("uploadSuccess", "Balasan terkirim!");
+        return "redirect:/dokumentasi/" + id;
+    }
+
+    @PostMapping("/dokumentasi/{id}/like")
+    public String toggleLikePost(@PathVariable Integer id,
+                                 HttpSession session,
+                                 RedirectAttributes ra) {
+        User user = (User) session.getAttribute("currentUser");
+        if (user == null) {
+            ra.addFlashAttribute("uploadError", "Silakan login atau daftar dulu untuk mendukung konten.");
+            return "redirect:/dokumentasi/" + id;
+        }
+        Posts post = postsRepository.findById(id).orElse(null);
+        if (post == null) return "redirect:/dokumentasi";
+
+        postLikesRepo.findByUser_IdAndPost_Id(user.getId(), post.getId()).ifPresentOrElse(
+            existing -> {
+                postLikesRepo.delete(existing);
+            },
+            () -> {
+                postLikesRepo.save(new PostLikes(user, post, now()));
+            }
+        );
+        return "redirect:/dokumentasi/" + id;
     }
 
     @PostMapping("/dokumentasi/upload")

@@ -38,9 +38,12 @@
       <li><a href="/forum" class="active">Forum</a></li>
       <li><a href="/dokumentasi">Dokumentasi</a></li>
     </ul>
+    <div style="flex:1"></div>
     <div class="nav-auth">
-      <button class="btn-masuk" onclick="openAuthModal('masuk')">Masuk</button>
-      <button class="btn-daftar" onclick="openAuthModal('daftar')">Daftar</button>
+      <button class="btn-masuk" th:if="${session.currentUser == null}" onclick="openAuthModal('masuk')">Masuk</button>
+      <button class="btn-daftar" th:if="${session.currentUser == null}" onclick="openAuthModal('daftar')">Daftar</button>
+      <span th:if="${session.currentUser != null}" style="font-size:14px;font-weight:600;color:var(--text-mid);margin-right:8px" th:text="${session.currentUser.username}">User</span>
+      <button class="btn-masuk" th:if="${session.currentUser != null}" onclick="location.href='/logout'">Keluar</button>
     </div>
     <button class="btn-hamburger" onclick="openDrawer()"><i class="bi bi-list"></i></button>
   </div>

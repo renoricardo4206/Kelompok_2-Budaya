@@ -1,5 +1,9 @@
 package com.project.budaya.Controller;
 
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -8,6 +12,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.project.budaya.Entity.User;
 import com.project.budaya.Repository.UserRepository;
 import com.project.budaya.Repository.PostsRepository;
+import com.project.budaya.Repository.PostLikesRepo;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -15,15 +20,29 @@ import jakarta.servlet.http.HttpSession;
 public class UserController {
     private final UserRepository userRepository;
     private final PostsRepository postsRepository;
+    private final PostLikesRepo postLikesRepo;
 
-    public UserController(UserRepository userRepository, PostsRepository postsRepository) {
+    public UserController(UserRepository userRepository,
+                          PostsRepository postsRepository,
+                          PostLikesRepo postLikesRepo) {
         this.userRepository = userRepository;
         this.postsRepository = postsRepository;
+        this.postLikesRepo = postLikesRepo;
     }
 
     @GetMapping("/")
-    public String beranda(Model model) {
+    public String beranda(HttpSession session, Model model) {
         model.addAttribute("posts", postsRepository.findAll());
+
+        // Set of post IDs yang sudah di-like oleh user saat ini (untuk render hati merah di kartu)
+        Set<Integer> likedPostIds = Collections.emptySet();
+        User current = (User) session.getAttribute("currentUser");
+        if (current != null) {
+            likedPostIds = postLikesRepo.findByUser_Id(current.getId()).stream()
+                .map(pl -> pl.getPost().getId())
+                .collect(Collectors.toSet());
+        }
+        model.addAttribute("likedPostIds", likedPostIds);
         return "Beranda";
     }
 

@@ -1,10 +1,10 @@
 /* ── DOKUMENTASIDETAIL.JS — Warisan ── */
-/* Isi halaman detail sekarang dirender server-side dari database (lihat DokumentasiDetail.html).
-   File ini hanya mengurus interaksi ringan: tombol suka (visual) & bagikan. */
+/* Isi halaman detail, komentar, dan like dirender server-side dari database (lihat DokumentasiDetail.html).
+   Komentar dikirim lewat form POST ke /dokumentasi/{id}/comment.
+   Like dikirim lewat form POST ke /dokumentasi/{id}/like (toggle).
+   File ini mengurus: edit modal, delete confirm, gerbang login, bagikan, dan toast flash. */
 
-let likedPost = false;
-
-/* ── FLASH MESSAGE DARI SERVER (sukses/gagal update/hapus) ── */
+/* ── FLASH MESSAGE DARI SERVER (sukses/gagal update/hapus/comment/like) ── */
 document.addEventListener('DOMContentLoaded', () => {
   const ok  = document.getElementById('flashSuccess');
   const err = document.getElementById('flashError');
@@ -72,35 +72,6 @@ function closeConfirmDelete() {
 function requireLoginForUpload() {
   showToast('Silakan login atau daftar dulu untuk mengupload konten.', 'error');
   openAuthModal('masuk');
-}
-
-/* ── LIKE (visual saja, belum disimpan ke database) ── */
-function toggleLikePost() {
-  const btn     = document.getElementById('likePostBtn');
-  const icon    = document.getElementById('likePostIcon');
-  const countEl = document.getElementById('likePostCount');
-  if (!btn || !icon || !countEl) return;
-
-  // angka dukungan ada di <span> pertama di dalam countEl
-  const numEl = countEl.querySelector('span');
-  let count = numEl ? parseInt(numEl.textContent) || 0 : 0;
-
-  likedPost = !likedPost;
-  if (likedPost) {
-    icon.className = 'bi bi-heart-fill';
-    icon.style.color = '#9e2016';
-    btn.classList.add('liked');
-    count++;
-    icon.style.transform = 'scale(1.4)';
-    setTimeout(() => icon.style.transform = '', 180);
-    showToast('Kamu mendukung dokumentasi ini ❤️', 'success');
-  } else {
-    icon.className = 'bi bi-heart';
-    icon.style.color = '';
-    btn.classList.remove('liked');
-    count--;
-  }
-  if (numEl) numEl.textContent = count;
 }
 
 /* ── SHARE ── */

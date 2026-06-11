@@ -20,7 +20,10 @@ public class Posts {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostLikes> postLikes;
-    
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<PostComments> comments;
+
     private String title;
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -103,5 +106,13 @@ public class Posts {
 
     public void setPostLikes(List<PostLikes> postLikes) {
         this.postLikes = postLikes;
+    }
+
+    public List<PostComments> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<PostComments> comments) {
+        this.comments = comments;
     }
 }

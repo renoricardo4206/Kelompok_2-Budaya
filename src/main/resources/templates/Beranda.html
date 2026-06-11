@@ -122,7 +122,21 @@
             </div>
           </div>
           <div class="card-actions">
-            <button class="act-btn like-btn" onclick="toggleLike(event,this)">
+            <!-- Sudah login: tombol like adalah form POST ke server -->
+            <form th:if="${session.currentUser != null}"
+                  th:action="@{'/dokumentasi/' + ${post.id} + '/like'}" method="post"
+                  style="display:contents"
+                  onclick="event.stopPropagation()">
+              <button type="submit" class="act-btn like-btn"
+                      th:classappend="${likedPostIds != null and likedPostIds.contains(post.id)} ? ' liked'">
+                <i th:class="${likedPostIds != null and likedPostIds.contains(post.id)} ? 'bi bi-heart-fill' : 'bi bi-heart'"
+                   th:style="${likedPostIds != null and likedPostIds.contains(post.id)} ? 'color:#9e2016' : ''"></i>
+                <span th:text="${post.postLikes != null ? post.postLikes.size() : 0}">0</span>
+              </button>
+            </form>
+            <!-- Belum login: klik langsung trigger gerbang auth -->
+            <button th:if="${session.currentUser == null}" class="act-btn like-btn"
+                    onclick="event.stopPropagation();requireLoginForLike()">
               <i class="bi bi-heart"></i><span th:text="${post.postLikes != null ? post.postLikes.size() : 0}">0</span>
             </button>
             <button class="act-btn"
@@ -194,12 +208,10 @@
           </div>
           <div class="auth-field">
             <label>Kata Sandi</label>
-            <input type="password" name="password" required placeholder="••••••••">
+            <input type="password" name="password" required placeholder="Min. 8 karakter">
           </div>
           <button type="submit" class="auth-btn-primary">Masuk</button>
         </form>
-        <div class="auth-divider"><span>atau</span></div>
-        <button class="auth-btn-google" onclick="showToast('Login Google segera hadir!','success')"><i class="bi bi-google" style="color:#EA4335;"></i> Lanjutkan dengan Google</button>
       </div>
       <div class="auth-form-panel" id="authFormDaftar">
         <form action="/register" method="post" style="display:flex;flex-direction:column;gap:16px">

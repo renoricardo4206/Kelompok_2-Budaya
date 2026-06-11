@@ -128,10 +128,13 @@
           </div>
         </div>
         <div class="interact-bar">
-          <button class="ibar-btn" id="likePostBtn" onclick="toggleLikePost()">
-            <i class="bi bi-heart" id="likePostIcon"></i>
-            <span id="likePostCount"><span th:text="${likeCount}">0</span> Dukungan</span>
-          </button>
+          <form th:action="@{'/forum/' + ${thread.id} + '/like'}" method="post" style="display:contents">
+            <button type="submit" class="ibar-btn" th:classappend="${userLiked} ? ' liked'">
+              <i th:class="${userLiked} ? 'bi bi-heart-fill' : 'bi bi-heart'"
+                 th:style="${userLiked} ? 'color:#9e2016' : ''"></i>
+              <span><span th:text="${likeCount}">0</span> Dukungan</span>
+            </button>
+          </form>
           <button class="ibar-btn" onclick="document.getElementById('commentTextarea').focus()">
             <i class="bi bi-chat"></i>
             <span><span th:text="${commentCount}">0</span> Balasan</span>
@@ -147,9 +150,11 @@
       <div class="discussion-section">
         <h2 class="discussion-title">Diskusi</h2>
 
-        <!-- Comment Form -->
-        <form class="comment-form" th:action="@{/forum/{id}/comment(id=${thread.id})}" method="post">
-          <div class="cf-avatar">A</div>
+        <!-- Comment Form — hanya tampil untuk user yang sudah login -->
+        <form class="comment-form" th:if="${session.currentUser != null}"
+              th:action="@{/forum/{id}/comment(id=${thread.id})}" method="post">
+          <div class="cf-avatar"
+               th:text="${#strings.substring(session.currentUser.username,0,1)}">A</div>
           <div class="cf-right">
             <textarea class="cf-textarea" id="commentTextarea" name="content" required
                       placeholder="Tuliskan pandangan Anda..." rows="3"></textarea>
@@ -158,6 +163,13 @@
             </div>
           </div>
         </form>
+
+        <!-- Prompt login untuk guest -->
+        <div class="comment-login-prompt" th:if="${session.currentUser == null}">
+          <i class="bi bi-chat-square-text"></i>
+          <p>Login dulu untuk ikut berdiskusi.</p>
+          <button type="button" class="cf-submit" onclick="openAuthModal('masuk')">Masuk / Daftar</button>
+        </div>
 
         <!-- Comment Thread -->
         <div class="comment-thread" id="commentThread">
@@ -271,12 +283,10 @@
           </div>
           <div class="auth-field">
             <label>Kata Sandi</label>
-            <input type="password" name="password" required placeholder="••••••••">
+            <input type="password" name="password" required placeholder="Min. 8 karakter">
           </div>
           <button type="submit" class="auth-btn-primary">Masuk</button>
         </form>
-        <div class="auth-divider"><span>atau</span></div>
-        <button class="auth-btn-google" onclick="showToast('Login Google segera hadir!','success')"><i class="bi bi-google" style="color:#EA4335;"></i> Lanjutkan dengan Google</button>
       </div>
 
       <div class="auth-form-panel" id="authFormDaftar">
